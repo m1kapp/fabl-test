@@ -574,7 +574,7 @@ function renderSharedType(code) {
   const modeByKey = Object.fromEntries(workModes.map(mode => [mode.key, mode]));
   const order = [...code].map(letter => modeByKey[letter]);
   app.innerHTML = `<main class="intro landing shared-type">
-    <nav class="landing-nav"><div class="brand">PEBBLE TEST <span>β</span></div><a href="/">테스트 하기</a></nav>
+    <nav class="landing-nav"><div class="brand">FABL TEST <span>β</span></div><a href="/">테스트 하기</a></nav>
     <section class="hero landing-hero"><div>
       <p class="eyebrow">SHARED RESULT · ${code}</p>
       <h1>${workTypeNames[code]}형<br><em>${workTypePeople[code]}</em> 아키타입</h1>
@@ -587,7 +587,7 @@ function renderSharedType(code) {
       <img src="/people/${code}.jpg" alt="${workTypePeople[code]} 초상">
       <figcaption>${code} · ${workTypeNames[code]}형</figcaption>
     </figure></section>
-    <footer class="landing-footer"><b>PEBBLE TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer>
+    <footer class="landing-footer"><b>FABL TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer>
   </main>`;
   document.querySelector('#startShared').onclick = () => { history.replaceState(null, '', '/'); beginTest('short'); };
 }
@@ -645,7 +645,7 @@ function renderIntro() {
   const archives = loadArchives();
   const savedActions = archives.length ? `<div class="saved-actions"><button id="latestResult">최근 결과 보기 <b>${archives.length}</b></button></div>` : '';
   const modeCards = workModes.map((mode, index) => `<article class="mode-card mode-${mode.key.toLowerCase()}"><div><span>0${index + 1}</span><b>${mode.key}</b></div><small>${mode.en} · ${mode.ko}</small><h3>${mode.question}</h3><p>${mode.desc}</p></article>`).join('');
-  app.innerHTML = `<main class="intro landing"><nav class="landing-nav"><div class="brand">PEBBLE TEST <span>β</span></div><a href="#types">24 TYPES</a></nav><section class="hero landing-hero"><div><p class="eyebrow">행동 사례 기반 업무 유형 테스트</p><h1>나는 일을<br><em>어떤 순서로</em><br>잘할까?</h1><p class="lead">성격을 묻지 않습니다. 실제 업무 상황에서 무엇을 먼저 보고, 어떻게 판단하고, 누구와 결과를 만드는지 살펴봅니다.</p><div class="hero-actions"><button class="primary" id="start">내 업무 유형 찾기 <b>→</b></button><button class="text-button" id="startFull">정밀 코스로 하기</button>${savedActions}</div><p class="meta">12개 상황 · 약 2~3분 · 정밀 코스는 서술형까지 16문항</p></div><div class="hero-code" aria-label="업무 유형 예시 FAB"><span>F</span><i></i><span>A</span><i></i><span>B</span><small>FRAME → AIM → BUILD</small><strong>FAB · 분석추진형</strong></div></section><section class="mode-section"><div class="section-copy"><p class="eyebrow">FOUR WORK MODES</p><h2>일은 네 가지 힘으로<br>흘러갑니다.</h2><p>10개 세부역량은 네 가지 업무 모드로 묶입니다. 먼저 쓰는 세 가지의 순서가 나의 업무 유형이 됩니다.</p></div><div class="mode-grid">${modeCards}</div></section><section class="type-section" id="types"><div class="section-copy"><p class="eyebrow">24 WORKING TYPES</p><h2>같은 강점도<br>순서가 다르면 다릅니다.</h2><p>세로에서 시작 모드, 가로에서 보조 모드를 찾으세요. 각 칸의 두 유형은 세 번째로 사용하는 힘이 다릅니다.</p></div>${renderTypeMatrix()}<div class="matrix-example"><span>예시 결과</span><b>FAB · 분석추진형</b><p>정확히 이해하고 → 중요한 방향을 정한 뒤 → 직접 결과로 완성합니다.</p><button id="exampleResult">실제 결과 보기 →</button></div></section><section class="landing-cta"><p class="eyebrow">READY TO FIND YOUR TYPE?</p><h2>당신의 일하는 순서를<br>확인해보세요.</h2><button class="primary" id="startBottom">테스트 시작 <b>→</b></button><button class="text-button" id="startBottomFull">정밀 코스</button><button class="text-button" id="importResult">결과 파일 불러오기</button><input type="file" id="resultFile" accept="application/json,.json" hidden></section><footer class="landing-footer"><b>PEBBLE TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer></main>`;
+  app.innerHTML = `<main class="intro landing"><nav class="landing-nav"><div class="brand">FABL TEST <span>β</span></div><a href="#types">24 TYPES</a></nav><section class="hero landing-hero"><div><p class="eyebrow">FRAME · AIM · BUILD · LINK</p><h1>나는 일을<br><em>어떤 순서로</em><br>잘할까?</h1><p class="lead">성격을 묻지 않습니다. 실제 업무 상황에서 무엇을 먼저 보고, 어떻게 판단하고, 누구와 결과를 만드는지 살펴봅니다.</p><div class="hero-actions"><button class="primary" id="start">내 업무 유형 찾기 <b>→</b></button><button class="text-button" id="startFull">정밀 코스로 하기</button>${savedActions}</div><p class="meta">12개 상황 · 약 2~3분 · 정밀 코스는 서술형까지 16문항</p></div><div class="hero-code" aria-label="업무 유형 예시 FAB"><span>F</span><i></i><span>A</span><i></i><span>B</span><small>FRAME → AIM → BUILD</small><strong>FAB · 분석추진형</strong></div></section><section class="mode-section"><div class="section-copy"><p class="eyebrow">FOUR WORK MODES</p><h2>FABL — 일은 네 가지<br>힘으로 흘러갑니다.</h2><p>10개 세부역량은 네 가지 업무 모드로 묶입니다. 먼저 쓰는 세 가지의 순서가 나의 업무 유형이 됩니다.</p></div><div class="mode-grid">${modeCards}</div></section><section class="type-section" id="types"><div class="section-copy"><p class="eyebrow">24 WORKING TYPES</p><h2>같은 강점도<br>순서가 다르면 다릅니다.</h2><p>세로에서 시작 모드, 가로에서 보조 모드를 찾으세요. 각 칸의 두 유형은 세 번째로 사용하는 힘이 다릅니다.</p></div>${renderTypeMatrix()}<div class="matrix-example"><span>예시 결과</span><b>FAB · 분석추진형</b><p>정확히 이해하고 → 중요한 방향을 정한 뒤 → 직접 결과로 완성합니다.</p><button id="exampleResult">실제 결과 보기 →</button></div></section><section class="landing-cta"><p class="eyebrow">READY TO FIND YOUR TYPE?</p><h2>당신의 일하는 순서를<br>확인해보세요.</h2><button class="primary" id="startBottom">테스트 시작 <b>→</b></button><button class="text-button" id="startBottomFull">정밀 코스</button><button class="text-button" id="importResult">결과 파일 불러오기</button><input type="file" id="resultFile" accept="application/json,.json" hidden></section><footer class="landing-footer"><b>FABL TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer></main>`;
   // beginTest 를 그대로 넘기면 클릭 이벤트가 course 인자로 들어가 긴 코스로 빠진다.
   document.querySelector('#start').onclick = () => beginTest('short');
   document.querySelector('#startBottom').onclick = () => beginTest('short');
@@ -661,7 +661,7 @@ function renderIntro() {
   document.querySelector('#importResult').onclick = () => fileInput.click();
   fileInput.onchange = async () => {
     try { await restoreResultFile(fileInput.files[0]); }
-    catch { alert('페블테스트 결과 파일을 확인해주세요.'); }
+    catch { alert('FABL 테스트 결과 파일을 확인해주세요.'); }
   };
 }
 
@@ -672,7 +672,7 @@ function renderQuestion() {
   // 짧은 코스는 객관식만으로 끝나므로 총계에 대화 단계를 더하지 않는다.
   const total = state.course === 'short' ? list.length : list.length + deepScenarios.length;
   const progress = ((state.current + 1) / total) * 100;
-  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>페블테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 실제로 내가 가장 먼저 취할 행동을 선택하세요.</p></section></main>`;
+  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 실제로 내가 가장 먼저 취할 행동을 선택하세요.</p></section></main>`;
   document.querySelector('#home').onclick = goHome;
   document.querySelectorAll('.option').forEach(btn => btn.onclick = () => choose(Number(btn.dataset.index)));
 }

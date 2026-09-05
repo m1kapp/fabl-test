@@ -14,7 +14,7 @@ import { workTypeNames, workTypePeople, workTypeReasons } from '../src/types.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
-const ORIGIN = process.env.SITE_ORIGIN || 'https://pebble.m1k.app';
+const ORIGIN = process.env.SITE_ORIGIN || 'https://fabl.m1k.app';
 
 const shell = readFileSync(join(dist, 'index.html'), 'utf8');
 const escapeAttr = (value) => String(value)
@@ -38,7 +38,7 @@ const codes = Object.keys(workTypeNames);
 const urls = [`${ORIGIN}/`];
 
 for (const code of codes) {
-  const title = `${code} · ${workTypeNames[code]}형 — 페블테스트`;
+  const title = `${code} · ${workTypeNames[code]}형 — FABL 테스트`;
   const description = `${workTypePeople[code]} 아키타입. ${workTypeReasons[code]} 나의 일하는 순서도 확인해보세요.`;
   const url = `${ORIGIN}/t/${code}/`;
 

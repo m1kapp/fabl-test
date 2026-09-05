@@ -60,7 +60,7 @@ function card(code) {
   <rect width="${W}" height="${H}" fill="${BG}"/>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
   <text x="86" y="120" font-family="Pretendard" font-weight="700" font-size="26"
-        fill="${ACCENT}" letter-spacing="6">PEBBLE TEST</text>
+        fill="${ACCENT}" letter-spacing="6">FABL TEST</text>
   <text x="86" y="196" font-family="Pretendard" font-weight="400" font-size="30"
         fill="${MUTED}">나의 일하는 순서는</text>
   ${letters}

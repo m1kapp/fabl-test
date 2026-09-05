@@ -56,7 +56,7 @@ export async function share(code, answers) {
   const text = shareText(code);
   if (navigator.share) {
     try {
-      await navigator.share({ title: '페블테스트', text, url });
+      await navigator.share({ title: 'FABL 테스트', text, url });
       return false;
     } catch (error) {
       // 사용자가 공유 시트를 닫은 경우까지 복사로 넘기지는 않는다.
