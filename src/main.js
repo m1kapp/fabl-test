@@ -647,7 +647,7 @@ function renderIntro() {
   const archives = loadArchives();
   const savedActions = archives.length ? `<div class="saved-actions"><button id="latestResult">최근 결과 보기 <b>${archives.length}</b></button></div>` : '';
   const modeCards = workModes.map((mode, index) => `<article class="mode-card mode-${mode.key.toLowerCase()}"><div><span>0${index + 1}</span><b>${mode.key}</b></div><small>${mode.en} · ${mode.ko}</small><h3>${mode.question}</h3><p>${mode.desc}</p></article>`).join('');
-  app.innerHTML = `<main class="intro landing"><nav class="landing-nav"><div class="brand">FABL TEST <span>β</span></div><a href="#types">24 TYPES</a></nav><section class="hero landing-hero"><div><p class="eyebrow">FRAME · AIM · BUILD · LINK</p><h1>일이 떨어지면<br>나는 <em>뭐부터</em><br>할까?</h1><p class="lead">상황부터 파악하는 사람, 뭐가 중요한지 먼저 정하는 사람, 일단 만들어보는 사람, 관련된 사람부터 맞추는 사람. 성격이 아니라 <b>먼저 손대는 곳</b>이 다릅니다.</p><div class="hero-actions"><button class="primary" id="start">내 업무 유형 찾기 <b>→</b></button><button class="text-button" id="startFull">정밀 코스로 하기</button>${savedActions}</div><p class="meta">12개 상황 · 약 2~3분 · 정밀 코스는 서술형까지 16문항</p></div><div class="hero-code" aria-label="업무 유형 예시 FAB"><span>F</span><i></i><span>A</span><i></i><span>B</span><small>FRAME → AIM → BUILD</small><strong>FAB · 분석추진형</strong></div></section><section class="mode-section"><div class="section-copy"><p class="eyebrow">FOUR WORK MODES</p><h2>FABL — 일은 네 가지<br>힘으로 흘러갑니다.</h2><p>일이 주어지면 사람마다 먼저 손대는 곳이 다릅니다. 그 네 갈래가 FABL 이고, 자주 쓰는 세 가지를 <b>먼저 쓰는 차례대로</b> 이으면 내 유형이 됩니다.</p></div><div class="mode-grid">${modeCards}</div></section><section class="type-section" id="types"><div class="section-copy"><p class="eyebrow">24 WORKING TYPES</p><h2>같은 강점도<br>먼저 쓰는 게 다르면<br>다른 유형입니다.</h2><p>세로에서 시작 모드, 가로에서 보조 모드를 찾으세요. 각 칸의 두 유형은 세 번째로 사용하는 힘이 다릅니다.</p></div>${renderTypeMatrix()}<div class="matrix-example"><span>예시</span><b>FAB · 분석추진형</b><p>상황을 읽고 → 중요한 것을 고르고 → 직접 만들어 끝냅니다.</p></div></section><section class="landing-cta"><p class="eyebrow">READY TO FIND YOUR TYPE?</p><h2>당신이 먼저 손대는 곳은<br>어디일까요?</h2><button class="primary" id="startBottom">테스트 시작 <b>→</b></button><button class="text-button" id="startBottomFull">정밀 코스</button><button class="text-button" id="importResult">결과 파일 불러오기</button><input type="file" id="resultFile" accept="application/json,.json" hidden></section><footer class="landing-footer"><b>FABL TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer></main>`;
+  app.innerHTML = `<main class="intro landing"><nav class="landing-nav"><div class="brand">FABL TEST <span>β</span></div><a href="#types">24 TYPES</a></nav><section class="hero landing-hero"><div><p class="eyebrow">FRAME · AIM · BUILD · LINK</p><h1>일이 떨어지면<br>나는 <em>뭐부터</em><br>할까?</h1><p class="lead">상황부터 파악하는 사람, 뭐가 중요한지 먼저 정하는 사람, 일단 만들어보는 사람, 관련된 사람부터 맞추는 사람. 성격이 아니라 <b>먼저 손대는 곳</b>이 다릅니다.</p><div class="hero-actions"><button class="primary" id="start">내 업무 유형 찾기 <b>→</b></button><button class="text-button" id="startFull">정밀 코스로 하기</button>${savedActions}</div><p class="meta">12개 상황 · 약 2~3분 · 정밀 코스는 서술형까지 20상황 · 약 6~8분</p></div><div class="hero-code" aria-label="업무 유형 예시 FAB"><span>F</span><i></i><span>A</span><i></i><span>B</span><small>FRAME → AIM → BUILD</small><strong>FAB · 분석추진형</strong></div></section><section class="mode-section"><div class="section-copy"><p class="eyebrow">FOUR WORK MODES</p><h2>FABL — 일은 네 가지<br>힘으로 흘러갑니다.</h2><p>일이 주어지면 사람마다 먼저 손대는 곳이 다릅니다. 그 네 갈래가 FABL 이고, 자주 쓰는 세 가지를 <b>먼저 쓰는 차례대로</b> 이으면 내 유형이 됩니다.</p></div><div class="mode-grid">${modeCards}</div></section><section class="type-section" id="types"><div class="section-copy"><p class="eyebrow">24 WORKING TYPES</p><h2>같은 강점도<br>먼저 쓰는 게 다르면<br>다른 유형입니다.</h2><p>세로에서 시작 모드, 가로에서 보조 모드를 찾으세요. 각 칸의 두 유형은 세 번째로 사용하는 힘이 다릅니다.</p></div>${renderTypeMatrix()}<div class="matrix-example"><span>예시</span><b>FAB · 분석추진형</b><p>상황을 읽고 → 중요한 것을 고르고 → 직접 만들어 끝냅니다.</p></div></section><section class="landing-cta"><p class="eyebrow">READY TO FIND YOUR TYPE?</p><h2>당신이 먼저 손대는 곳은<br>어디일까요?</h2><button class="primary" id="startBottom">테스트 시작 <b>→</b></button><button class="text-button" id="startBottomFull">정밀 코스</button><button class="text-button" id="importResult">결과 파일 불러오기</button><input type="file" id="resultFile" accept="application/json,.json" hidden></section><footer class="landing-footer"><b>FABL TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer></main>`;
   // beginTest 를 그대로 넘기면 클릭 이벤트가 course 인자로 들어가 긴 코스로 빠진다.
   document.querySelector('#start').onclick = () => beginTest('short');
   document.querySelector('#startBottom').onclick = () => beginTest('short');
@@ -746,17 +746,17 @@ function renderChat() {
   const history = state.deepAnswers[scenarioIndex] || [];
   const messages = [`<div class="scenario-visual">${renderMotionGraphic(scenarioIndex, q.domain)}</div><article class="bubble interviewer scenario-bubble"><small>상황</small>${compactScenario(q.opening)}</article>`];
   history.forEach((answer, index) => {
-    messages.push(`<article class="bubble interviewer"><small>대화형 평가자</small><p>${q.turns[index]}</p></article>`);
+    messages.push(`<article class="bubble interviewer"><small>진행</small><p>${q.turns[index]}</p></article>`);
     messages.push(`<article class="bubble user"><small>나</small><p>${escapeHtml(answer)}</p></article>`);
   });
   if (state.awaitingNext) {
     const finalSignal = state.chatSignals.filter(signal => signal.scenarioIndex === scenarioIndex).at(-1);
-    messages.push(`<article class="bubble interviewer active"><small>AI 평가자</small><p><em>${escapeHtml(finalSignal?.reaction || '답변에서 드러난 접근을 기록했습니다.')}</em>이 상황의 답변을 기록했습니다. 다음 상황으로 이어가겠습니다.</p></article>`);
+    messages.push(`<article class="bubble interviewer active"><small>자동 기록</small><p><em>${escapeHtml(finalSignal?.reaction || '답변에서 드러난 접근을 기록했습니다.')}</em>이 상황의 답변을 기록했습니다. 다음 상황으로 이어가겠습니다.</p></article>`);
   } else if (mode === 'deep' && state.deepTurn < q.turns.length) {
     const previousSignal = state.chatSignals.find(signal => signal.scenarioIndex === scenarioIndex && signal.turn === state.deepTurn - 1);
     const leadText = previousSignal?.reaction || (history.length ? adaptiveLead(history.at(-1)) : '');
     const lead = leadText ? `<em>${escapeHtml(leadText)}</em>` : '';
-    messages.push(`<article class="bubble interviewer active"><small>대화형 평가자</small><p>${lead}${q.turns[state.deepTurn]}</p></article>`);
+    messages.push(`<article class="bubble interviewer active"><small>진행</small><p>${lead}${q.turns[state.deepTurn]}</p></article>`);
   }
   let composer;
   if (state.awaitingNext) {
@@ -984,6 +984,9 @@ function renderResult() {
   const selectedModes = workType.modes.slice(0, 3);
   const judgmentQuality = calculateJudgmentQuality();
   const qualityEvidenceCount = judgmentQuality.reduce((sum, item) => sum + item.observed, 0);
+  // 판단 품질 패널은 LLM 이 채워주던 quality 신호에만 의존한다. 공개판에서 그 호출을
+  // 걷어냈으므로 qualityEvidenceCount 는 항상 0 이고 이 패널은 렌더되지 않는다.
+  // 같은 역할은 정답 키가 있는 판단 체크(renderKeyedPanel)가 대신한다.
   const qualityPanel = qualityEvidenceCount ? `<section class="quality-panel"><div><p class="eyebrow">JUDGMENT QUALITY · ${qualityEvidenceCount} SIGNALS</p><h3>한 줄 답변에서 확인된 판단 품질</h3></div><div>${judgmentQuality.map(item => `<article class="${item.score === null ? 'unobserved' : ''}"><span><b>${item.ko}</b><small>${item.desc}</small></span><strong>${item.score === null ? '관찰 전' : item.score.toFixed(1)}</strong></article>`).join('')}</div></section>` : `<p class="quality-empty">선택 이유나 직접 답변을 한 줄 보태면 판단 품질 점수가 여기에 표시됩니다.</p>`;
   const responseTimes = state.chatSignals.map(signal => signal.responseMs).filter(Number.isFinite).sort((a, b) => a - b);
   const middle = Math.floor(responseTimes.length / 2);
