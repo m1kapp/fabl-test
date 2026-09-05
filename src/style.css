@@ -11,3 +11,33 @@
 .shared-portrait figcaption {
   margin-top: 14px; font-size: 14px; font-weight: 700; letter-spacing: .02em; opacity: .62;
 }
+
+/* 판단 체크 — 유형(선호)과 달리 정답 키가 있는 층. 시각적으로도 구분되게 둔다. */
+.keyed-panel {
+  margin-top: 22px; padding: 26px 26px 28px;
+  background: #fff; border: 1px solid #e6e4f0; border-radius: 20px;
+}
+.keyed-invite { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
+.keyed-invite h2 { margin: 8px 0 8px; font-size: 21px; letter-spacing: -.03em; }
+.keyed-invite p { max-width: 46em; color: #6b6880; font-size: 14px; line-height: 1.62; }
+.keyed-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.keyed-head h2 { margin: 8px 0 6px; font-size: 22px; letter-spacing: -.03em; }
+.keyed-head h2 em { font-style: normal; color: #6047d8; }
+.keyed-head p { color: #6b6880; font-size: 13.5px; }
+.keyed-dims { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 16px; }
+.keyed-dim {
+  display: flex; align-items: baseline; gap: 8px; padding: 8px 14px;
+  border: 1px solid #e6e4f0; border-radius: 999px; font-size: 13px;
+}
+.keyed-dim b { font-weight: 700; }
+.keyed-dim span { font-variant-numeric: tabular-nums; color: #8b8799; }
+.keyed-dim.ok { border-color: #bfe6d5; background: #f1faf6; }
+.keyed-dim.ok span { color: #198a67; }
+.keyed-miss { padding: 13px 0; border-top: 1px solid #eeecf4; }
+.keyed-miss summary { cursor: pointer; font-size: 14.5px; line-height: 1.5; }
+.keyed-miss summary b { margin-right: 8px; color: #c14d4d; }
+.keyed-miss p { margin: 9px 0 0; font-size: 13.5px; line-height: 1.6; }
+.keyed-chose { color: #8b8799; }
+.keyed-answer { color: #198a67; font-weight: 600; }
+.keyed-why { color: #6b6880; padding-left: 12px; border-left: 2px solid #ded9f2; }
+.keyed-allok { margin: 6px 0 0; color: #198a67; font-weight: 600; font-size: 14px; }

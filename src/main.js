@@ -2,6 +2,7 @@ import './style.css';
 import './chat.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
 import { share, typeUrl, codeFromPath, answersFromQuery } from './share.js';
+import { keyedItems, scoreKeyed, qualityDimensionNames } from './keyed.js';
 
 const capabilities = [
   { key: 'sensemaking', ko: '맥락추론력', en: 'Sensemaking', desc: '불완전한 정보에서도 전체 흐름과 의미를 파악한다.' },
@@ -450,7 +451,7 @@ const STORAGE_KEY = 'iljaller-assessment-session-v1';
 const ARCHIVE_KEY = 'iljaller-assessment-archives-v1';
 
 function createState() {
-  return { screen: 'intro', course: 'short', current: 0, answers: [], optionOrders: [], scenarioOrder: [], scenarioStartedAt: [], assessmentStartedAt: null, completedAt: null, assessmentDurationMs: null, deepCurrent: 0, deepTurn: 0, deepAnswers: [], chatSignals: [], awaitingNext: false, pendingChoice: null };
+  return { screen: 'intro', course: 'short', current: 0, answers: [], keyedAnswers: [], keyedOrders: [], keyedCurrent: 0, optionOrders: [], scenarioOrder: [], scenarioStartedAt: [], assessmentStartedAt: null, completedAt: null, assessmentDurationMs: null, deepCurrent: 0, deepTurn: 0, deepAnswers: [], chatSignals: [], awaitingNext: false, pendingChoice: null };
 }
 
 function createSampleState() {
@@ -591,12 +592,52 @@ function renderSharedType(code) {
   document.querySelector('#startShared').onclick = () => { history.replaceState(null, '', '/'); beginTest('short'); };
 }
 
+// 판단 체크 화면. 유형 문항과 달리 정답이 있고, 정답 위치는 매번 섞는다.
+function renderKeyed() {
+  const item = keyedItems[state.keyedCurrent];
+  const order = state.keyedOrders[state.keyedCurrent];
+  const total = keyedItems.length;
+  const progress = ((state.keyedCurrent + 1) / total) * 100;
+  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>결과로</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p></section></main>`;
+  document.querySelector('#backToResult').onclick = () => { state.screen = 'result'; render(); };
+  document.querySelectorAll('.option').forEach(btn => btn.onclick = () => {
+    state.keyedAnswers[state.keyedCurrent] = Number(btn.dataset.index);
+    if (state.keyedCurrent < keyedItems.length - 1) state.keyedCurrent += 1;
+    else state.screen = 'result';
+    render();
+  });
+}
+
+function beginKeyed() {
+  state.keyedAnswers = [];
+  state.keyedCurrent = 0;
+  state.keyedOrders = keyedItems.map(item => shuffledIndexes(item.options.length));
+  state.screen = 'keyed';
+  render();
+}
+
+// 결과 화면 안의 판단 체크 영역. 아직 안 했으면 권유, 했으면 채점 결과.
+function renderKeyedPanel() {
+  const done = state.keyedAnswers && state.keyedAnswers.length === keyedItems.length;
+  if (!done) {
+    return `<section class="keyed-panel keyed-invite"><div><p class="eyebrow">JUDGMENT CHECK · ${keyedItems.length} ITEMS</p><h2>여기까지는 &lsquo;어떤 순서로 일하는가&rsquo;였습니다</h2><p>위 유형은 자주 쓰는 순서를 볼 뿐, 잘하는지는 보지 않습니다. 모든 선택지가 타당한 대응이라 애초에 틀린 답이 없기 때문입니다. 정답이 있는 문항 ${keyedItems.length}개로 판단 습관을 따로 확인해보세요.</p></div><button class="primary" id="startKeyed">판단 체크 하기 <b>→</b></button></section>`;
+  }
+  const scored = scoreKeyed(state.keyedAnswers);
+  const dims = Object.entries(scored.byDimension)
+    .map(([key, v]) => `<div class="keyed-dim${v.correct === v.total ? ' ok' : ''}"><b>${qualityDimensionNames[key]}</b><span>${v.correct} / ${v.total}</span></div>`).join('');
+  const missed = scored.missed.length
+    ? scored.missed.map(({ item, index }) => `<details class="keyed-miss"><summary><b>${qualityDimensionNames[item.dimension]}</b> ${item.question}</summary><p class="keyed-chose">고른 답 · ${item.options[state.keyedAnswers[index]]}</p><p class="keyed-answer">더 타당한 답 · ${item.options[item.correct]}</p><p class="keyed-why">${item.principle}</p></details>`).join('')
+    : '<p class="keyed-allok">여덟 문항 모두 원칙에 맞게 골랐습니다.</p>';
+  return `<section class="keyed-panel"><div class="keyed-head"><div><p class="eyebrow">JUDGMENT CHECK</p><h2>판단 체크 <em>${scored.correct} / ${scored.total}</em></h2><p>유형과 달리 이 점수는 정답 키로 매겼습니다. 사람 사이 비교가 되는 값입니다.</p></div><button class="ghost" id="retryKeyed">다시 풀기</button></div><div class="keyed-dims">${dims}</div>${missed}</section>`;
+}
+
 function render() {
   clearInterval(quickTimerId);
   saveState();
   if (state.screen === 'intro') renderIntro();
   else if (state.screen === 'test') renderQuestion();
   else if (state.screen === 'chat') renderChat();
+  else if (state.screen === 'keyed') renderKeyed();
   else renderResult();
 }
 
@@ -956,7 +997,7 @@ function renderResult() {
   const archivedDurations = loadArchives().map(item => item.assessmentDurationMs).filter(Number.isFinite);
   const browserAverageMs = archivedDurations.length ? archivedDurations.reduce((sum, milliseconds) => sum + milliseconds, 0) / archivedDurations.length : null;
   const paceCard = responseTimes.length ? `<section class="pace-card"><div><p class="eyebrow">ASSESSMENT TIME</p><h2>검사 시간</h2><p>중간에 화면을 닫아둔 시간은 총 소요시간에 포함될 수 있습니다.</p></div><div class="time-metrics"><span><small>이번 검사</small><b>${formatDuration(state.assessmentDurationMs)}</b></span><span><small>문항당 평균</small><b>${averageResponseSeconds}초</b></span><span><small>중앙 응답</small><b>${medianSeconds}초</b></span><span><small>내 평균 · ${archivedDurations.length}회</small><b>${formatDuration(browserAverageMs)}</b></span></div><span class="guide-count">25초 안에 선택<br><b>${withinGuide} / ${responseTimes.length}</b></span></section>` : '';
-  app.innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">YOUR WORKING PATTERN</p><h1><em>${selectedModes[0].ko}</em>에서 시작해<br>${selectedModes[1].ko}을 거쳐 ${selectedModes[2].ko} 모드로 완성합니다.</h1></div><button class="ghost" id="restart">다시 하기</button></header><section class="type-result"><div class="type-identity"><img src="/people/${typeCode}.jpg" alt="${workTypePeople[typeCode]} 초상"><div><b class="result-type-code" aria-label="${typeCode}">${rankedTypeCode}</b><span>${workTypeNames[typeCode]}형</span><small>${workTypePeople[typeCode]} 아키타입</small></div><p>${workTypeReasons[typeCode]}</p></div></section><section class="result-grid"><div class="radar-card"><canvas id="radar" width="680" height="620"></canvas><div class="scale-note">색상은 FABL 그룹 · 2 관찰 없음 · 3.5 평균 · 5 강한 선호</div></div><div class="summary behavior-summary"><h2>당신은 이렇게 행동할 가능성이 큽니다</h2>${renderBehaviorInsights(selectedModes)}<p class="behavior-note">상황에 따라 다른 접근도 사용하지만, 답변에서 반복된 우선순서를 풀어낸 예시입니다.</p></div></section>${qualityPanel}<details class="all-scores"><summary><div class="section-title"><p class="eyebrow">${state.answers.length} SCENARIOS · 10 CAPABILITIES</p><h2>10개 역량 상세 점수 보기</h2></div><b>펼치기 ＋</b></summary><div class="score-list">${result.map(c => `<div class="score-row"><div><b>${c.ko}</b><small>${c.en} · 신호 ${c.observed}</small></div><i><span style="width:${c.score / 5 * 100}%"></span></i><strong>${c.score.toFixed(1)}</strong></div>`).join('')}</div></details><footer>이 결과는 ${state.answers.length}개 상황에서 먼저 사용한 접근을 분석한 상대적 선호도입니다. 낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
+  app.innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">YOUR WORKING PATTERN</p><h1><em>${selectedModes[0].ko}</em>에서 시작해<br>${selectedModes[1].ko}을 거쳐 ${selectedModes[2].ko} 모드로 완성합니다.</h1></div><button class="ghost" id="restart">다시 하기</button></header><section class="type-result"><div class="type-identity"><img src="/people/${typeCode}.jpg" alt="${workTypePeople[typeCode]} 초상"><div><b class="result-type-code" aria-label="${typeCode}">${rankedTypeCode}</b><span>${workTypeNames[typeCode]}형</span><small>${workTypePeople[typeCode]} 아키타입</small></div><p>${workTypeReasons[typeCode]}</p></div></section><section class="result-grid"><div class="radar-card"><canvas id="radar" width="680" height="620"></canvas><div class="scale-note">색상은 FABL 그룹 · 2 관찰 없음 · 3.5 평균 · 5 강한 선호</div></div><div class="summary behavior-summary"><h2>당신은 이렇게 행동할 가능성이 큽니다</h2>${renderBehaviorInsights(selectedModes)}<p class="behavior-note">상황에 따라 다른 접근도 사용하지만, 답변에서 반복된 우선순서를 풀어낸 예시입니다.</p></div></section>${qualityPanel}${renderKeyedPanel()}<details class="all-scores"><summary><div class="section-title"><p class="eyebrow">${state.answers.length} SCENARIOS · 10 CAPABILITIES</p><h2>10개 역량 상세 점수 보기</h2></div><b>펼치기 ＋</b></summary><div class="score-list">${result.map(c => `<div class="score-row"><div><b>${c.ko}</b><small>${c.en} · 신호 ${c.observed}</small></div><i><span style="width:${c.score / 5 * 100}%"></span></i><strong>${c.score.toFixed(1)}</strong></div>`).join('')}</div></details><footer>이 결과는 ${state.answers.length}개 상황에서 먼저 사용한 접근을 분석한 상대적 선호도입니다. 낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
   if (paceCard) document.querySelector('.all-scores').insertAdjacentHTML('beforebegin', paceCard);
   drawRadar(document.querySelector('#radar'), result);
   const resultHead = document.querySelector('.result-head');
@@ -969,6 +1010,10 @@ function renderResult() {
   actions.append(downloadButton, restartButton);
   restartButton.onclick = reset;
   downloadButton.onclick = downloadCurrentResult;
+  const startKeyed = document.querySelector('#startKeyed');
+  if (startKeyed) startKeyed.onclick = beginKeyed;
+  const retryKeyed = document.querySelector('#retryKeyed');
+  if (retryKeyed) retryKeyed.onclick = beginKeyed;
 
   // 결과가 나오면 주소창을 공유 가능한 유형 경로로 바꾼다. 이 링크를 붙여 넣으면
   // 빌드 때 찍어둔 유형별 미리보기 카드가 뜬다(해시로는 크롤러가 못 읽는다).
