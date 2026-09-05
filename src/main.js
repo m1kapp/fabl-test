@@ -375,6 +375,7 @@ const scenarios = scenarioBlueprints.map((scenario, index) => {
   const omittedOptionIndex = index % 4;
   return {
     ...scenario,
+    imageIndex: index,
     title: plainScenarioCopy[index].title,
     body: plainScenarioCopy[index].body,
     options: scenario.options
@@ -385,6 +386,7 @@ const scenarios = scenarioBlueprints.map((scenario, index) => {
 
 const shortScenarios = SHORT_SCENARIO_INDEXES.map(index => ({
   ...scenarioBlueprints[index],
+  imageIndex: index,
   title: plainScenarioCopy[index].title,
   body: plainScenarioCopy[index].body,
   options: scenarioBlueprints[index].options.map((option, optionIndex) => ({
@@ -667,7 +669,7 @@ function renderQuestion() {
   // 짧은 코스는 객관식만으로 끝나므로 총계에 대화 단계를 더하지 않는다.
   const total = state.course === 'short' ? list.length : list.length + deepScenarios.length;
   const progress = ((state.current + 1) / total) * 100;
-  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 실제로 내가 가장 먼저 취할 행동을 선택하세요.</p></section></main>`;
+  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 실제로 내가 가장 먼저 취할 행동을 선택하세요.</p></section></main>`;
   document.querySelector('#home').onclick = goHome;
   document.querySelectorAll('.option').forEach(btn => btn.onclick = () => choose(Number(btn.dataset.index)));
 }

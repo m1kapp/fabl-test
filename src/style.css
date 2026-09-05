@@ -41,3 +41,15 @@
 .keyed-answer { color: #198a67; font-weight: 600; }
 .keyed-why { color: #6b6880; padding-left: 12px; border-left: 2px solid #ded9f2; }
 .keyed-allok { margin: 6px 0 0; color: #198a67; font-weight: 600; font-size: 14px; }
+
+/* 객관식 문항의 상황 이미지.
+   정밀 코스(대화형)에는 붙어 있었는데 객관식 경로만 빠져 있었다.
+   .scenario-image 자체 규칙은 chat.css 에 있고, 여기서는 담는 상자만 잡는다. */
+.question .scenario-visual {
+  height: clamp(150px, 40vw, 220px);
+  margin-bottom: 16px;
+  overflow: hidden;
+  background: #eeecfb;
+  border: 1px solid #ded9fb;
+  border-radius: 20px;
+}
