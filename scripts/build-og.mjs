@@ -62,7 +62,7 @@ function card(code) {
   <text x="86" y="120" font-family="Pretendard" font-weight="700" font-size="26"
         fill="${ACCENT}" letter-spacing="6">FABL TEST</text>
   <text x="86" y="196" font-family="Pretendard" font-weight="400" font-size="30"
-        fill="${MUTED}">나의 일하는 순서는</text>
+        fill="${MUTED}">일이 떨어지면 나는</text>
   ${letters}
   <text x="86" y="410" font-family="Pretendard" font-weight="700" font-size="58"
         fill="${FG}">${escapeXml(workTypeNames[code])}형</text>
@@ -93,8 +93,8 @@ for (const code of codes) {
 
 // 유형이 아직 없는 진입 페이지용 기본 카드
 const intro = card('FAB')
-  .replace(/>나의 일하는 순서는</, '>일을 잘한다는 말을 12개 상황으로<')
-  .replace(/>분석추진형</, '>당신은 어떤 순서로 일할까?<');
+  .replace(/>일이 떨어지면 나는</, '>일이 떨어지면 당신은<')
+  .replace(/>분석추진형</, '>뭐부터 하나요?<');
 writeFileSync(join(outDir, 'default.png'), new Resvg(intro, {
   fitTo: { mode: 'width', value: W },
   font: { fontDirs: [fontDir], defaultFontFamily: 'Pretendard', loadSystemFonts: false }

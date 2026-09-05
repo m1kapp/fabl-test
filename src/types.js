@@ -2,10 +2,10 @@
 // 한쪽에만 고치면 결과 화면과 공유 카드가 어긋나므로 반드시 여기 한 곳에서만 바꾼다.
 
 const workModes = [
-  { key: 'F', en: 'Frame', ko: '해석', archetype: '탐구자', question: '무슨 일이 벌어지고 있지?', desc: '맥락을 읽고, 이상을 발견하고, 풀 문제를 선명하게 만듭니다.' },
-  { key: 'A', en: 'Aim', ko: '판단', archetype: '전략가', question: '무엇을 먼저 해야 하지?', desc: '영향과 비용을 비교해 중요한 방향과 목표를 고릅니다.' },
-  { key: 'B', en: 'Build', ko: '실행', archetype: '개척자', question: '어떻게 결과로 만들지?', desc: '직접 끝까지 완성하고, 필요하면 새로운 길을 시험합니다.' },
-  { key: 'L', en: 'Link', ko: '조율', archetype: '조율자', question: '누구와 함께 움직이지?', desc: '기준과 역할을 맞추고 사람을 연결해 공동 결과를 만듭니다.' }
+  { key: 'F', en: 'Frame', ko: '해석', archetype: '탐구자', plain: '상황 읽기', question: '무슨 일이 벌어지고 있지?', desc: '맥락을 읽고, 이상을 발견하고, 풀 문제를 선명하게 만듭니다.' },
+  { key: 'A', en: 'Aim', ko: '판단', archetype: '전략가', plain: '중요한 것 고르기', question: '무엇을 먼저 해야 하지?', desc: '영향과 비용을 비교해 중요한 방향과 목표를 고릅니다.' },
+  { key: 'B', en: 'Build', ko: '실행', archetype: '개척자', plain: '직접 만들어 끝내기', question: '어떻게 결과로 만들지?', desc: '직접 끝까지 완성하고, 필요하면 새로운 길을 시험합니다.' },
+  { key: 'L', en: 'Link', ko: '조율', archetype: '조율자', plain: '사람과 맞추기', question: '누구와 함께 움직이지?', desc: '기준과 역할을 맞추고 사람을 연결해 공동 결과를 만듭니다.' }
 ];
 
 const workTypeNames = {
