@@ -582,9 +582,10 @@ function renderSharedType(code) {
       <div class="hero-actions"><button class="primary" id="startShared">나도 테스트 하기 <b>→</b></button></div>
       <p class="meta">12개 상황 · 약 2~3분</p>
     </div>
-    <div class="hero-code" aria-label="업무 유형 ${code}">
-      <img src="/people/${code}.jpg" alt="${workTypePeople[code]} 초상" style="width:100%;border-radius:16px;display:block">
-    </div></section>
+    <figure class="shared-portrait">
+      <img src="/people/${code}.jpg" alt="${workTypePeople[code]} 초상">
+      <figcaption>${code} · ${workTypeNames[code]}형</figcaption>
+    </figure></section>
     <footer class="landing-footer"><b>PEBBLE TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer>
   </main>`;
   document.querySelector('#startShared').onclick = () => { history.replaceState(null, '', '/'); beginTest('short'); };
