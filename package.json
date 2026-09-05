@@ -1,0 +1,15 @@
+{
+  "name": "pebble-test",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build-og.mjs && vite build && node scripts/build-seo.mjs",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "vite": "^7.1.3"
+  }
+}
