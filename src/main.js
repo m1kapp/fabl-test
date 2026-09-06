@@ -600,15 +600,35 @@ function renderKeyed() {
   const order = state.keyedOrders[state.keyedCurrent];
   const total = keyedItems.length;
   const progress = ((state.keyedCurrent + 1) / total) * 100;
-  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>결과로</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p></section></main>`;
+  const picked = state.keyedAnswers[state.keyedCurrent];
+  const last = state.keyedCurrent === total - 1;
+  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>결과로</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.keyedCurrent === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '채점 보기' : '다음 →'}</button></nav></section></main>`;
   document.querySelector('#backToResult').onclick = () => { state.screen = 'result'; render(); };
   scrollToQuestionTop();
+
+  const nextButton = document.querySelector('#nextQ');
   document.querySelectorAll('.option').forEach(btn => btn.onclick = () => {
-    state.keyedAnswers[state.keyedCurrent] = Number(btn.dataset.index);
-    if (state.keyedCurrent < keyedItems.length - 1) state.keyedCurrent += 1;
+    const index = Number(btn.dataset.index);
+    state.keyedAnswers[state.keyedCurrent] = index;
+    document.querySelectorAll('.option').forEach(other => {
+      const on = Number(other.dataset.index) === index;
+      other.classList.toggle('selected', on);
+      other.setAttribute('aria-pressed', String(on));
+    });
+    nextButton.disabled = false;
+    saveState();
+  });
+  document.querySelector('#prevQ').onclick = () => {
+    if (state.keyedCurrent === 0) return;
+    state.keyedCurrent -= 1;
+    render();
+  };
+  nextButton.onclick = () => {
+    if (state.keyedAnswers[state.keyedCurrent] === undefined) return;
+    if (state.keyedCurrent < total - 1) state.keyedCurrent += 1;
     else state.screen = 'result';
     render();
-  });
+  };
 }
 
 function beginKeyed() {
@@ -678,20 +698,49 @@ function renderQuestion() {
   // 짧은 코스는 객관식만으로 끝나므로 총계에 대화 단계를 더하지 않는다.
   const total = state.course === 'short' ? list.length : list.length + deepScenarios.length;
   const progress = ((state.current + 1) / total) * 100;
-  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 실제로 내가 가장 먼저 취할 행동을 선택하세요.</p></section></main>`;
+  const picked = state.answers[state.current];
+  const last = state.current === list.length - 1;
+
+  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 가장 먼저 취할 행동 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.current === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '결과 보기' : '다음 →'}</button></nav></section></main>`;
+
   document.querySelector('#home').onclick = goHome;
-  document.querySelectorAll('.option').forEach(btn => btn.onclick = () => choose(Number(btn.dataset.index)));
+
+  const nextButton = document.querySelector('#nextQ');
+  // 누르는 즉시 넘어가지 않는다. 고른 뒤 확인하고 '다음'을 눌러야 진행된다.
+  // 여기서 다시 그리지 않는 이유는 스크롤이 튀지 않게 하기 위해서다.
+  document.querySelectorAll('.option').forEach(btn => btn.onclick = () => {
+    const index = Number(btn.dataset.index);
+    state.answers[state.current] = index;
+    document.querySelectorAll('.option').forEach(other => {
+      const on = Number(other.dataset.index) === index;
+      other.classList.toggle('selected', on);
+      other.setAttribute('aria-pressed', String(on));
+    });
+    nextButton.disabled = false;
+    saveState();
+  });
+
+  document.querySelector('#prevQ').onclick = () => {
+    if (state.current === 0) return;
+    state.current -= 1;
+    render();
+  };
+  nextButton.onclick = () => {
+    if (state.answers[state.current] === undefined) return;
+    advance();
+  };
   scrollToQuestionTop();
 }
 
-function choose(index) {
-  state.answers[state.current] = index;
+// 마지막 문항에서는 결과로, 아니면 다음 문항으로.
+function advance() {
   const list = activeScenarios();
   if (state.current < list.length - 1) state.current += 1;
   else if (state.course === 'short') { state.completedAt = new Date().toISOString(); state.screen = 'result'; }
   else state.screen = 'chat';
   render();
 }
+
 
 const signalRules = {
   sensemaking: [/집단|구간|조건|패턴|맥락|나눠|분리|상위|공통|왜/],
