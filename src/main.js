@@ -101,6 +101,14 @@ const scenarioImageAlts = [
   '온라인 경매 마감 시각의 혼선을 바로잡는 장면',
   '급식 알레르기 안내와 배식 동선을 점검하는 장면',
   '스포츠 센터 이용자별 숙련도 차이를 분석하는 장면',
+  '병원 외래 접수 창구 앞에 오전 대기 줄이 길게 늘어선 장면',
+  '카페 주방에서 신메뉴 준비로 다른 주문이 밀리는 장면',
+  '게임 화면 앞에서 사흘 만에 접속을 끊은 이용자 흐름을 살피는 장면',
+  '아파트 주차장에서 자리를 두고 마주 선 두 입주민 장면',
+  '도서관 강좌실의 빈 좌석과 대기자 명단을 함께 보는 장면',
+  '정비소에서 같은 고장으로 다시 들어온 차를 점검하는 장면',
+  '광고 클릭 그래프는 오르고 구매 그래프는 평평한 화면을 보는 장면',
+  '민원 접수함에 서류가 쌓이고 담당자가 처리 순서를 정하는 장면',
   '대다수는 빠르지만 특정 이용자는 계속 느린 장면',
   '국내 처리는 원활하지만 해외 주소에서 막히는 장면',
   '축제 입장 동선의 병목을 찾아 경로를 바꾸는 장면',
@@ -267,6 +275,86 @@ const scenarioBlueprints = [
       { text: '난도별 소규모 세션을 열어 재등록률 변화를 시험한다.', scores: { pioneering: 3, delivery: 2 } },
       { text: '예약 성과와 장기 유지 중 무엇을 우선할지 운영 목표부터 맞춘다.', scores: { priority: 3, focus: 3 } }
     ]
+  },
+  {
+    domain: '병원 외래', title: '오전 대기만 길어졌다',
+    body: '외래 접수 방식을 바꾼 뒤 전체 대기 시간은 줄었다. 그런데 오전 첫 시간대 환자들의 대기만 유독 길어졌다는 민원이 이어진다.',
+    options: [
+      { text: '어느 시간대와 진료과에서만 길어지는지 접수 기록을 갈라 확인한다.', scores: { sensemaking: 3, validation: 2 } },
+      { text: '민원 수와 진료 지연의 영향을 비교해 먼저 손댈 구간을 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '한 진료과의 접수 순서를 바꿔 다음 날 대기가 줄어드는지 본다.', scores: { delivery: 3, pioneering: 2 } },
+      { text: '접수 담당자와 간호팀에 현장에서 무엇이 막히는지 묻고 기준을 맞춘다.', scores: { alignment: 3, collaboration: 2 } }
+    ]
+  },
+  {
+    domain: '카페 운영', title: '신메뉴는 잘 팔리는데 매장이 힘들다',
+    body: '신메뉴 매출은 목표를 넘겼다. 그런데 점주들은 준비 시간이 길어 다른 주문이 밀린다고 말한다.',
+    options: [
+      { text: '어느 공정에서 시간이 더 드는지 매장 기록으로 확인한다.', scores: { sensemaking: 3, focus: 2 } },
+      { text: '매출 증가분과 밀린 주문의 손해를 견줘 계속할지 정한다.', scores: { priority: 3, impact: 3 } },
+      { text: '한 매장에서 준비 순서를 바꿔 시간이 주는지 시험한다.', scores: { delivery: 3, pioneering: 2 } },
+      { text: '점주 대표들과 무엇을 줄일지 기준을 맞춘 뒤 조정한다.', scores: { alignment: 3, recalibration: 2 } }
+    ]
+  },
+  {
+    domain: '게임 서비스', title: '업데이트 뒤 복귀가 줄었다',
+    body: '새 시즌을 열고 접속자는 늘었다. 그런데 사흘째 이후 돌아오지 않는 이용자가 이전보다 많아졌다.',
+    options: [
+      { text: '돌아오지 않는 이용자가 어디까지 하고 멈췄는지 구간을 나눠 본다.', scores: { sensemaking: 3, validation: 2 } },
+      { text: '이번 시즌 목표와 견줘 먼저 잡을 숫자를 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '난이도를 조금 낮춘 버전을 일부에게 열어 복귀율을 본다.', scores: { pioneering: 3, delivery: 2 } },
+      { text: '기획팀과 운영팀이 이번 시즌에서 지킬 기준을 다시 맞춘다.', scores: { alignment: 3, collaboration: 2 } }
+    ]
+  },
+  {
+    domain: '아파트 관리', title: '한 동에서만 주차 다툼이 난다',
+    body: '주차 구역을 다시 나눈 뒤 전체 민원은 줄었다. 그런데 특정 동에서는 밤마다 자리 다툼이 생긴다.',
+    options: [
+      { text: '그 동만 다른 조건이 무엇인지 세대 수와 차량 수를 대조한다.', scores: { validation: 3, sensemaking: 2 } },
+      { text: '피해 세대 수와 반복되는 정도를 보고 먼저 해결할 곳을 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '그 동에 임시 구획을 그어 한 주 동안 다툼이 주는지 본다.', scores: { delivery: 3, pioneering: 2 } },
+      { text: '입주민 대표와 관리소가 함께 지킬 규칙을 정한다.', scores: { collaboration: 3, alignment: 2 } }
+    ]
+  },
+  {
+    domain: '도서관 운영', title: '신청은 꽉 차는데 자리가 빈다',
+    body: '주말 강좌는 신청이 열리자마자 마감된다. 그런데 실제 참석률은 절반쯤이라는 기록이 남아 있다.',
+    options: [
+      { text: '신청은 했는데 오지 않은 사람들의 공통점을 기록에서 찾는다.', scores: { sensemaking: 3, validation: 2 } },
+      { text: '빈자리 손해와 대기자 불만을 견줘 무엇부터 고칠지 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '한 강좌에 대기자 승계를 넣어 참석률이 오르는지 본다.', scores: { delivery: 3, pioneering: 2 } },
+      { text: '강사와 담당자에게 정원과 취소 기준을 어떻게 둘지 맞춘다.', scores: { alignment: 3, recalibration: 2 } }
+    ]
+  },
+  {
+    domain: '자동차 정비', title: '같은 고장이 다시 들어온다',
+    body: '수리를 마친 차가 두 주 안에 같은 증상으로 다시 들어오는 일이 늘었다. 정비 기록에는 정상 처리로 남아 있다.',
+    options: [
+      { text: '다시 온 차들의 부품과 작업 내용을 대조해 공통점을 찾는다.', scores: { validation: 3, sensemaking: 2 } },
+      { text: '재작업 비용과 신규 예약 손실을 비교해 먼저 볼 것을 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '의심되는 부품을 바꾼 차를 따로 표시해 다시 오는지 본다.', scores: { delivery: 3, pioneering: 2 } },
+      { text: '정비사들과 무엇을 정상 처리로 볼지 기준을 다시 맞춘다.', scores: { alignment: 3, recalibration: 3 } }
+    ]
+  },
+  {
+    domain: '온라인 광고', title: '클릭은 늘고 구매는 그대로다',
+    body: '새 광고 문구로 바꾼 뒤 클릭은 40% 늘었다. 그런데 구매 건수는 거의 변하지 않았다.',
+    options: [
+      { text: '클릭한 사람들이 어느 화면에서 멈추는지 흐름을 갈라 본다.', scores: { sensemaking: 3, focus: 2 } },
+      { text: '광고비 대비 구매를 기준으로 이 문구를 계속 쓸지 정한다.', scores: { priority: 3, impact: 3 } },
+      { text: '도착 화면 문구를 광고와 맞춘 버전을 만들어 비교한다.', scores: { delivery: 3, pioneering: 2 } },
+      { text: '마케팅과 상품팀이 같은 성공 기준을 쓰도록 맞춘다.', scores: { alignment: 3, collaboration: 2 } }
+    ]
+  },
+  {
+    domain: '공공 민원', title: '접수는 늘었는데 처리가 밀린다',
+    body: '온라인 접수를 열자 민원 수가 두 배가 됐다. 담당 인력은 그대로라 처리 기한을 넘기는 건이 쌓인다.',
+    options: [
+      { text: '밀리는 민원이 어떤 종류인지 갈라 원인을 찾는다.', scores: { sensemaking: 3, focus: 2 } },
+      { text: '기한을 넘겼을 때 피해가 큰 순서로 처리 순서를 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '자주 오는 문의는 자동 답변으로 돌려 처리량을 줄여 본다.', scores: { pioneering: 3, delivery: 2 } },
+      { text: '관련 부서와 어디까지 우리가 맡을지 경계를 맞춘다.', scores: { alignment: 3, collaboration: 2 } }
+    ]
   }
 ];
 
@@ -352,6 +440,46 @@ const plainScenarioCopy = [
     title: '다시 오는 사람이 적어요',
     body: '새 운동 수업은 예약이 많아요. 그런데 다음 달 재신청은 적고 실력 차이도 커요.',
     options: ['초보와 숙련자가 언제 그만두는지 보기', '수업 전에 난이도와 준비물 알리기', '실력별 수업 작게 열어 보기', '예약과 재신청 중 뭐가 중요한지 정하기']
+  },
+  {
+    title: '오전에만 줄이 길어요',
+    body: '접수 방식을 바꾼 뒤 전체 대기는 줄었어요. 그런데 오전 첫 시간대만 유독 길다는 민원이 이어져요.',
+    options: ['어느 시간대·진료과만 긴지 확인하기', '민원 수와 지연 영향을 견줘 정하기', '한 진료과 순서를 바꿔 내일 보기', '접수·간호팀에 뭐가 막히는지 묻기']
+  },
+  {
+    title: '잘 팔리는데 매장이 힘들대요',
+    body: '신메뉴 매출은 목표를 넘겼어요. 그런데 점주들은 준비가 오래 걸려 다른 주문이 밀린대요.',
+    options: ['어느 공정이 오래 걸리는지 보기', '매출과 밀린 주문 손해를 견주기', '한 매장에서 순서 바꿔 재보기', '점주들과 뭘 줄일지 기준 맞추기']
+  },
+  {
+    title: '사흘 뒤에 안 돌아와요',
+    body: '새 시즌을 열고 접속자는 늘었어요. 그런데 사흘째 이후 돌아오지 않는 사람이 많아졌어요.',
+    options: ['어디까지 하고 멈췄는지 나눠 보기', '시즌 목표와 견줘 볼 숫자 정하기', '난이도 낮춘 판을 일부에게 열기', '기획·운영팀과 지킬 기준 맞추기']
+  },
+  {
+    title: '한 동만 주차 다툼이 나요',
+    body: '주차 구역을 다시 나눈 뒤 전체 민원은 줄었어요. 그런데 한 동만 밤마다 자리 다툼이 생겨요.',
+    options: ['그 동만 다른 조건이 뭔지 대조하기', '피해 세대와 반복 정도로 정하기', '임시 구획 긋고 한 주 지켜보기', '입주민 대표와 규칙 함께 정하기']
+  },
+  {
+    title: '신청은 꽉 차는데 자리가 비어요',
+    body: '주말 강좌는 열자마자 마감돼요. 그런데 실제로 오는 사람은 절반쯤이에요.',
+    options: ['안 온 사람들의 공통점 찾기', '빈자리 손해와 대기 불만 견주기', '대기자 승계 넣고 참석률 보기', '강사와 정원·취소 기준 맞추기']
+  },
+  {
+    title: '고친 차가 또 들어와요',
+    body: '수리한 차가 두 주 안에 같은 증상으로 다시 와요. 기록에는 정상 처리로 남아 있어요.',
+    options: ['다시 온 차들의 공통점 찾기', '재작업 비용과 예약 손실 견주기', '의심 부품 바꾼 차를 표시해 보기', '정비사와 정상 기준 다시 맞추기']
+  },
+  {
+    title: '클릭은 느는데 구매는 그대로예요',
+    body: '광고 문구를 바꾸고 클릭이 40% 늘었어요. 그런데 구매 수는 거의 그대로예요.',
+    options: ['클릭한 사람이 어디서 멈추는지 보기', '광고비 대비 구매로 계속할지 정하기', '도착 화면 문구를 맞춰 비교하기', '마케팅·상품팀 성공 기준 맞추기']
+  },
+  {
+    title: '접수는 두 배, 처리는 그대로예요',
+    body: '온라인 접수를 열자 민원이 두 배가 됐어요. 인력은 그대로라 기한을 넘기는 건이 쌓여요.',
+    options: ['밀리는 민원이 어떤 종류인지 갈라 보기', '기한 넘길 때 피해 큰 순서로 정하기', '자주 오는 문의는 자동 답변 돌리기', '관련 부서와 맡을 경계 맞추기']
   }
 ];
 
@@ -491,7 +619,7 @@ const STORAGE_KEY = 'iljaller-assessment-session-v1';
 const ARCHIVE_KEY = 'iljaller-assessment-archives-v1';
 
 function createState() {
-  return { screen: 'intro', course: 'short', scenarioSet: null, current: 0, answers: [], keyedAnswers: [], keyedOrders: [], keyedCurrent: 0, optionOrders: [], scenarioOrder: [], scenarioStartedAt: [], assessmentStartedAt: null, completedAt: null, assessmentDurationMs: null, deepCurrent: 0, deepTurn: 0, deepAnswers: [], chatSignals: [], awaitingNext: false, pendingChoice: null };
+  return { screen: 'intro', course: 'short', scenarioSet: null, current: 0, answers: [], keyedAnswers: [], keyedOrders: [], keyedSet: null, keyedSequence: [], keyedCurrent: 0, optionOrders: [], scenarioOrder: [], scenarioStartedAt: [], assessmentStartedAt: null, completedAt: null, assessmentDurationMs: null, deepCurrent: 0, deepTurn: 0, deepAnswers: [], chatSignals: [], awaitingNext: false, pendingChoice: null };
 }
 
 function createSampleState() {
@@ -618,6 +746,8 @@ function beginTest(course = 'short') {
     keyedAnswers: [],
     keyedCurrent: 0,
     keyedOrders: [],
+    keyedSet: null,
+    keyedSequence: [],
     assessmentStartedAt: new Date().toISOString(),
     completedAt: null,
     assessmentDurationMs: null,
@@ -662,7 +792,7 @@ function renderKeyed() {
   const itemIndex = (state.keyedSequence || [])[state.keyedCurrent] ?? state.keyedCurrent;
   const item = keyedItems[itemIndex];
   const order = state.keyedOrders[itemIndex];
-  const total = keyedItems.length;
+  const total = keyedTotal();
   const progress = ((state.keyedCurrent + 1) / total) * 100;
   const picked = state.keyedAnswers[itemIndex];
   const last = state.keyedCurrent === total - 1;
@@ -710,30 +840,50 @@ function renderKeyedOnly() {
   if (retryKeyed) retryKeyed.onclick = beginKeyed;
 }
 
-/** 답한 문항 수. 순서를 섞으면 배열이 듬성듬성 차므로 length 로는 셀 수 없다. */
+// 역량 문항도 매번 뽑는다. 30개 후보에서 20개를 내고, 직전에 낸 문항은 뒤로 미룬다.
+const KEYED_QUESTION_COUNT = 20;
+const KEYED_SEEN_KEY = 'fabl-seen-keyed';
+
+function pickKeyedSet() {
+  let seen = [];
+  try { seen = JSON.parse(localStorage.getItem(KEYED_SEEN_KEY)) || []; } catch { seen = []; }
+  const seenSet = new Set(seen);
+  const all = keyedItems.map((_, index) => index);
+  const fresh = shuffleValues(all.filter(index => !seenSet.has(index)));
+  const rest = shuffleValues(all.filter(index => seenSet.has(index)));
+  const picked = [...fresh, ...rest].slice(0, KEYED_QUESTION_COUNT);
+  try { localStorage.setItem(KEYED_SEEN_KEY, JSON.stringify(picked)); } catch { /* 저장 못 해도 진행 */ }
+  return picked;
+}
+
+/** 이번 회차에 답한 문항 수. 배열이 듬성듬성 차므로 length 로는 셀 수 없다. */
 function keyedAnsweredCount() {
   const answers = state.keyedAnswers || [];
-  let count = 0;
-  for (let index = 0; index < keyedItems.length; index += 1) if (answers[index] !== undefined) count += 1;
-  return count;
+  const asked = state.keyedSet || keyedItems.map((_, index) => index);
+  return asked.filter(index => answers[index] !== undefined).length;
+}
+
+function keyedTotal() {
+  return (state.keyedSet || []).length || Math.min(KEYED_QUESTION_COUNT, keyedItems.length);
 }
 
 function beginKeyed() {
   state.keyedAnswers = [];
   state.keyedCurrent = 0;
   state.keyedOrders = keyedItems.map(item => shuffledIndexes(item.options.length));
-  state.keyedSequence = shuffledIndexes(keyedItems.length);
+  state.keyedSet = pickKeyedSet();
+  state.keyedSequence = shuffleValues(state.keyedSet);
   state.screen = 'keyed';
   render();
 }
 
 // 결과 화면 안의 역량 체크 영역. 아직 안 했으면 권유, 했으면 채점 결과.
 function renderKeyedPanel() {
-  const done = keyedAnsweredCount() === keyedItems.length;
+  const done = state.keyedSet && keyedAnsweredCount() === state.keyedSet.length;
   if (!done) {
-    return `<section class="keyed-panel keyed-invite"><div><p class="eyebrow">역량 체크 · ${keyedItems.length}문항</p><h2>여기까지는 &lsquo;무엇부터 하는가&rsquo;였어요</h2><p>유형은 자주 쓰는 순서만 봐요. 선택지가 다 가능한 대응이라 틀린 답이 없거든요. 정답이 있는 ${keyedItems.length}문항으로 실력은 따로 확인해보세요.</p></div><button class="primary" id="startKeyed">역량 체크 하기 <b>→</b></button></section>`;
+    return `<section class="keyed-panel keyed-invite"><div><p class="eyebrow">역량 체크 · ${KEYED_QUESTION_COUNT}문항</p><h2>여기까지는 &lsquo;무엇부터 하는가&rsquo;였어요</h2><p>유형은 자주 쓰는 순서만 봐요. 선택지가 다 가능한 대응이라 틀린 답이 없거든요. 정답이 있는 ${KEYED_QUESTION_COUNT}문항으로 실력은 따로 확인해보세요.</p></div><button class="primary" id="startKeyed">역량 체크 하기 <b>→</b></button></section>`;
   }
-  const scored = scoreKeyed(state.keyedAnswers);
+  const scored = scoreKeyed(state.keyedAnswers, state.keyedSet);
   const dims = Object.entries(scored.byDimension)
     .map(([key, v]) => `<div class="keyed-dim${v.correct === v.total ? ' ok' : ''}"><b>${qualityDimensionNames[key]}</b><span>${v.correct} / ${v.total}</span></div>`).join('');
   const missed = scored.missed.length
@@ -1085,7 +1235,7 @@ function continueChat() {
   if (state.deepCurrent < chatScenarios.length - 1) {
     state.deepCurrent += 1;
     state.deepTurn = 0;
-  } else if (keyedAnsweredCount() < keyedItems.length) {
+  } else if (!state.keyedSet || keyedAnsweredCount() < state.keyedSet.length) {
     // 긴 코스는 유형(20상황)에 이어 역량 체크(20문항)까지 한 번에 간다.
     beginKeyed();
     return;

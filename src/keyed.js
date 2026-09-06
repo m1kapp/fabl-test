@@ -295,14 +295,146 @@ export const keyedItems = [
     ],
     correct: 0,
     principle: '그럴듯함은 검증이 아니다. 결과를 쓰는 사람이 원본과 대조할 책임을 진다.'
+  },
+  {
+    dimension: 'problem_definition',
+    situation: '주문 취소가 늘었다는 보고가 올라왔다. 영업팀은 가격 때문이라고 하고, 개발팀은 결제 오류를 의심한다.',
+    question: '어느 쪽부터 확인할까요?',
+    options: [
+      '취소한 주문이 어느 단계에서 멈췄는지 본다.',
+      '두 팀의 의견을 모아 회의로 결론을 낸다.',
+      '가격을 조금 내려 취소가 주는지 지켜본다.',
+      '결제 오류 기록을 전부 뽑아 살펴본다.'
+    ],
+    correct: 0,
+    principle: '원인 후보가 둘일 때는 둘을 가르는 관측을 먼저 만든다. 한쪽을 골라 파고들면 다른 쪽이 원인일 때 시간을 통째로 버린다.'
+  },
+  {
+    dimension: 'problem_definition',
+    situation: '"직원들이 시스템을 안 쓴다"는 말이 나왔다. 접속 기록을 보니 절반은 매일 쓰고 절반은 한 번도 안 썼다.',
+    question: '지금 확정할 것은?',
+    options: [
+      '안 쓰는 절반이 누구인지부터 확인한다.',
+      '전 직원 대상 사용법 교육을 다시 연다.',
+      '쓰지 않으면 불이익이 있다고 알린다.',
+      '시스템 기능을 더 편하게 고쳐 둔다.'
+    ],
+    correct: 0,
+    principle: '평균이 아니라 갈라진 두 집단을 본다. "안 쓴다"가 아니라 "누가 왜 안 쓰는가"가 풀 문제다.'
+  },
+  {
+    dimension: 'prioritization',
+    situation: '다음 분기 계획에 여덟 가지가 올라왔다. 팀이 실제로 할 수 있는 것은 셋 정도다.',
+    question: '무엇부터 정할까요?',
+    options: [
+      '안 할 다섯 개를 먼저 정해 알린다.',
+      '여덟 개를 다 조금씩 진행할 계획을 짠다.',
+      '요청한 부서별로 하나씩 고르게 나눈다.',
+      '쉬운 것부터 넣어 개수를 채워 둔다.'
+    ],
+    correct: 0,
+    principle: '우선순위는 무엇을 할지가 아니라 무엇을 안 할지를 정하는 일이다. 안 하기로 한 것을 말하지 않으면 모두가 기다린다.'
+  },
+  {
+    dimension: 'prioritization',
+    situation: '중요한 일을 하는 중에 대표가 다른 급한 일을 시켰다. 둘 다 이번 주 안에는 안 된다.',
+    question: '어떻게 하겠어요?',
+    options: [
+      '뒤로 밀 것을 정해 대표에게 확인받는다.',
+      '새로 받은 일부터 하고 원래 일은 미룬다.',
+      '원래 일을 지키고 새 일은 나중에 말한다.',
+      '야근을 해서 둘 다 이번 주에 끝낸다.'
+    ],
+    correct: 0,
+    principle: '두 개를 다 맡으면 우선순위는 사라진다. 무엇이 밀리는지 정하고 그 결정을 시킨 사람과 맞추는 것까지가 일이다.'
+  },
+  {
+    dimension: 'customer_impact',
+    situation: '고객 만족도 점수가 4.5에서 4.6으로 올랐다. 같은 기간 해지한 고객 수도 늘었다.',
+    question: '이 둘을 어떻게 볼까요?',
+    options: [
+      '남은 사람과 떠난 사람이 다른지 본다.',
+      '점수가 올랐으니 개선이 통한 것으로 본다.',
+      '해지는 계절 요인일 수 있으니 더 지켜본다.',
+      '만족도 조사 문항을 다시 만들어 본다.'
+    ],
+    correct: 0,
+    principle: '만족도는 남아 있는 사람만 답한다. 떠난 사람의 이유는 그 조사에 처음부터 들어 있지 않다.'
+  },
+  {
+    dimension: 'customer_impact',
+    situation: '새 기능을 쓰는 고객 비율이 낮다. 팀은 안내 배너를 크게 붙이자고 한다.',
+    question: '배너를 붙이기 전에 볼 것은?',
+    options: [
+      '써 본 사람이 다시 쓰는지부터 본다.',
+      '배너 문구 후보를 여러 개 만들어 고른다.',
+      '경쟁 서비스는 어떻게 안내하는지 본다.',
+      '사용률 목표를 몇 %로 잡을지 정한다.'
+    ],
+    correct: 0,
+    principle: '몰라서 안 쓰는 것과 써 보고 안 쓰는 것은 다른 문제다. 후자라면 안내를 키울수록 실망이 늘어난다.'
+  },
+  {
+    dimension: 'actionability',
+    situation: '두 팀이 같은 데이터를 서로 다르게 세고 있다는 것이 회의에서 드러났다.',
+    question: '회의에서 무엇을 정해야 할까요?',
+    options: [
+      '어느 정의를 쓸지와 맞출 사람을 정한다.',
+      '각 팀의 계산 방식을 문서로 정리해 공유한다.',
+      '데이터 담당자에게 검토를 요청해 둔다.',
+      '다음 회의에서 다시 논의하기로 미룬다.'
+    ],
+    correct: 0,
+    principle: '정의가 갈린 채 헤어지면 다음 회의에서도 같은 숫자로 싸운다. 하나를 고르고 맞출 사람과 기한을 붙여야 끝난다.'
+  },
+  {
+    dimension: 'actionability',
+    situation: '내가 맡은 일이 다른 팀의 결정 하나에 걸려 있다. 그 결정은 2주 뒤에 난다.',
+    question: '지금 할 일은?',
+    options: [
+      '상관없는 부분을 먼저 하고 갈림길을 적어 둔다.',
+      '결정이 날 때까지 다른 일을 하고 있는다.',
+      '결정을 앞당겨 달라고 계속 요청해 본다.',
+      '내 예상대로 결정될 것으로 보고 진행한다.'
+    ],
+    correct: 0,
+    principle: '기다리는 시간에도 진행할 수 있는 부분이 있다. 갈림길을 미리 적어 두면 결정이 난 뒤 하루 만에 이어 붙는다.'
+  },
+  {
+    dimension: 'verification',
+    situation: '개선 작업을 마치고 지표가 올랐다. 같은 주에 큰 홍보 행사도 있었다.',
+    question: '성과를 보고하기 전에 볼 것은?',
+    options: [
+      '행사와 무관한 구간에서도 올랐는지 본다.',
+      '오른 폭이 목표를 넘었는지 계산해 본다.',
+      '행사 담당자에게 영향이 있었는지 물어본다.',
+      '다음 주 수치까지 보고 나서 판단한다.'
+    ],
+    correct: 0,
+    principle: '같은 시기에 두 가지가 있었으면 어느 쪽 덕인지 갈라야 한다. 내 작업 덕이라고 먼저 정하면 다음 계획이 틀어진다.'
+  },
+  {
+    dimension: 'verification',
+    situation: '자동 점검이 모두 통과했다. 그런데 고객은 어제부터 같은 화면에서 막힌다고 말한다.',
+    question: '먼저 할 일은?',
+    options: [
+      '고객이 막힌 경로를 그대로 따라가 본다.',
+      '점검이 통과했으니 고객 환경 문제로 본다.',
+      '점검 항목을 더 추가해 다시 돌린다.',
+      '어제 배포한 것을 일단 되돌려 둔다.'
+    ],
+    correct: 0,
+    principle: '통과한 점검은 "확인한 것만" 통과했다는 뜻이다. 점검과 현실이 다르면 현실을 먼저 재현해 무엇이 빠졌는지 찾는다.'
   }
 ];
 
 /** 정답 수와 차원별 정오를 낸다. 유형 점수와 달리 사람 간 비교가 가능한 값이다. */
-export function scoreKeyed(answers) {
+export function scoreKeyed(answers, indexes) {
   const byDimension = {};
   let correct = 0;
-  keyedItems.forEach((item, index) => {
+  // 회차마다 문항을 뽑아 내므로 이번에 낸 문항만 채점한다.
+  const asked = Array.isArray(indexes) && indexes.length ? indexes : keyedItems.map((_, index) => index);
+  asked.map(index => [keyedItems[index], index]).forEach(([item, index]) => {
     const ok = answers[index] === item.correct;
     if (ok) correct += 1;
     const bucket = byDimension[item.dimension] || (byDimension[item.dimension] = { correct: 0, total: 0 });
@@ -311,8 +443,8 @@ export function scoreKeyed(answers) {
   });
   return {
     correct,
-    total: keyedItems.length,
+    total: asked.length,
     byDimension,
-    missed: keyedItems.map((item, index) => ({ item, index })).filter(({ item, index }) => answers[index] !== item.correct)
+    missed: asked.map(index => ({ item: keyedItems[index], index })).filter(({ item, index }) => answers[index] !== item.correct)
   };
 }
