@@ -815,6 +815,7 @@ function renderSharedType(code) {
       <img src="/people/${code}.jpg" alt="${workTypePeople[code]} 초상">
       <figcaption>${code} · ${workTypeNames[code]}형</figcaption>
     </figure></section>
+    ${renderCompanions(code)}
     <footer class="landing-footer"><b>FABL TEST</b><span>FRAME · AIM · BUILD · LINK</span></footer>
   </main>`;
   pick('#startShared').onclick = () => { history.replaceState(null, '', '/'); beginTest('short'); };
@@ -1461,11 +1462,13 @@ function renderResult() {
   const archivedDurations = loadArchives().map(item => item.assessmentDurationMs).filter(Number.isFinite);
   const browserAverageMs = archivedDurations.length ? archivedDurations.reduce((sum, milliseconds) => sum + milliseconds, 0) / archivedDurations.length : null;
   const paceCard = responseTimes.length ? `<section class="pace-card"><div><p class="eyebrow">ASSESSMENT TIME</p><h2>검사 시간</h2><p>중간에 화면을 닫아둔 시간은 총 소요시간에 포함될 수 있습니다.</p></div><div class="time-metrics"><span><small>이번 검사</small><b>${formatDuration(state.assessmentDurationMs)}</b></span><span><small>문항당 평균</small><b>${averageResponseSeconds}초</b></span><span><small>중앙 응답</small><b>${medianSeconds}초</b></span><span><small>내 평균 · ${archivedDurations.length}회</small><b>${formatDuration(browserAverageMs)}</b></span></div><span class="guide-count">25초 안에 선택<br><b>${withinGuide} / ${responseTimes.length}</b></span></section>` : '';
-  screenHost().innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">YOUR WORKING PATTERN</p><h1>먼저 <em>${selectedModes[0].plain}</em>,<br>그다음 ${selectedModes[1].plain},<br>마지막에 ${selectedModes[2].plain}.</h1></div><button class="ghost" id="restart">다시 하기</button></header><section class="type-result"><div class="type-identity"><img src="/people/${typeCode}.jpg" alt="${workTypePeople[typeCode]} 초상"><div><b class="result-type-code" aria-label="${typeCode}">${rankedTypeCode}</b><span>${workTypeNames[typeCode]}형</span><small>${workTypePeople[typeCode]} 아키타입</small></div><p>${workTypeReasons[typeCode]}</p></div></section><section class="result-grid"><div class="radar-card"><canvas id="radar" width="680" height="620"></canvas><div class="scale-note">색상은 FABL 그룹 · 2 관찰 없음 · 3.5 평균 · 5 강한 선호</div></div><div class="summary behavior-summary"><h2>당신은 이렇게 행동할 가능성이 큽니다</h2>${renderBehaviorInsights(selectedModes)}<p class="behavior-note">상황에 따라 다른 접근도 사용하지만, 답변에서 반복된 우선순서를 풀어낸 예시입니다.</p></div></section>${qualityPanel}${renderKeyedPanel()}<details class="all-scores"><summary><div class="section-title"><p class="eyebrow">${state.answers.length} SCENARIOS · 10 CAPABILITIES</p><h2>10개 역량 상세 점수 보기</h2></div><b>펼치기 ＋</b></summary><div class="score-list">${result.map(c => `<div class="score-row"><div><b>${c.ko}</b><small>${c.en} · 신호 ${c.observed}</small></div><i><span style="width:${c.score / 5 * 100}%"></span></i><strong>${c.score.toFixed(1)}</strong></div>`).join('')}</div></details><footer>이 결과는 ${state.answers.length}개 상황에서 먼저 사용한 접근을 분석한 상대적 선호도입니다. 낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요. 함께 나오는 인물은 공개된 업적에서 연상한 예시이고, 그 사람을 진단한 결과가 아닙니다.</footer></main>`;
+  screenHost().innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">YOUR WORKING PATTERN</p><h1>먼저 <em>${selectedModes[0].plain}</em>,<br>그다음 ${selectedModes[1].plain},<br>마지막에 ${selectedModes[2].plain}.</h1></div><button class="ghost" id="restart">다시 하기</button></header><section class="type-result"><div class="type-identity"><img src="/people/${typeCode}.jpg" alt="${workTypePeople[typeCode]} 초상"><div><b class="result-type-code" aria-label="${typeCode}">${rankedTypeCode}</b><span>${workTypeNames[typeCode]}형</span><small>${workTypePeople[typeCode]} 아키타입</small></div><p>${workTypeReasons[typeCode]}</p></div></section><section class="result-grid"><div class="radar-card"><canvas id="radar" width="680" height="620"></canvas><div class="scale-note">색상은 FABL 그룹 · 2 관찰 없음 · 3.5 평균 · 5 강한 선호</div></div><div class="summary behavior-summary"><h2>당신은 이렇게 행동할 가능성이 큽니다</h2>${renderBehaviorInsights(selectedModes)}<p class="behavior-note">상황에 따라 다른 접근도 사용하지만, 답변에서 반복된 우선순서를 풀어낸 예시입니다.</p></div></section>${qualityPanel}${renderCompanions(typeCode)}${renderKeyedPanel()}<details class="all-scores"><summary><div class="section-title"><p class="eyebrow">${state.answers.length} SCENARIOS · 10 CAPABILITIES</p><h2>10개 역량 상세 점수 보기</h2></div><b>펼치기 ＋</b></summary><div class="score-list">${result.map(c => `<div class="score-row"><div><b>${c.ko}</b><small>${c.en} · 신호 ${c.observed}</small></div><i><span style="width:${c.score / 5 * 100}%"></span></i><strong>${c.score.toFixed(1)}</strong></div>`).join('')}</div></details><footer>이 결과는 ${state.answers.length}개 상황에서 먼저 사용한 접근을 분석한 상대적 선호도입니다. 낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요. 함께 나오는 인물은 공개된 업적에서 연상한 예시이고, 그 사람을 진단한 결과가 아닙니다.</footer></main>`;
   if (paceCard) pick('.all-scores').insertAdjacentHTML('beforebegin', paceCard);
   drawRadar(pick('#radar'), result);
   const resultHead = pick('.result-head');
   const restartButton = resultHead.querySelector('#restart');
+  // 우상단에도 공유를 둔다. 아래까지 안 내려도 링크를 넘길 수 있어야 한다.
+  restartButton.insertAdjacentHTML('beforebegin', '<button class="head-share" id="headShare">공유</button>');
   restartButton.insertAdjacentHTML('beforebegin', '<button class="ghost" id="downloadResult">결과 다운로드</button>');
   const downloadButton = pick('#downloadResult');
   const actions = document.createElement('div');
@@ -1486,12 +1489,33 @@ function renderResult() {
   restartButton.insertAdjacentHTML('beforebegin', '<button class="primary" id="shareResult">결과 공유하기</button>');
   const shareButton = pick('#shareResult');
   actions.prepend(shareButton);
-  shareButton.onclick = async () => {
+  const shareResult = async (button, done, back) => {
     const copied = await share(typeCode, state.answers, state.scenarioSet, state.lastAnswers);
     if (!copied) return;
-    shareButton.textContent = '링크를 복사했어요';
-    setTimeout(() => { shareButton.textContent = '결과 공유하기'; }, 2000);
+    button.textContent = done;
+    setTimeout(() => { button.textContent = back; }, 2000);
   };
+  shareButton.onclick = () => shareResult(shareButton, '링크를 복사했어요', '결과 공유하기');
+  const headShare = pick('#headShare');
+  headShare.onclick = () => shareResult(headShare, '복사됨', '공유');
+}
+
+// 세 사람을 뽑는다. 규칙은 코드 세 글자에서 바로 나온다 — 조사 결과가 아니라 설계다.
+// 짝: 내가 안 쓰는 힘을 제일 먼저 쓰는 사람. 내 빈칸을 그 사람이 첫 손에 든다.
+// 부딪히는 상대: 내 순서를 그대로 뒤집은 사람. 내가 먼저 하는 것을 마지막에 한다.
+// 거울: 같은 유형. 말은 잘 통하고 막히는 곳도 같다.
+function companionCodes(code) {
+  const missing = workModes.map(mode => mode.key).find(key => !code.includes(key));
+  return [
+    { code: `${missing}${code[2]}${code[1]}`, label: '잘 맞는 짝', why: '내가 마지막에 쓰는 힘을 제일 먼저 씁니다. 내 빈칸을 이 사람이 첫 손에 듭니다.' },
+    { code: `${code[2]}${code[1]}${code[0]}`, label: '부딪히는 상대', why: '내 순서를 그대로 뒤집었습니다. 내가 먼저 하는 것을 이 사람은 마지막에 합니다.' },
+    { code, label: '나와 같은 사람', why: '말은 제일 잘 통합니다. 대신 막히는 곳도 똑같아서 둘만 있으면 그 자리에 오래 머뭅니다.' }
+  ];
+}
+
+function renderCompanions(typeCode) {
+  const cards = companionCodes(typeCode).map(({ code, label, why }) => `<article class="companion"><img src="/people/${code}.jpg" alt="${workTypePeople[code]} 초상" loading="lazy"><div><p class="companion-label">${label}</p><b>${code} · ${workTypeNames[code]}형</b><small>${workTypePeople[code]} 아키타입</small><p class="companion-why">${why}</p></div></article>`).join('');
+  return `<section class="companions"><div class="section-title"><p class="eyebrow">WHO FITS</p><h2>내 옆에 두면 좋은 사람</h2></div>${cards}<p class="companion-note">코드 세 글자에서 계산한 짝입니다. 이렇게 모으면 성과가 오른다는 조사 결과가 아니라, 겹치는 힘과 빈 힘을 센 것입니다.</p></section>`;
 }
 
 function drawRadar(canvas, result) {

@@ -215,3 +215,15 @@
   border-top: 1px solid #edf0f4;
   box-shadow: 0 -8px 16px rgba(255, 255, 255, .9);
 }
+
+/* 헤더 우상단 공유. 결과가 없는 화면에서도 링크를 넘길 수 있어야 한다. */
+.kit-sharelink {
+  padding: 6px 13px;
+  color: #fff;
+  background: #6047d8;
+  border: 0;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+}

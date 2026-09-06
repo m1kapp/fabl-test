@@ -71,9 +71,7 @@ async function copy(url) {
 }
 
 /** 공유하고, 링크가 클립보드로 갔으면 true 를 돌려준다(버튼 문구 전환용). */
-export async function share(code, answers, scenarioSet, worstAnswers) {
-  const url = typeUrl(code, answers, scenarioSet, worstAnswers);
-  const text = shareText(code);
+export async function shareLink(url, text) {
   if (navigator.share) {
     try {
       await navigator.share({ title: 'FABL 테스트', text, url });
@@ -84,4 +82,13 @@ export async function share(code, answers, scenarioSet, worstAnswers) {
     }
   }
   return copy(url);
+}
+
+export async function share(code, answers, scenarioSet, worstAnswers) {
+  return shareLink(typeUrl(code, answers, scenarioSet, worstAnswers), shareText(code));
+}
+
+/** 결과가 아직 없을 때 쓰는 사이트 자체 링크. 헤더의 공유 버튼이 이걸 쓴다. */
+export async function shareSite() {
+  return shareLink(location.origin + '/', '일하는 순서로 보는 24유형 · FABL 테스트');
 }

@@ -4,8 +4,27 @@ import { AppShell, AppShellHeader, AppShellContent, TabBar, Tab, Section, Divide
 import './landing.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
 import { keyedItems, qualityDimensionNames, KEYED_QUESTION_COUNT } from './keyed.js';
+import { shareSite } from './share.js';
 
 const ACCENT = '#6047d8';
+
+// 헤더 우상단. 결과가 없는 화면에서도 링크를 넘길 수 있어야 한다.
+function ShareLink() {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      className="kit-sharelink"
+      onClick={async () => {
+        if (!(await shareSite())) return;
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }}
+    >
+      {copied ? '복사됨' : '공유'}
+    </button>
+  );
+}
 
 // 24유형을 '시작 모드' 4묶음으로 세운다. 원래 랜딩의 5열 매트릭스는 가로 스크롤로 넣어도
 // 430px 셸 안에서 칸이 한 글자 폭으로 접혀서 못 읽는다(실측). 세로 목록으로 바꿨다.
@@ -595,7 +614,7 @@ function Shell({ mode, archiveCount, initialTab, on }) {
         {landing && (
           <AppShellHeader>
             <b className="kit-brand">FABL TEST</b>
-            <span className="kit-navlink">24 TYPES</span>
+            <ShareLink />
           </AppShellHeader>
         )}
         <AppShellContent key={landing ? tab : 'screen'}>
