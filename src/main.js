@@ -524,6 +524,13 @@ async function restoreResultFile(file) {
 const sampleRequested = new URLSearchParams(location.search).has('sample');
 let state = sampleRequested ? createSampleState() : loadState();
 if (sampleRequested) history.replaceState(null, '', location.pathname);
+// 받침에 따라 '을/를'을 붙인다. '문제수렴력를' 같은 문장이 나오던 자리다.
+function withObjectParticle(word) {
+  const last = word.charCodeAt(word.length - 1);
+  const hasFinal = last >= 0xac00 && last <= 0xd7a3 && (last - 0xac00) % 28 !== 0;
+  return `${word}${hasFinal ? '을' : '를'}`;
+}
+
 const app = document.querySelector('#app');
 
 // 바닐라 화면은 셸 안의 고정 노드(screenHost)에 그려진다. 그 노드는 React 가
@@ -557,6 +564,10 @@ function beginTest(course = 'short') {
     optionOrders: list.map(scenario => shuffledIndexes(scenario.options.length)),
     scenarioOrder: shuffledIndexes(list.length),
     scenarioStartedAt: [],
+    // 긴 코스는 역량 체크까지 이어지므로 여기서 같이 초기화한다.
+    keyedAnswers: [],
+    keyedCurrent: 0,
+    keyedOrders: [],
     assessmentStartedAt: new Date().toISOString(),
     completedAt: null,
     assessmentDurationMs: null,
@@ -842,7 +853,7 @@ function renderChat() {
   }
   let composer;
   if (state.awaitingNext) {
-    composer = `<div class="continue-row"><button id="continue">${state.deepCurrent < chatScenarios.length - 1 ? '다음 상황 →' : '결과 보기 →'}</button></div>`;
+    composer = `<div class="continue-row"><button id="continue">${state.deepCurrent < chatScenarios.length - 1 ? '다음 상황 →' : '역량 체크로 →'}</button></div>`;
   } else if (mode === 'quick' || mode === 'hybrid') {
     const scenario = scenarios[scenarioIndex];
     const order = state.optionOrders[scenarioIndex] || scenario.options.map((_, index) => index);
@@ -863,7 +874,7 @@ function renderChat() {
   const modeLabel = mode === 'quick' ? 'QUICK CHOICE' : mode === 'hybrid' ? 'CHOICE + WHY' : 'AI DEEP TALK';
   const guide = mode === 'quick' ? '직관적으로 가장 먼저 할 행동을 선택하세요.' : mode === 'hybrid' ? '선택하고, 필요할 때만 이유를 덧붙이세요.' : '좋은 문장보다 실제 질문과 다음 행동을 적어주세요.';
   const timer = mode === 'quick' && !state.awaitingNext ? '<b class="quick-timer" id="quickTimer">권장 25초</b>' : '';
-  screenHost().innerHTML = `<main class="chat-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>일잘러 테스트</strong><span>${totalIndex} / ${chatScenarios.length}</span></header><div class="progress"><i style="width:${totalIndex / chatScenarios.length * 100}%"></i></div><section class="chat-stage"><div class="chat-intro"><p class="domain">${modeLabel} · ${q.domain}</p><h2>${q.title}</h2><span>${guide}${timer}</span></div><div class="conversation">${messages.join('')}</div>${composer}</section></main>`;
+  screenHost().innerHTML = `<main class="chat-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${totalIndex} / ${chatScenarios.length}</span></header><div class="progress"><i style="width:${totalIndex / chatScenarios.length * 100}%"></i></div><section class="chat-stage"><div class="chat-intro"><p class="domain">${modeLabel} · ${q.domain}</p><h2>${q.title}</h2><span>${guide}${timer}</span></div><div class="conversation">${messages.join('')}</div>${composer}</section></main>`;
   if (mode === 'quick' && !state.awaitingNext) startQuickTimer(scenarioIndex);
   pick('#home').onclick = goHome;
   if (state.awaitingNext) {
@@ -959,7 +970,7 @@ async function submitChoice(optionIndex, rationale) {
     scenarioIndex,
     turn: 0,
     scores: {},
-    reaction: `${capability?.ko || '행동 선호'}를 먼저 사용하는 선택으로 보입니다.`,
+    reaction: `${withObjectParticle(capability?.ko || '행동 선호')} 먼저 사용하는 선택으로 보입니다.`,
     text: option.text,
     responseMs: state.scenarioStartedAt[scenarioIndex] ? Date.now() - state.scenarioStartedAt[scenarioIndex] : null
   });
@@ -998,6 +1009,10 @@ function continueChat() {
   if (state.deepCurrent < chatScenarios.length - 1) {
     state.deepCurrent += 1;
     state.deepTurn = 0;
+  } else if ((state.keyedAnswers || []).length < keyedItems.length) {
+    // 긴 코스는 유형(20상황)에 이어 역량 체크(20문항)까지 한 번에 간다.
+    beginKeyed();
+    return;
   } else {
     state.screen = 'result';
   }

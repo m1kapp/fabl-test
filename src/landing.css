@@ -70,3 +70,17 @@
 /* 토스 이모지는 탭 아이콘에만 쓴다. 폰트 스택 맨 앞에 두면 숫자까지 Tossface 로 잡혀
    'v0.0.46' 이 'v 0 . 0 . 4 6' 처럼 벌어진다(실측). */
 .kit-tab-icon { font-family: "Tossface", sans-serif; }
+
+/* 홈 탭의 떠 있는 시작 버튼. 앱셸이 position:relative 라 셸 기준으로 붙는다.
+   탭바(약 56px) 위에 두고, 배경을 살짝 깔아 밑의 글자와 겹쳐 읽히지 않게 한다. */
+.kit-home-tail { padding-bottom: 92px; }  /* 떠 있는 CTA 에 마지막 항목이 가리지 않게 */
+
+.kit-sticky-cta {
+  position: absolute;
+  right: 0;
+  bottom: 56px;
+  left: 0;
+  z-index: 15;
+  padding: 10px 16px 12px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff 42%);
+}

@@ -66,7 +66,7 @@ function HomeTab({ on }) {
 
       <Divider />
 
-      <Section className="pb-6">
+      <Section className="kit-home-tail">
         <p className="kit-eyebrow">24 WORKING TYPES</p>
         <h2 className="kit-h2">같은 강점도 먼저 쓰는 게 다르면 다른 유형입니다.</h2>
         <p className="kit-body">
@@ -108,6 +108,7 @@ function TypeTab({ archiveCount, on }) {
       <p className="kit-body">
         일이 생긴 상황 12개에서 <b>내가 제일 먼저 할 것</b>을 고르면 돼요.
         자주 고른 세 가지를 순서대로 이으면 24유형 중 하나가 나와요.
+        시간이 있으면 상황 20개에 역량 체크까지 이어서 하는 긴 코스도 있어요.
       </p>
       <ul className="kit-facts">
         <li><b>12문항</b><span>2~3분이면 끝나요</span></li>
@@ -116,7 +117,7 @@ function TypeTab({ archiveCount, on }) {
       </ul>
       <div className="kit-actions">
         <Button full shape="pill" onClick={() => on.start('short')}>짧은 코스 시작 →</Button>
-        <Button full shape="pill" variant="light" onClick={() => on.start('full')}>길게 하기 (20상황 · 6~8분)</Button>
+        <Button full shape="pill" variant="light" onClick={() => on.start('full')}>유형 + 역량 다 하기 · 약 15분</Button>
         {archiveCount > 0 && (
           <Button full shape="pill" variant="light" onClick={on.latest}>최근 결과 보기 {archiveCount}</Button>
         )}
@@ -138,10 +139,10 @@ function KeyedTab({ on }) {
       <h1 className="kit-h2 kit-tab-title">일머리를 맞혀 볼까요</h1>
       <p className="kit-body">
         유형 찾기와 달리 <b>정답이 있는</b> {keyedItems.length}문항이에요. 정답으로 매기니까
-        사람끼리 비교가 되는 점수가 나와요.
+        사람끼리 비교가 되는 점수가 나와요. 다섯 가지 영역을 네 문항씩 봅니다.
       </p>
       <ul className="kit-facts">
-        <li><b>{keyedItems.length}문항</b><span>3분이면 끝나요</span></li>
+        <li><b>{keyedItems.length}문항</b><span>5~6분이면 끝나요</span></li>
         <li><b>정답 있음</b><span>틀리면 더 맞는 답과 이유를 보여줘요</span></li>
         <li><b>결과</b><span>맞은 개수 · 영역별 점수</span></li>
       </ul>
@@ -189,6 +190,12 @@ function Shell({ mode, archiveCount, initialTab, on }) {
           {landing && tab === 'type' && <TypeTab archiveCount={archiveCount} on={handlers} />}
           {landing && tab === 'keyed' && <KeyedTab on={handlers} />}
         </AppShellContent>
+        {/* 홈은 길다. 스크롤 어디에서든 시작 버튼이 손에 닿게 탭바 위에 띄운다. */}
+        {landing && tab === 'home' && (
+          <div className="kit-sticky-cta">
+            <Button full shape="pill" onClick={() => on.start('short')}>3분 만에 내 유형 찾기 →</Button>
+          </div>
+        )}
         {landing && (
           <TabBar>
             <Tab active={tab === 'home'} onClick={() => setTab('home')} icon={<span className="kit-tab-icon">🏠</span>} label="홈" activeColor={ACCENT} />
