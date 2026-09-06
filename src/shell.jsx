@@ -84,7 +84,7 @@ function HomeTab({ on, ctaRef }) {
 
       <Divider />
 
-      <Section className="kit-home-tail">
+      <Section className="pb-2">
         <p className="kit-eyebrow">24 WORKING TYPES</p>
         <h2 className="kit-h2">같은 강점도 먼저 쓰는 게 다르면 다른 유형입니다.</h2>
         <p className="kit-body">
@@ -124,6 +124,47 @@ function HomeTab({ on, ctaRef }) {
           인물은 공개된 업적과 행동에서 연상한 아키타입 예시이며, 실제 성격이나 역량을
           진단한 결과가 아닙니다.
         </p>
+      </Section>
+
+      <Divider />
+
+      <Section className="kit-home-tail">
+        <p className="kit-eyebrow">팀 조합</p>
+        <h2 className="kit-h2">일잘러 유형은 없습니다</h2>
+        <p className="kit-body">
+          <b>어느 유형이 더 낫다는 답은 못 냅니다.</b> 유형 점수는 내 답 안에서 비중을
+          나눈 값이라 사람끼리 비교되지 않고, 유형 라벨로 성과를 가른다는 근거도 약해요.
+          실력을 보고 싶으면 정답이 있는 <b>역량 체크</b> 쪽입니다.
+        </p>
+        <p className="kit-body">
+          대신 <b>빈칸이 겹치는지</b>는 셀 수 있어요. 넷이 모였는데 시작 모드가 같으면
+          그 힘만 두꺼워지고, 모두가 마지막에 쓰는 힘이 팀 전체의 빈칸으로 남습니다.
+        </p>
+
+        {TEAM_SETS.map(set => (
+          <div className="kit-team" key={set.label}>
+            <div className="kit-team-head"><b>{set.label}</b><span>F · A · B · L 모두 채움</span></div>
+            <ul>
+              {set.codes.map(code => (
+                <li key={code}>
+                  <img src={`/people/${code}.jpg`} alt="" loading="lazy" />
+                  <b>{code}</b>
+                  <span>{workTypeNames[code]}형</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+
+        <div className="kit-callout">
+          <b>상극은 없어요. 겹침이 있을 뿐입니다.</b>
+          <p>
+            잘 안 맞는 조합이란 성격이 부딪히는 게 아니라, 네 명이 같은 순서로 일해서
+            아무도 안 보는 자리가 생기는 경우예요. 위 묶음은 그 자리가 안 생기게 짠
+            예시일 뿐, <b>성과가 좋아진다는 예측이 아닙니다</b>. 팀 성과에 관해 알려진
+            것은 <b>근거</b> 탭에 적어 뒀어요.
+          </p>
+        </div>
       </Section>
     </>
   );
@@ -183,6 +224,14 @@ function TestTab({ archiveCount, on }) {
   );
 }
 
+// 4인 팀 조합. 네 명의 '시작 모드'가 모두 다르고 '마지막 모드'도 겹치지 않는 묶음이다.
+// 성과 예측이 아니라 커버리지 계산이라는 점을 화면에도 적는다.
+const TEAM_SETS = [
+  { label: '균형형', codes: ['FAB', 'ABL', 'BLF', 'LFA'] },
+  { label: '실행 중심', codes: ['FBA', 'BAL', 'ALF', 'LFB'] },
+  { label: '조율 중심', codes: ['FLA', 'LAB', 'ABF', 'BFL'] }
+];
+
 // 근거 탭. 이 테스트가 무엇에 기대고 무엇을 못 하는지 출처와 함께 적는다.
 // 링크는 걸지 않는다 — 확인 못 한 URL 을 붙이는 것보다 서지사항이 정확하다.
 const EVIDENCE = [
@@ -215,6 +264,13 @@ const EVIDENCE = [
     where: 'Journal of Applied Psychology, 107(11)'
   },
   {
+    claim: '팀을 잘 굴리는 것은 구성원 조합보다 대화 방식이었다',
+    body: '집단의 성과를 예측한 것은 구성원 개개인의 능력 평균이나 성향 조합이 아니라, 발언 기회가 고르게 돌아가는지와 상대의 상태를 읽는 능력이었다. 유형을 골고루 섞는 것이 좋은 팀을 만든다는 보장은 없다.',
+    who: 'Woolley, A. W., Chabris, C. F., Pentland, A., Hashmi, N., & Malone, T. W. (2010)',
+    title: 'Evidence for a collective intelligence factor in the performance of human groups',
+    where: 'Science, 330(6004)'
+  },
+  {
     claim: '문항이 적으면 점수가 흔들린다',
     body: '같은 성질의 문항을 늘릴수록 검사의 신뢰도가 올라간다는 관계는 100년 전에 공식으로 정리됐다. 역량 체크는 20문항이라, 맞은 개수의 차이가 실력 차인지 운인지 가르기에는 아직 짧다.',
     who: 'Spearman, C. (1910) · Brown, W. (1910)',
@@ -227,7 +283,8 @@ const LIMITS = [
   '문항별 난이도·변별도를 응답 데이터로 검증한 적이 없다. 이 사이트는 답변을 서버로 보내지 않아 그런 데이터가 쌓이지 않는다.',
   '"이 점수가 높은 사람이 실제로 일을 잘하더라"를 확인한 준거 타당도 연구가 없다.',
   '공개 웹이라 재응시가 자유롭고 문항이 고정이다. 두 번째부터는 기억이 섞인다.',
-  '24유형의 인물은 공개된 업적에서 연상한 예시이고, 성격이나 역량을 진단한 결과가 아니다.'
+  '24유형의 인물은 공개된 업적에서 연상한 예시이고, 성격이나 역량을 진단한 결과가 아니다.',
+  '홈의 4인 팀 조합은 네 가지 힘이 겹치지 않게 짠 계산일 뿐, 그렇게 모으면 성과가 오른다는 근거는 없다.'
 ];
 
 function EvidenceTab() {

@@ -133,3 +133,14 @@
 .kit-pick p { margin: 8px 0 12px; color: #5b6577; font-size: 12px; line-height: 1.5; }
 .kit-pick i { margin-top: auto; padding: 7px 12px; color: #fff; background: #172238; border-radius: 999px; font-size: 12px; font-style: normal; font-weight: 800; }
 .kit-pick:first-child i { background: var(--kit-accent, #6047d8); }
+
+/* 4인 팀 조합 예시 */
+.kit-team { margin: 12px 0; padding: 13px; background: #fbfbfe; border: 1px solid #e5e2f3; border-radius: 14px; }
+.kit-team-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.kit-team-head b { font-size: 13.5px; }
+.kit-team-head span { color: #8b95a8; font-size: 10.5px; font-weight: 700; }
+.kit-team ul { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.kit-team li { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+.kit-team li img { width: 40px; height: 40px; object-fit: cover; background: #f1eefe; border-radius: 50%; }
+.kit-team li b { color: var(--kit-accent, #6047d8); font-size: 12px; font-weight: 950; letter-spacing: .02em; }
+.kit-team li span { color: #6b7688; font-size: 10px; line-height: 1.3; }
