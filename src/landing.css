@@ -171,3 +171,12 @@
 .kit-mbti > div > span { color: #6b7688; font-size: 12px; font-weight: 700; }
 .kit-mbti em { font-size: 12.5px; font-style: normal; font-weight: 800; }
 .kit-mbti p { grid-column: 2 / -1; margin: 4px 0 0; color: #5b6577; font-size: 12px; line-height: 1.55; }
+
+/* 섞기 vs 모으기 대비 */
+.kit-tradeoff { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.kit-tradeoff > div { padding: 12px; background: #fff; border: 1px solid #e3e7ee; border-radius: 13px; }
+.kit-tradeoff b { display: block; margin-bottom: 8px; font-size: 12.5px; letter-spacing: -.02em; }
+.kit-tradeoff > div:first-child b { color: #3f8f6d; }
+.kit-tradeoff > div:last-child b { color: #b06a5f; }
+.kit-tradeoff ul { margin: 0; padding-left: 15px; }
+.kit-tradeoff li { margin-bottom: 5px; color: #5b6577; font-size: 11.5px; line-height: 1.5; }

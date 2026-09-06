@@ -209,13 +209,37 @@ function HomeTab({ on, ctaRef }) {
           </details>
         ))}
 
+        <h3 className="kit-skew-title">고루 섞는 게 늘 좋은 건 아니에요</h3>
+        <p className="kit-body">
+          섞으면 보는 눈이 넓어지지만 <b>맞추는 비용</b>이 함께 붙습니다. 같은 순서로
+          일하는 사람끼리는 말이 짧고 빠릅니다. 무엇을 하는 팀인지에 따라 답이 갈려요.
+        </p>
+        <div className="kit-tradeoff">
+          <div>
+            <b>섞는 쪽이 유리할 때</b>
+            <ul>
+              <li>문제가 아직 정의되지 않은 새 일</li>
+              <li>놓치면 되돌리기 어려운 결정</li>
+              <li>맞출 시간이 있는 긴 호흡의 일</li>
+            </ul>
+          </div>
+          <div>
+            <b>모으는 쪽이 유리할 때</b>
+            <ul>
+              <li>방법이 이미 정해진 반복 실행</li>
+              <li>마감이 촉박해 합의할 틈이 없을 때</li>
+              <li>조율 비용이 얻는 것보다 클 때</li>
+            </ul>
+          </div>
+        </div>
+
         <div className="kit-callout">
           <b>상극은 없어요. 겹침이 있을 뿐입니다.</b>
           <p>
             잘 안 맞는 조합이란 성격이 부딪히는 게 아니라, 네 명이 같은 순서로 일해서
             아무도 안 보는 자리가 생기는 경우예요. 위 묶음은 그 자리가 안 생기게 짠
-            예시일 뿐, <b>성과가 좋아진다는 예측이 아닙니다</b>. 팀 성과에 관해 알려진
-            것은 <b>근거</b> 탭에 적어 뒀어요.
+            예시일 뿐, <b>성과가 좋아진다는 예측이 아닙니다</b>. 섞는 것의 효과가
+            작고 조건을 탄다는 연구는 <b>근거</b> 탭에 적어 뒀어요.
           </p>
         </div>
       </Section>
@@ -359,6 +383,20 @@ const EVIDENCE = [
     where: 'Journal of Applied Psychology, 107(11)'
   },
   {
+    claim: '팀을 다양하게 섞는 효과는 작고 종류를 탄다',
+    body: '여러 연구를 모아 보면 다양성과 팀 성과의 관계는 일관되게 크지 않았다. 하는 일과 관련된 다양성(전문성·경험)은 성과와 약한 양의 관계를 보였고, 인구통계 다양성은 거의 관계가 없었다. "섞으면 좋다"는 조건 없이 성립하는 말이 아니다.',
+    who: 'Horwitz, S. K., & Horwitz, I. B. (2007)',
+    title: 'The effects of team diversity on team outcomes: A meta-analytic review of team demography',
+    where: 'Journal of Management, 33(6)'
+  },
+  {
+    claim: '서로 같은 그림을 갖고 있으면 더 잘 굴러간다',
+    body: '팀원들이 일과 서로에 대해 비슷한 이해를 공유할수록 협업 과정과 성과가 좋았다. 다르게 보는 사람이 모이면 이 공유된 그림을 만드는 데 시간이 더 든다 — 섞는 데 드는 비용이 여기 있다.',
+    who: 'Mathieu, J. E., Heffner, T. S., Goodwin, G. F., Salas, E., & Cannon-Bowers, J. A. (2000)',
+    title: 'The influence of shared mental models on team process and performance',
+    where: 'Journal of Applied Psychology, 85(2)'
+  },
+  {
     claim: '같은 것을 아는 사람끼리 모이면 아는 것만 다시 확인한다',
     body: '집단은 이미 모두가 알고 있는 정보를 주로 이야기하고, 한 사람만 가진 정보는 잘 꺼내지 않는다는 실험이 있다. 한쪽으로 쏠린 조직에서 놓치는 자리가 생기는 이유와 맞닿는다.',
     who: 'Stasser, G., & Titus, W. (1985)',
@@ -386,7 +424,8 @@ const LIMITS = [
   '"이 점수가 높은 사람이 실제로 일을 잘하더라"를 확인한 준거 타당도 연구가 없다.',
   '공개 웹이라 재응시가 자유롭고 문항이 고정이다. 두 번째부터는 기억이 섞인다.',
   '24유형의 인물은 공개된 업적에서 연상한 예시이고, 성격이나 역량을 진단한 결과가 아니다.',
-  '홈의 4인 팀 조합은 네 가지 힘이 겹치지 않게 짠 계산일 뿐, 그렇게 모으면 성과가 오른다는 근거는 없다.'
+  '홈의 4인 팀 조합은 네 가지 힘이 겹치지 않게 짠 계산일 뿐, 그렇게 모으면 성과가 오른다는 근거는 없다.',
+  '어떤 팀에 섞는 편이 유리하고 어떤 팀에 모으는 편이 유리한지는 이 사이트가 판별하지 못한다. 조건을 적어 두었을 뿐이다.'
 ];
 
 function EvidenceTab() {
