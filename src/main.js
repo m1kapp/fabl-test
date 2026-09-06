@@ -602,6 +602,7 @@ function renderKeyed() {
   const progress = ((state.keyedCurrent + 1) / total) * 100;
   app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>결과로</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p></section></main>`;
   document.querySelector('#backToResult').onclick = () => { state.screen = 'result'; render(); };
+  scrollToQuestionTop();
   document.querySelectorAll('.option').forEach(btn => btn.onclick = () => {
     state.keyedAnswers[state.keyedCurrent] = Number(btn.dataset.index);
     if (state.keyedCurrent < keyedItems.length - 1) state.keyedCurrent += 1;
@@ -662,6 +663,14 @@ function renderIntro() {
   };
 }
 
+// 문항이 바뀔 때 화면을 맨 위로 올린다. innerHTML 만 교체하면 스크롤 위치가
+// 그대로 남아, 아래쪽 보기를 누른 사람은 다음 문항의 진행바와 상황 이미지를
+// 지나친 자리에서 보게 된다.
+function scrollToQuestionTop() {
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  document.scrollingElement && (document.scrollingElement.scrollTop = 0);
+}
+
 function renderQuestion() {
   const list = activeScenarios();
   const q = list[state.current];
@@ -672,6 +681,7 @@ function renderQuestion() {
   app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 실제로 내가 가장 먼저 취할 행동을 선택하세요.</p></section></main>`;
   document.querySelector('#home').onclick = goHome;
   document.querySelectorAll('.option').forEach(btn => btn.onclick = () => choose(Number(btn.dataset.index)));
+  scrollToQuestionTop();
 }
 
 function choose(index) {
