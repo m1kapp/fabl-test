@@ -723,8 +723,8 @@ function renderIntro() {
     archiveCount: archives.length,
     initialTab: introTab,
     on: {
-      start: course => { introTab = 'type'; beginTest(course); },
-      startKeyed: () => { introTab = 'keyed'; beginKeyed(); },
+      start: course => { introTab = 'test'; beginTest(course); },
+      startKeyed: () => { introTab = 'test'; beginKeyed(); },
       latest: () => { state = { ...createState(), ...archives[0], screen: 'result' }; render(); },
       importResult: () => fileInput.click()
     }
@@ -897,7 +897,7 @@ function renderChat() {
   } else {
     composer = `<form class="reply" id="reply"><textarea id="replyText" rows="3" maxlength="500" placeholder="이 상황에서 실제로 할 말이나 행동을 입력하세요"></textarea><div><span id="count">0 / 500</span><button type="submit">답변 보내기 →</button></div></form>`;
   }
-  const modeLabel = mode === 'quick' ? 'QUICK CHOICE' : mode === 'hybrid' ? 'CHOICE + WHY' : 'AI DEEP TALK';
+  const modeLabel = mode === 'quick' ? '빠른 선택' : mode === 'hybrid' ? '선택 + 이유' : '자세히 말하기';
   const guide = mode === 'quick' ? '직관적으로 가장 먼저 할 행동을 선택하세요.' : mode === 'hybrid' ? '선택하고, 필요할 때만 이유를 덧붙이세요.' : '좋은 문장보다 실제 질문과 다음 행동을 적어주세요.';
   const timer = mode === 'quick' && !state.awaitingNext ? '<b class="quick-timer" id="quickTimer">권장 25초</b>' : '';
   screenHost().innerHTML = `<main class="chat-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${totalIndex} / ${chatScenarios.length}</span></header><div class="progress"><i style="width:${totalIndex / chatScenarios.length * 100}%"></i></div><section class="chat-stage"><div class="chat-intro"><p class="domain">${modeLabel} · ${q.domain}</p><h2>${q.title}</h2><span>${guide}${timer}</span></div><div class="conversation">${messages.join('')}</div>${composer}</section></main>`;

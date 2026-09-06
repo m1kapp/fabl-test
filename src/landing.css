@@ -86,3 +86,27 @@
   padding: 10px 16px 12px;
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff 42%);
 }
+
+/* 테스트 탭의 코스 카드 */
+.kit-course { margin: 16px 0; padding: 16px; background: #fbfbfe; border: 1px solid #e5e2f3; border-radius: 16px; }
+.kit-course-head { display: flex; align-items: baseline; gap: 8px; }
+.kit-course-head b { font-size: 17px; font-weight: 950; letter-spacing: -.03em; }
+.kit-course-head span { padding: 3px 8px; color: var(--kit-accent, #6047d8); background: #ece8fd; border-radius: 999px; font-size: 11px; font-weight: 800; }
+.kit-course > p { margin: 8px 0 4px; color: #5b6577; font-size: 13px; line-height: 1.6; }
+.kit-course .kit-facts { margin: 10px 0 12px; }
+.kit-course .kit-dims { margin-bottom: 12px; }
+
+/* 근거 탭 */
+.kit-evidence { padding: 14px 0; border-top: 1px solid #edf0f4; }
+.kit-evidence h3 { margin: 0 0 6px; font-size: 14.5px; line-height: 1.4; letter-spacing: -.02em; }
+.kit-evidence p { margin: 0 0 8px; color: #5b6577; font-size: 12.5px; line-height: 1.65; }
+.kit-evidence cite { display: block; color: #8b95a8; font-size: 11px; font-style: normal; line-height: 1.5; }
+.kit-evidence-title { margin: 26px 0 10px; font-size: 19px; }
+.kit-limits { margin: 0; padding-left: 18px; }
+.kit-limits li { margin-bottom: 8px; color: #5b6577; font-size: 12.5px; line-height: 1.6; }
+
+.kit-callout { margin: 0 0 18px; padding: 14px; background: #f5f3ff; border: 1px solid #e0daf8; border-radius: 14px; }
+.kit-callout > b { display: block; margin-bottom: 6px; font-size: 13.5px; }
+.kit-callout p { margin: 0; color: #5b6577; font-size: 12.5px; line-height: 1.65; }
+.kit-type-pair { margin: 6px 0 0 !important; color: #8b95a8; font-size: 11.5px; }
+.kit-type-pair b { color: var(--kit-accent, #6047d8); font-weight: 900; letter-spacing: .02em; }
