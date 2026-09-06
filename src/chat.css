@@ -1,5 +1,5 @@
 .chat-shell {
-  min-height: 100vh;
+  min-height: 100%;
   background: #f5f6fa;
 }
 
@@ -447,7 +447,7 @@
 .landing-footer span { font-size: 10px; letter-spacing: .12em; }
 
 /* FABL result identity */
-.type-result { margin-top: 38px; }
+.type-result { margin-top: 20px; }
 .type-identity, .mode-flow { background: #fff; border: 1px solid #e0e5ec; border-radius: 18px; }
 .type-identity { display: grid; grid-template-columns: 112px 220px 1fr; align-items: center; gap: 22px; padding: 24px; }
 .type-identity > img { width: 112px; height: 112px; border: 4px solid #fff; border-radius: 50%; object-fit: cover; box-shadow: 0 5px 18px #39288a2b; }
@@ -500,13 +500,13 @@
 .quality-panel article.unobserved { opacity: .48; }
 .quality-empty { margin: 18px 0 0; padding: 16px 20px; color: #748095; background: #fff; border: 1px dashed #ccd3de; border-radius: 14px; font-size: 11px; text-align: center; }
 
-@media (max-width: 800px) {
-  .type-identity { grid-template-columns: 86px 1fr; }
-  .type-identity > img { width: 86px; height: 86px; }
-  .type-identity > p { grid-column: 1 / -1; }
-  .quality-panel { grid-template-columns: 1fr; }
-  .quality-panel > div:last-child { grid-template-columns: 1fr 1fr; }
-}
+/* 결과 화면도 430px 앱셸 안에서만 렌더된다. 뷰포트 미디어쿼리로 두면 데스크톱에서
+   좁은 셸에 와이드 레이아웃이 걸려 카드가 텅 빈 채 늘어난다(실측). 상시 규칙으로 둔다. */
+.type-identity { grid-template-columns: 72px 1fr; gap: 14px; padding: 18px; }
+.type-identity > img { width: 72px; height: 72px; }
+.type-identity > p { grid-column: 1 / -1; max-width: none; }
+.quality-panel { grid-template-columns: 1fr; }
+.quality-panel > div:last-child { grid-template-columns: 1fr 1fr; }
 
 @media (max-width: 850px) {
   .landing-hero, .mode-section { grid-template-columns: 1fr; }

@@ -167,28 +167,43 @@ function KeyedTab({ on }) {
   );
 }
 
-// 랜딩만 @m1kapp/kit 앱셸로 간다. 테스트 진행·결과 화면은 기존 바닐라 렌더 그대로다.
+// 문항·결과 화면은 여전히 바닐라가 innerHTML 로 그린다. 그 출력이 들어갈 자리를
+// 셸 안에 고정된 노드 하나로 두고, React 는 이 노드를 붙였다 뗐다 할 뿐 내용은 건드리지 않는다.
+const hostNode = document.createElement('div');
+hostNode.className = 'screen-host';
+
+function ScreenSlot() {
+  return <div ref={el => { if (el && el.firstChild !== hostNode) el.appendChild(hostNode); }} />;
+}
+
+// 랜딩과 진행 화면이 같은 @m1kapp/kit 앱셸을 공유한다.
 // 탭은 홈 + 평가 두 개(유형 · 판단)로, 두 평가가 다른 것을 잰다는 게 첫 화면에서 보이게 한다.
-function Landing({ archiveCount, initialTab, on }) {
+function Shell({ mode, archiveCount, initialTab, on }) {
   const [tab, setTab] = useState(initialTab || 'home');
   const handlers = { ...on, goKeyed: () => setTab('keyed') };
+  const landing = mode === 'landing';
   return (
     <Watermark color={watermarkTint(ACCENT)} text="fabl">
       <AppShell accent={ACCENT}>
-        <AppShellHeader>
-          <b className="kit-brand">FABL TEST <span>β</span></b>
-          <span className="kit-navlink">24 TYPES</span>
-        </AppShellHeader>
-        <AppShellContent key={tab}>
-          {tab === 'home' && <HomeTab on={handlers} />}
-          {tab === 'type' && <TypeTab archiveCount={archiveCount} on={handlers} />}
-          {tab === 'keyed' && <KeyedTab on={handlers} />}
+        {landing && (
+          <AppShellHeader>
+            <b className="kit-brand">FABL TEST <span>β</span></b>
+            <span className="kit-navlink">24 TYPES</span>
+          </AppShellHeader>
+        )}
+        <AppShellContent key={landing ? tab : 'screen'}>
+          {!landing && <ScreenSlot />}
+          {landing && tab === 'home' && <HomeTab on={handlers} />}
+          {landing && tab === 'type' && <TypeTab archiveCount={archiveCount} on={handlers} />}
+          {landing && tab === 'keyed' && <KeyedTab on={handlers} />}
         </AppShellContent>
-        <TabBar>
-          <Tab active={tab === 'home'} onClick={() => setTab('home')} icon="🏠" label="홈" activeColor={ACCENT} />
-          <Tab active={tab === 'type'} onClick={() => setTab('type')} icon="🧭" label="유형 테스트" activeColor={ACCENT} />
-          <Tab active={tab === 'keyed'} onClick={() => setTab('keyed')} icon="✅" label="판단 체크" activeColor={ACCENT} />
-        </TabBar>
+        {landing && (
+          <TabBar>
+            <Tab active={tab === 'home'} onClick={() => setTab('home')} icon="🏠" label="홈" activeColor={ACCENT} />
+            <Tab active={tab === 'type'} onClick={() => setTab('type')} icon="🧭" label="유형 테스트" activeColor={ACCENT} />
+            <Tab active={tab === 'keyed'} onClick={() => setTab('keyed')} icon="✅" label="판단 체크" activeColor={ACCENT} />
+          </TabBar>
+        )}
       </AppShell>
     </Watermark>
   );
@@ -196,14 +211,17 @@ function Landing({ archiveCount, initialTab, on }) {
 
 let root = null;
 
-export function mountLanding(container, props) {
-  // 다른 화면이 innerHTML 로 남긴 노드를 React 가 치워주지 않는다. 루트를 새로 만들 때 비운다.
+export function mountShell(container, props) {
   if (!root) { container.innerHTML = ''; root = createRoot(container); }
-  root.render(<Landing {...props} />);
+  root.render(<Shell {...props} />);
 }
 
-export function unmountLanding() {
-  if (!root) return;
-  root.unmount();
-  root = null;
+/** 바닐라 화면이 innerHTML 을 쓰는 대상. 셸 안에 있고 재렌더에도 같은 노드다. */
+export function screenHost() {
+  return hostNode;
+}
+
+/** 셸 콘텐츠의 스크롤 컨테이너. 문항을 넘길 때 최상단으로 되돌린다. */
+export function shellScroller() {
+  return document.querySelector('.app-shell-root .tab-scroll');
 }

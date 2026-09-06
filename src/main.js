@@ -3,7 +3,7 @@ import './chat.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
 import { share, typeUrl, codeFromPath, answersFromQuery } from './share.js';
 import { keyedItems, scoreKeyed, qualityDimensionNames } from './keyed.js';
-import { mountLanding, unmountLanding } from './landing.jsx';
+import { mountShell, screenHost, shellScroller } from './shell.jsx';
 
 const capabilities = [
   { key: 'sensemaking', ko: '맥락추론력', en: 'Sensemaking', desc: '불완전한 정보에서도 전체 흐름과 의미를 파악한다.' },
@@ -523,6 +523,16 @@ const sampleRequested = new URLSearchParams(location.search).has('sample');
 let state = sampleRequested ? createSampleState() : loadState();
 if (sampleRequested) history.replaceState(null, '', location.pathname);
 const app = document.querySelector('#app');
+
+// 바닐라 화면은 셸 안의 고정 노드(screenHost)에 그려진다. 그 노드는 React 가
+// 슬롯에 붙이기 전까지 문서에 없어서, document.querySelector 로 찾으면 null 이
+// 나오고 핸들러가 하나도 안 붙는다(실제로 '다음' 버튼이 죽었다).
+// 화면 안 요소는 호스트에서 먼저 찾고, body 에 붙는 것(확인 모달 등)만 문서로 넘어간다.
+const pick = selector => screenHost().querySelector(selector) || document.querySelector(selector);
+const pickAll = selector => {
+  const inHost = screenHost().querySelectorAll(selector);
+  return inHost.length ? inHost : document.querySelectorAll(selector);
+};
 let quickTimerId;
 
 function shuffledIndexes(length) {
@@ -563,7 +573,7 @@ function beginTest(course = 'short') {
 function renderSharedType(code) {
   const modeByKey = Object.fromEntries(workModes.map(mode => [mode.key, mode]));
   const order = [...code].map(letter => modeByKey[letter]);
-  app.innerHTML = `<main class="intro landing shared-type">
+  screenHost().innerHTML = `<main class="intro landing shared-type">
     <nav class="landing-nav"><div class="brand">FABL TEST <span>β</span></div><a href="/">테스트 하기</a></nav>
     <section class="hero landing-hero"><div>
       <p class="eyebrow">SHARED RESULT · ${code}</p>
@@ -579,7 +589,7 @@ function renderSharedType(code) {
     </figure></section>
     <footer class="landing-footer"><b>FABL TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer>
   </main>`;
-  document.querySelector('#startShared').onclick = () => { history.replaceState(null, '', '/'); beginTest('short'); };
+  pick('#startShared').onclick = () => { history.replaceState(null, '', '/'); beginTest('short'); };
 }
 
 // 판단 체크 화면. 유형 문항과 달리 정답이 있고, 정답 위치는 매번 섞는다.
@@ -590,16 +600,16 @@ function renderKeyed() {
   const progress = ((state.keyedCurrent + 1) / total) * 100;
   const picked = state.keyedAnswers[state.keyedCurrent];
   const last = state.keyedCurrent === total - 1;
-  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>${state.answers.length ? '결과로' : '나가기'}</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.keyedCurrent === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '채점 보기' : '다음 →'}</button></nav></section></main>`;
+  screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>${state.answers.length ? '결과로' : '나가기'}</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.keyedCurrent === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '채점 보기' : '다음 →'}</button></nav></section></main>`;
   // 유형 테스트를 거치지 않고 시작한 판단 체크는 돌아갈 결과 화면이 없다.
-  document.querySelector('#backToResult').onclick = () => { state.screen = state.answers.length ? 'result' : 'intro'; render(); };
+  pick('#backToResult').onclick = () => { state.screen = state.answers.length ? 'result' : 'intro'; render(); };
   scrollToQuestionTop();
 
-  const nextButton = document.querySelector('#nextQ');
-  document.querySelectorAll('.option').forEach(btn => btn.onclick = () => {
+  const nextButton = pick('#nextQ');
+  pickAll('.option').forEach(btn => btn.onclick = () => {
     const index = Number(btn.dataset.index);
     state.keyedAnswers[state.keyedCurrent] = index;
-    document.querySelectorAll('.option').forEach(other => {
+    pickAll('.option').forEach(other => {
       const on = Number(other.dataset.index) === index;
       other.classList.toggle('selected', on);
       other.setAttribute('aria-pressed', String(on));
@@ -607,7 +617,7 @@ function renderKeyed() {
     nextButton.disabled = false;
     saveState();
   });
-  document.querySelector('#prevQ').onclick = () => {
+  pick('#prevQ').onclick = () => {
     if (state.keyedCurrent === 0) return;
     state.keyedCurrent -= 1;
     render();
@@ -622,10 +632,10 @@ function renderKeyed() {
 
 // 유형 테스트 없이 판단 체크만 한 경우의 결과. 유형 결과 화면은 유형 답변을 전제한다.
 function renderKeyedOnly() {
-  app.innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">JUDGMENT CHECK</p><h1>정답 키로 매긴<br>판단 점수입니다.</h1></div><button class="ghost" id="toIntro">처음으로</button></header>${renderKeyedPanel()}<section class="keyed-panel keyed-invite"><div><p class="eyebrow">ASSESSMENT 01 · TYPE</p><h2>일하는 순서도 보시겠어요?</h2><p>판단 체크는 타당성만 봅니다. 어떤 순서로 일하는지는 유형 테스트 12문항에서 나옵니다.</p></div><button class="primary" id="toType">유형 테스트 하기 <b>→</b></button></section><footer>낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
-  document.querySelector('#toIntro').onclick = () => { state.screen = 'intro'; render(); };
-  document.querySelector('#toType').onclick = () => beginTest('short');
-  const retryKeyed = document.querySelector('#retryKeyed');
+  screenHost().innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">JUDGMENT CHECK</p><h1>정답 키로 매긴<br>판단 점수입니다.</h1></div><button class="ghost" id="toIntro">처음으로</button></header>${renderKeyedPanel()}<section class="keyed-panel keyed-invite"><div><p class="eyebrow">ASSESSMENT 01 · TYPE</p><h2>일하는 순서도 보시겠어요?</h2><p>판단 체크는 타당성만 봅니다. 어떤 순서로 일하는지는 유형 테스트 12문항에서 나옵니다.</p></div><button class="primary" id="toType">유형 테스트 하기 <b>→</b></button></section><footer>낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
+  pick('#toIntro').onclick = () => { state.screen = 'intro'; render(); };
+  pick('#toType').onclick = () => beginTest('short');
+  const retryKeyed = pick('#retryKeyed');
   if (retryKeyed) retryKeyed.onclick = beginKeyed;
 }
 
@@ -655,9 +665,10 @@ function renderKeyedPanel() {
 function render() {
   clearInterval(quickTimerId);
   saveState();
-  if (state.screen !== 'intro') unmountLanding();
-  if (state.screen === 'intro') renderIntro();
-  else if (state.screen === 'test') renderQuestion();
+  if (state.screen === 'intro') { renderIntro(); return; }
+  // 진행·결과 화면도 같은 셸 안에서 그린다. 셸은 유지하고 내용만 바꾼다.
+  mountShell(app, { mode: 'screen' });
+  if (state.screen === 'test') renderQuestion();
   else if (state.screen === 'chat') renderChat();
   else if (state.screen === 'keyed') renderKeyed();
   else if (state.screen === 'keyedResult') renderKeyedOnly();
@@ -677,7 +688,8 @@ function renderIntro() {
     catch { alert('FABL 테스트 결과 파일을 확인해주세요.'); }
   };
   // 랜딩만 @m1kapp/kit 앱셸(React)로 그린다. 나머지 화면은 기존 바닐라 렌더다.
-  mountLanding(app, {
+  mountShell(app, {
+    mode: 'landing',
     archiveCount: archives.length,
     initialTab: introTab,
     on: {
@@ -695,6 +707,9 @@ function renderIntro() {
 function scrollToQuestionTop() {
   window.scrollTo({ top: 0, behavior: 'auto' });
   document.scrollingElement && (document.scrollingElement.scrollTop = 0);
+  // 실제로 스크롤되는 건 셸 콘텐츠다. 문항이 바뀌면 여기도 최상단으로.
+  const scroller = shellScroller();
+  if (scroller) scroller.scrollTop = 0;
 }
 
 function renderQuestion() {
@@ -707,17 +722,17 @@ function renderQuestion() {
   const picked = state.answers[state.current];
   const last = state.current === list.length - 1;
 
-  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 가장 먼저 취할 행동 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.current === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '결과 보기' : '다음 →'}</button></nav></section></main>`;
+  screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 가장 먼저 취할 행동 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.current === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '결과 보기' : '다음 →'}</button></nav></section></main>`;
 
-  document.querySelector('#home').onclick = goHome;
+  pick('#home').onclick = goHome;
 
-  const nextButton = document.querySelector('#nextQ');
+  const nextButton = pick('#nextQ');
   // 누르는 즉시 넘어가지 않는다. 고른 뒤 확인하고 '다음'을 눌러야 진행된다.
   // 여기서 다시 그리지 않는 이유는 스크롤이 튀지 않게 하기 위해서다.
-  document.querySelectorAll('.option').forEach(btn => btn.onclick = () => {
+  pickAll('.option').forEach(btn => btn.onclick = () => {
     const index = Number(btn.dataset.index);
     state.answers[state.current] = index;
-    document.querySelectorAll('.option').forEach(other => {
+    pickAll('.option').forEach(other => {
       const on = Number(other.dataset.index) === index;
       other.classList.toggle('selected', on);
       other.setAttribute('aria-pressed', String(on));
@@ -726,7 +741,7 @@ function renderQuestion() {
     saveState();
   });
 
-  document.querySelector('#prevQ').onclick = () => {
+  pick('#prevQ').onclick = () => {
     if (state.current === 0) return;
     state.current -= 1;
     render();
@@ -846,15 +861,15 @@ function renderChat() {
   const modeLabel = mode === 'quick' ? 'QUICK CHOICE' : mode === 'hybrid' ? 'CHOICE + WHY' : 'AI DEEP TALK';
   const guide = mode === 'quick' ? '직관적으로 가장 먼저 할 행동을 선택하세요.' : mode === 'hybrid' ? '선택하고, 필요할 때만 이유를 덧붙이세요.' : '좋은 문장보다 실제 질문과 다음 행동을 적어주세요.';
   const timer = mode === 'quick' && !state.awaitingNext ? '<b class="quick-timer" id="quickTimer">권장 25초</b>' : '';
-  app.innerHTML = `<main class="chat-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>일잘러 테스트</strong><span>${totalIndex} / ${chatScenarios.length}</span></header><div class="progress"><i style="width:${totalIndex / chatScenarios.length * 100}%"></i></div><section class="chat-stage"><div class="chat-intro"><p class="domain">${modeLabel} · ${q.domain}</p><h2>${q.title}</h2><span>${guide}${timer}</span></div><div class="conversation">${messages.join('')}</div>${composer}</section></main>`;
+  screenHost().innerHTML = `<main class="chat-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>일잘러 테스트</strong><span>${totalIndex} / ${chatScenarios.length}</span></header><div class="progress"><i style="width:${totalIndex / chatScenarios.length * 100}%"></i></div><section class="chat-stage"><div class="chat-intro"><p class="domain">${modeLabel} · ${q.domain}</p><h2>${q.title}</h2><span>${guide}${timer}</span></div><div class="conversation">${messages.join('')}</div>${composer}</section></main>`;
   if (mode === 'quick' && !state.awaitingNext) startQuickTimer(scenarioIndex);
-  document.querySelector('#home').onclick = goHome;
+  pick('#home').onclick = goHome;
   if (state.awaitingNext) {
-    document.querySelector('#continue').onclick = continueChat;
+    pick('#continue').onclick = continueChat;
     return;
   }
   if (mode === 'quick' || mode === 'hybrid') {
-    document.querySelectorAll('.chat-option').forEach(button => {
+    pickAll('.chat-option').forEach(button => {
       button.onclick = () => {
         if (button.id === 'customChoice') { state.pendingChoice = -1; render(); return; }
         const optionIndex = Number(button.dataset.index);
@@ -863,33 +878,33 @@ function renderChat() {
       };
     });
     if (state.pendingChoice === -1) {
-      document.querySelector('#customForm').onsubmit = event => {
+      pick('#customForm').onsubmit = event => {
         event.preventDefault();
-        const answer = document.querySelector('#customText').value.trim();
-        if (answer.length < 5) { document.querySelector('#customText').classList.add('invalid'); return; }
+        const answer = pick('#customText').value.trim();
+        if (answer.length < 5) { pick('#customText').classList.add('invalid'); return; }
         const button = event.currentTarget.querySelector('button');
         button.disabled = true;
         button.textContent = '답변 분석 중…';
         submitCustomChoice(answer);
       };
-      document.querySelector('#customText').focus();
+      pick('#customText').focus();
       return;
     }
     if (mode === 'hybrid') {
-      document.querySelector('#choiceForm').onsubmit = event => {
+      pick('#choiceForm').onsubmit = event => {
         event.preventDefault();
         if (state.pendingChoice === null) return;
         const button = event.currentTarget.querySelector('button');
         button.disabled = true;
         button.textContent = '답변 분석 중…';
-        submitChoice(state.pendingChoice, document.querySelector('#rationaleText').value.trim());
+        submitChoice(state.pendingChoice, pick('#rationaleText').value.trim());
       };
     }
     return;
   }
-  const textarea = document.querySelector('#replyText');
-  textarea.oninput = () => { document.querySelector('#count').textContent = `${textarea.value.length} / 500`; };
-  document.querySelector('#reply').onsubmit = event => {
+  const textarea = pick('#replyText');
+  textarea.oninput = () => { pick('#count').textContent = `${textarea.value.length} / 500`; };
+  pick('#reply').onsubmit = event => {
     event.preventDefault();
     const answer = textarea.value.trim();
     if (answer.length < 5) { textarea.focus(); textarea.classList.add('invalid'); return; }
@@ -906,7 +921,7 @@ function startQuickTimer(scenarioIndex) {
     state.scenarioStartedAt[scenarioIndex] = Date.now();
     saveState();
   }
-  const timer = document.querySelector('#quickTimer');
+  const timer = pick('#quickTimer');
   const update = () => {
     const elapsed = Math.floor((Date.now() - state.scenarioStartedAt[scenarioIndex]) / 1000);
     const remaining = Math.max(0, 25 - elapsed);
@@ -1062,22 +1077,22 @@ function renderResult() {
   const archivedDurations = loadArchives().map(item => item.assessmentDurationMs).filter(Number.isFinite);
   const browserAverageMs = archivedDurations.length ? archivedDurations.reduce((sum, milliseconds) => sum + milliseconds, 0) / archivedDurations.length : null;
   const paceCard = responseTimes.length ? `<section class="pace-card"><div><p class="eyebrow">ASSESSMENT TIME</p><h2>검사 시간</h2><p>중간에 화면을 닫아둔 시간은 총 소요시간에 포함될 수 있습니다.</p></div><div class="time-metrics"><span><small>이번 검사</small><b>${formatDuration(state.assessmentDurationMs)}</b></span><span><small>문항당 평균</small><b>${averageResponseSeconds}초</b></span><span><small>중앙 응답</small><b>${medianSeconds}초</b></span><span><small>내 평균 · ${archivedDurations.length}회</small><b>${formatDuration(browserAverageMs)}</b></span></div><span class="guide-count">25초 안에 선택<br><b>${withinGuide} / ${responseTimes.length}</b></span></section>` : '';
-  app.innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">YOUR WORKING PATTERN</p><h1>먼저 <em>${selectedModes[0].plain}</em>,<br>그다음 ${selectedModes[1].plain},<br>마지막에 ${selectedModes[2].plain}.</h1></div><button class="ghost" id="restart">다시 하기</button></header><section class="type-result"><div class="type-identity"><img src="/people/${typeCode}.jpg" alt="${workTypePeople[typeCode]} 초상"><div><b class="result-type-code" aria-label="${typeCode}">${rankedTypeCode}</b><span>${workTypeNames[typeCode]}형</span><small>${workTypePeople[typeCode]} 아키타입</small></div><p>${workTypeReasons[typeCode]}</p></div></section><section class="result-grid"><div class="radar-card"><canvas id="radar" width="680" height="620"></canvas><div class="scale-note">색상은 FABL 그룹 · 2 관찰 없음 · 3.5 평균 · 5 강한 선호</div></div><div class="summary behavior-summary"><h2>당신은 이렇게 행동할 가능성이 큽니다</h2>${renderBehaviorInsights(selectedModes)}<p class="behavior-note">상황에 따라 다른 접근도 사용하지만, 답변에서 반복된 우선순서를 풀어낸 예시입니다.</p></div></section>${qualityPanel}${renderKeyedPanel()}<details class="all-scores"><summary><div class="section-title"><p class="eyebrow">${state.answers.length} SCENARIOS · 10 CAPABILITIES</p><h2>10개 역량 상세 점수 보기</h2></div><b>펼치기 ＋</b></summary><div class="score-list">${result.map(c => `<div class="score-row"><div><b>${c.ko}</b><small>${c.en} · 신호 ${c.observed}</small></div><i><span style="width:${c.score / 5 * 100}%"></span></i><strong>${c.score.toFixed(1)}</strong></div>`).join('')}</div></details><footer>이 결과는 ${state.answers.length}개 상황에서 먼저 사용한 접근을 분석한 상대적 선호도입니다. 낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
-  if (paceCard) document.querySelector('.all-scores').insertAdjacentHTML('beforebegin', paceCard);
-  drawRadar(document.querySelector('#radar'), result);
-  const resultHead = document.querySelector('.result-head');
+  screenHost().innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">YOUR WORKING PATTERN</p><h1>먼저 <em>${selectedModes[0].plain}</em>,<br>그다음 ${selectedModes[1].plain},<br>마지막에 ${selectedModes[2].plain}.</h1></div><button class="ghost" id="restart">다시 하기</button></header><section class="type-result"><div class="type-identity"><img src="/people/${typeCode}.jpg" alt="${workTypePeople[typeCode]} 초상"><div><b class="result-type-code" aria-label="${typeCode}">${rankedTypeCode}</b><span>${workTypeNames[typeCode]}형</span><small>${workTypePeople[typeCode]} 아키타입</small></div><p>${workTypeReasons[typeCode]}</p></div></section><section class="result-grid"><div class="radar-card"><canvas id="radar" width="680" height="620"></canvas><div class="scale-note">색상은 FABL 그룹 · 2 관찰 없음 · 3.5 평균 · 5 강한 선호</div></div><div class="summary behavior-summary"><h2>당신은 이렇게 행동할 가능성이 큽니다</h2>${renderBehaviorInsights(selectedModes)}<p class="behavior-note">상황에 따라 다른 접근도 사용하지만, 답변에서 반복된 우선순서를 풀어낸 예시입니다.</p></div></section>${qualityPanel}${renderKeyedPanel()}<details class="all-scores"><summary><div class="section-title"><p class="eyebrow">${state.answers.length} SCENARIOS · 10 CAPABILITIES</p><h2>10개 역량 상세 점수 보기</h2></div><b>펼치기 ＋</b></summary><div class="score-list">${result.map(c => `<div class="score-row"><div><b>${c.ko}</b><small>${c.en} · 신호 ${c.observed}</small></div><i><span style="width:${c.score / 5 * 100}%"></span></i><strong>${c.score.toFixed(1)}</strong></div>`).join('')}</div></details><footer>이 결과는 ${state.answers.length}개 상황에서 먼저 사용한 접근을 분석한 상대적 선호도입니다. 낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
+  if (paceCard) pick('.all-scores').insertAdjacentHTML('beforebegin', paceCard);
+  drawRadar(pick('#radar'), result);
+  const resultHead = pick('.result-head');
   const restartButton = resultHead.querySelector('#restart');
   restartButton.insertAdjacentHTML('beforebegin', '<button class="ghost" id="downloadResult">결과 다운로드</button>');
-  const downloadButton = document.querySelector('#downloadResult');
+  const downloadButton = pick('#downloadResult');
   const actions = document.createElement('div');
   actions.className = 'result-actions';
   restartButton.before(actions);
   actions.append(downloadButton, restartButton);
   restartButton.onclick = reset;
   downloadButton.onclick = downloadCurrentResult;
-  const startKeyed = document.querySelector('#startKeyed');
+  const startKeyed = pick('#startKeyed');
   if (startKeyed) startKeyed.onclick = beginKeyed;
-  const retryKeyed = document.querySelector('#retryKeyed');
+  const retryKeyed = pick('#retryKeyed');
   if (retryKeyed) retryKeyed.onclick = beginKeyed;
 
   // 결과가 나오면 주소창을 공유 가능한 유형 경로로 바꾼다. 이 링크를 붙여 넣으면
@@ -1085,7 +1100,7 @@ function renderResult() {
   if (!state.isExample) history.replaceState(null, '', typeUrl(typeCode, state.answers));
 
   restartButton.insertAdjacentHTML('beforebegin', '<button class="primary" id="shareResult">결과 공유하기</button>');
-  const shareButton = document.querySelector('#shareResult');
+  const shareButton = pick('#shareResult');
   actions.prepend(shareButton);
   shareButton.onclick = async () => {
     const copied = await share(typeCode, state.answers);
@@ -1128,17 +1143,17 @@ function drawRadar(canvas, result) {
 }
 
 function reset() {
-  document.querySelector('#homeConfirm')?.remove();
+  pick('#homeConfirm')?.remove();
   sessionStorage.removeItem(STORAGE_KEY);
   state = createState();
   render();
 }
 
 function goHome() {
-  if (document.querySelector('#homeConfirm')) return;
+  if (pick('#homeConfirm')) return;
   document.body.insertAdjacentHTML('beforeend', `<div class="confirm-backdrop" id="homeConfirm" role="dialog" aria-modal="true" aria-labelledby="homeConfirmTitle"><section><b id="homeConfirmTitle">처음 화면으로 갈까요?</b><p>지금까지 입력한 이번 테스트 답변은 지워집니다.</p><div><button class="ghost" id="cancelHome">계속 풀기</button><button class="danger" id="confirmHome">답변 지우고 처음으로</button></div></section></div>`);
-  document.querySelector('#cancelHome').onclick = () => document.querySelector('#homeConfirm').remove();
-  document.querySelector('#confirmHome').onclick = reset;
+  pick('#cancelHome').onclick = () => pick('#homeConfirm').remove();
+  pick('#confirmHome').onclick = reset;
 }
 // 부팅 경로 분기. /t/CODE/ 로 들어오면 저장된 세션보다 링크가 우선이다.
 const sharedCode = codeFromPath();
@@ -1149,6 +1164,7 @@ if (sharedCode) {
     state = { ...createState(), course: 'short', answers: sharedAnswers, screen: 'result' };
     render();
   } else {
+    mountShell(app, { mode: 'screen' });
     renderSharedType(sharedCode);
   }
 } else {
