@@ -28,7 +28,7 @@ function HomeTab({ on }) {
     <>
       <Section className="pt-6">
         <p className="kit-eyebrow">FRAME · AIM · BUILD · LINK</p>
-        <h1 className="kit-h1">일이 떨어지면<br />나는 <em>뭐부터</em><br />할까?</h1>
+        <h1 className="kit-h1">일이 떨어지면<br />나는 <em>뭐부터</em> 할까?</h1>
         <p className="kit-lead">
           상황부터 파악하는 사람, 뭐가 중요한지 먼저 정하는 사람, 일단 만들어보는 사람,
           관련된 사람부터 맞추는 사람. 성격이 아니라 <b>먼저 손대는 곳</b>이 다릅니다.
@@ -178,7 +178,7 @@ function Shell({ mode, archiveCount, initialTab, on }) {
       <AppShell accent={ACCENT}>
         {landing && (
           <AppShellHeader>
-            <b className="kit-brand">FABL TEST <span>β</span></b>
+            <b className="kit-brand">FABL TEST</b>
             <span className="kit-navlink">24 TYPES</span>
           </AppShellHeader>
         )}

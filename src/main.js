@@ -574,7 +574,7 @@ function renderSharedType(code) {
   const modeByKey = Object.fromEntries(workModes.map(mode => [mode.key, mode]));
   const order = [...code].map(letter => modeByKey[letter]);
   screenHost().innerHTML = `<main class="intro landing shared-type">
-    <nav class="landing-nav"><div class="brand">FABL TEST <span>β</span></div><a href="/">테스트 하기</a></nav>
+    <nav class="landing-nav"><div class="brand">FABL TEST</div><a href="/">테스트 하기</a></nav>
     <section class="hero landing-hero"><div>
       <p class="eyebrow">SHARED RESULT · ${code}</p>
       <h1>${workTypeNames[code]}형<br><em>${workTypePeople[code]}</em> 아키타입</h1>
@@ -587,7 +587,7 @@ function renderSharedType(code) {
       <img src="/people/${code}.jpg" alt="${workTypePeople[code]} 초상">
       <figcaption>${code} · ${workTypeNames[code]}형</figcaption>
     </figure></section>
-    <footer class="landing-footer"><b>FABL TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer>
+    <footer class="landing-footer"><b>FABL TEST</b><span>FRAME · AIM · BUILD · LINK</span></footer>
   </main>`;
   pick('#startShared').onclick = () => { history.replaceState(null, '', '/'); beginTest('short'); };
 }
