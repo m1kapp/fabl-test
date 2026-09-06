@@ -209,6 +209,30 @@ function HomeTab({ on, ctaRef }) {
           </details>
         ))}
 
+        <h3 className="kit-skew-title">상황마다 두껍게 갈 곳이 다릅니다</h3>
+        <p className="kit-body">
+          네 힘을 똑같이 나누는 게 늘 답은 아니에요. 지금 하는 일이 무엇이냐에 따라
+          한쪽을 두껍게 가져가되, <b>빠지면 안 되는 자리</b>는 한 명이라도 채워야 합니다.
+        </p>
+        {SITUATION_TEAMS.map(item => (
+          <div className="kit-situation" key={item.label}>
+            <div className="kit-situation-head">
+              <b>{item.label}</b>
+              <span>{item.thick} 두껍게</span>
+            </div>
+            <p>{item.need}</p>
+            <div className="kit-situation-codes">
+              {item.codes.map((code, index) => (
+                <span key={code + index}>
+                  <img src={`/people/${code}.jpg`} alt="" loading="lazy" />
+                  <b>{code}</b>
+                  <em>{workTypeNames[code]}형</em>
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+
         <h3 className="kit-skew-title">고루 섞는 게 늘 좋은 건 아니에요</h3>
         <p className="kit-body">
           섞으면 보는 눈이 넓어지지만 <b>맞추는 비용</b>이 함께 붙습니다. 같은 순서로
@@ -318,6 +342,34 @@ const MBTI_HINTS = [
   { key: 'L', ko: '조율', axis: 'E · F 쪽', why: '사람과 맞추는 과정에서 답을 찾는다' }
 ];
 
+// 상황별로 어느 힘을 두껍게 가져갈지. 연구가 아니라 FABL 정의에서 따라 나오는 배치다.
+const SITUATION_TEAMS = [
+  {
+    label: '아직 뭘 할지 모르는 새 일',
+    thick: 'F',
+    need: '한 명은 반드시 B — 안 만들면 계속 회의만 한다',
+    codes: ['FAB', 'FLA', 'BFL', 'LFA']
+  },
+  {
+    label: '마감이 코앞인 출시',
+    thick: 'B',
+    need: '한 명은 반드시 A — 뭘 버릴지 정할 사람이 필요하다',
+    codes: ['BAF', 'BLF', 'AFB', 'FBA']
+  },
+  {
+    label: '이해관계자가 많은 개편',
+    thick: 'L',
+    need: '한 명은 반드시 F — 합의가 사실을 덮지 않게',
+    codes: ['LAB', 'LFA', 'AFL', 'BLF']
+  },
+  {
+    label: '터진 사고를 수습할 때',
+    thick: 'F + B',
+    need: '한 명은 반드시 A — 어디까지 고치고 멈출지 정한다',
+    codes: ['FBA', 'BAF', 'BFL', 'AFB']
+  }
+];
+
 // 한 모드로 쏠린 조직에서 생기는 일. 연구 결과가 아니라 FABL 정의에서 따라 나오는
 // 예상이라는 점을 화면에 적는다.
 const SKEWS = [
@@ -425,7 +477,8 @@ const LIMITS = [
   '공개 웹이라 재응시가 자유롭고 문항이 고정이다. 두 번째부터는 기억이 섞인다.',
   '24유형의 인물은 공개된 업적에서 연상한 예시이고, 성격이나 역량을 진단한 결과가 아니다.',
   '홈의 4인 팀 조합은 네 가지 힘이 겹치지 않게 짠 계산일 뿐, 그렇게 모으면 성과가 오른다는 근거는 없다.',
-  '어떤 팀에 섞는 편이 유리하고 어떤 팀에 모으는 편이 유리한지는 이 사이트가 판별하지 못한다. 조건을 적어 두었을 뿐이다.'
+  '어떤 팀에 섞는 편이 유리하고 어떤 팀에 모으는 편이 유리한지는 이 사이트가 판별하지 못한다. 조건을 적어 두었을 뿐이다.',
+  '상황별 팀 배치는 FABL 정의에서 따라 나오는 설계이지, 그 배치로 성과가 좋아진 것을 확인한 자료가 아니다.'
 ];
 
 function EvidenceTab() {

@@ -180,3 +180,15 @@
 .kit-tradeoff > div:last-child b { color: #b06a5f; }
 .kit-tradeoff ul { margin: 0; padding-left: 15px; }
 .kit-tradeoff li { margin-bottom: 5px; color: #5b6577; font-size: 11.5px; line-height: 1.5; }
+
+/* 상황별 팀 배치 */
+.kit-situation { margin-bottom: 10px; padding: 13px; background: #fff; border: 1px solid #e3e7ee; border-radius: 14px; }
+.kit-situation-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.kit-situation-head b { font-size: 13.5px; letter-spacing: -.02em; }
+.kit-situation-head span { flex: 0 0 auto; padding: 4px 9px; color: #fff; background: var(--kit-accent, #6047d8); border-radius: 999px; font-size: 11px; font-weight: 800; }
+.kit-situation > p { margin: 8px 0 10px; color: #b06a5f; font-size: 12px; line-height: 1.5; }
+.kit-situation-codes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.kit-situation-codes > span { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+.kit-situation-codes img { width: 34px; height: 34px; object-fit: cover; background: #f1eefe; border-radius: 50%; }
+.kit-situation-codes b { color: var(--kit-accent, #6047d8); font-size: 11.5px; font-weight: 950; letter-spacing: .02em; }
+.kit-situation-codes em { color: #8b95a8; font-size: 9.5px; font-style: normal; line-height: 1.25; }
