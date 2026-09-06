@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AppShell, AppShellHeader, AppShellContent, TabBar, Tab, Section, Divider, Button, Watermark, watermarkTint } from '@m1kapp/kit';
 import './landing.css';
@@ -23,7 +23,7 @@ function typeGroups() {
   });
 }
 
-function HomeTab({ on }) {
+function HomeTab({ on, ctaRef }) {
   return (
     <>
       <Section className="pt-6">
@@ -36,7 +36,7 @@ function HomeTab({ on }) {
         <figure className="kit-hero-shot">
           <img src="/landing/hero.jpg" alt="새 일감 앞에서 어느 길로 갈지 고르는 사람" />
         </figure>
-        <div className="kit-actions">
+        <div className="kit-actions" ref={ctaRef}>
           <Button full shape="pill" onClick={() => on.start('short')}>3분 만에 내 유형 찾기 →</Button>
           <Button full shape="pill" variant="light" onClick={on.goKeyed}>역량 체크 보기</Button>
         </div>
@@ -175,6 +175,20 @@ function Shell({ mode, archiveCount, initialTab, on }) {
   const [tab, setTab] = useState(initialTab || 'home');
   const handlers = { ...on, goKeyed: () => setTab('keyed') };
   const landing = mode === 'landing';
+  const heroCtaRef = useRef(null);
+  const [ctaOffscreen, setCtaOffscreen] = useState(false);
+
+  // 히어로의 시작 버튼이 화면 밖으로 나갔을 때만 떠 있는 버튼을 띄운다.
+  // 둘이 동시에 보이면 같은 버튼이 두 개 있는 화면이 된다.
+  useEffect(() => {
+    if (!landing || tab !== 'home') { setCtaOffscreen(false); return; }
+    const target = heroCtaRef.current;
+    const root = document.querySelector('.app-shell-root .tab-scroll');
+    if (!target || !root) return;
+    const observer = new IntersectionObserver(([entry]) => setCtaOffscreen(!entry.isIntersecting), { root, threshold: 0 });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [landing, tab]);
   return (
     <Watermark color={watermarkTint(ACCENT)} text="fabl">
       <AppShell accent={ACCENT}>
@@ -186,12 +200,12 @@ function Shell({ mode, archiveCount, initialTab, on }) {
         )}
         <AppShellContent key={landing ? tab : 'screen'}>
           {!landing && <ScreenSlot />}
-          {landing && tab === 'home' && <HomeTab on={handlers} />}
+          {landing && tab === 'home' && <HomeTab on={handlers} ctaRef={heroCtaRef} />}
           {landing && tab === 'type' && <TypeTab archiveCount={archiveCount} on={handlers} />}
           {landing && tab === 'keyed' && <KeyedTab on={handlers} />}
         </AppShellContent>
         {/* 홈은 길다. 스크롤 어디에서든 시작 버튼이 손에 닿게 탭바 위에 띄운다. */}
-        {landing && tab === 'home' && (
+        {landing && tab === 'home' && ctaOffscreen && (
           <div className="kit-sticky-cta">
             <Button full shape="pill" onClick={() => on.start('short')}>3분 만에 내 유형 찾기 →</Button>
           </div>

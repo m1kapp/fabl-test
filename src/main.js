@@ -607,11 +607,14 @@ function renderSharedType(code) {
 
 // 역량 체크 화면. 유형 문항과 달리 정답이 있고, 정답 위치는 매번 섞는다.
 function renderKeyed() {
-  const item = keyedItems[state.keyedCurrent];
-  const order = state.keyedOrders[state.keyedCurrent];
+  // 문항 순서도 매번 섞는다(state.keyedSequence). 답은 원본 문항 위치에 저장해야
+  // scoreKeyed 의 정답 대조가 그대로 맞는다.
+  const itemIndex = (state.keyedSequence || [])[state.keyedCurrent] ?? state.keyedCurrent;
+  const item = keyedItems[itemIndex];
+  const order = state.keyedOrders[itemIndex];
   const total = keyedItems.length;
   const progress = ((state.keyedCurrent + 1) / total) * 100;
-  const picked = state.keyedAnswers[state.keyedCurrent];
+  const picked = state.keyedAnswers[itemIndex];
   const last = state.keyedCurrent === total - 1;
   screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>${state.answers.length ? '결과로' : '나가기'}</span></button><strong>역량 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">역량 · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">이 문제는 정답이 있어요. 가장 맞다고 보는 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.keyedCurrent === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '채점 보기' : '다음 →'}</button></nav></section></main>`;
   // 유형 테스트를 거치지 않고 시작한 역량 체크는 돌아갈 결과 화면이 없다.
@@ -620,10 +623,10 @@ function renderKeyed() {
 
   const nextButton = pick('#nextQ');
   pickAll('.option').forEach(btn => btn.onclick = () => {
-    const index = Number(btn.dataset.index);
-    state.keyedAnswers[state.keyedCurrent] = index;
+    const optionIndex = Number(btn.dataset.index);
+    state.keyedAnswers[itemIndex] = optionIndex;
     pickAll('.option').forEach(other => {
-      const on = Number(other.dataset.index) === index;
+      const on = Number(other.dataset.index) === optionIndex;
       other.classList.toggle('selected', on);
       other.setAttribute('aria-pressed', String(on));
     });
@@ -636,7 +639,7 @@ function renderKeyed() {
     render();
   };
   nextButton.onclick = () => {
-    if (state.keyedAnswers[state.keyedCurrent] === undefined) return;
+    if (state.keyedAnswers[itemIndex] === undefined) return;
     if (state.keyedCurrent < total - 1) state.keyedCurrent += 1;
     else state.screen = state.answers.length ? 'result' : 'keyedResult';
     render();
@@ -652,17 +655,26 @@ function renderKeyedOnly() {
   if (retryKeyed) retryKeyed.onclick = beginKeyed;
 }
 
+/** 답한 문항 수. 순서를 섞으면 배열이 듬성듬성 차므로 length 로는 셀 수 없다. */
+function keyedAnsweredCount() {
+  const answers = state.keyedAnswers || [];
+  let count = 0;
+  for (let index = 0; index < keyedItems.length; index += 1) if (answers[index] !== undefined) count += 1;
+  return count;
+}
+
 function beginKeyed() {
   state.keyedAnswers = [];
   state.keyedCurrent = 0;
   state.keyedOrders = keyedItems.map(item => shuffledIndexes(item.options.length));
+  state.keyedSequence = shuffledIndexes(keyedItems.length);
   state.screen = 'keyed';
   render();
 }
 
 // 결과 화면 안의 역량 체크 영역. 아직 안 했으면 권유, 했으면 채점 결과.
 function renderKeyedPanel() {
-  const done = state.keyedAnswers && state.keyedAnswers.length === keyedItems.length;
+  const done = keyedAnsweredCount() === keyedItems.length;
   if (!done) {
     return `<section class="keyed-panel keyed-invite"><div><p class="eyebrow">역량 체크 · ${keyedItems.length}문항</p><h2>여기까지는 &lsquo;무엇부터 하는가&rsquo;였어요</h2><p>유형은 자주 쓰는 순서만 봐요. 선택지가 다 가능한 대응이라 틀린 답이 없거든요. 정답이 있는 ${keyedItems.length}문항으로 실력은 따로 확인해보세요.</p></div><button class="primary" id="startKeyed">역량 체크 하기 <b>→</b></button></section>`;
   }
@@ -725,14 +737,23 @@ function scrollToQuestionTop() {
   if (scroller) scroller.scrollTop = 0;
 }
 
+// 문항을 보여줄 순서. 매번 같은 순서로 나오지 않게 코스 시작 때 섞는다(state.scenarioOrder).
+// 답은 화면 순서가 아니라 원본 시나리오 위치에 저장한다 — 그래야 채점과 공유 링크가
+// 순서에 영향받지 않는다.
+function questionIndexAt(step) {
+  const order = state.scenarioOrder || [];
+  return order[step] ?? step;
+}
+
 function renderQuestion() {
   const list = activeScenarios();
-  const q = list[state.current];
-  const order = state.optionOrders[state.current] || q.options.map((_, index) => index);
+  const index = questionIndexAt(state.current);
+  const q = list[index];
+  const order = state.optionOrders[index] || q.options.map((_, optionIndex) => optionIndex);
   // 짧은 코스는 객관식만으로 끝나므로 총계에 대화 단계를 더하지 않는다.
   const total = state.course === 'short' ? list.length : list.length + deepScenarios.length;
   const progress = ((state.current + 1) / total) * 100;
-  const picked = state.answers[state.current];
+  const picked = state.answers[index];
   const last = state.current === list.length - 1;
 
   screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">상황 · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">정답은 없어요. 내가 제일 먼저 할 것 같은 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.current === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '결과 보기' : '다음 →'}</button></nav></section></main>`;
@@ -743,10 +764,10 @@ function renderQuestion() {
   // 누르는 즉시 넘어가지 않는다. 고른 뒤 확인하고 '다음'을 눌러야 진행된다.
   // 여기서 다시 그리지 않는 이유는 스크롤이 튀지 않게 하기 위해서다.
   pickAll('.option').forEach(btn => btn.onclick = () => {
-    const index = Number(btn.dataset.index);
-    state.answers[state.current] = index;
+    const optionIndex = Number(btn.dataset.index);
+    state.answers[index] = optionIndex;
     pickAll('.option').forEach(other => {
-      const on = Number(other.dataset.index) === index;
+      const on = Number(other.dataset.index) === optionIndex;
       other.classList.toggle('selected', on);
       other.setAttribute('aria-pressed', String(on));
     });
@@ -760,7 +781,7 @@ function renderQuestion() {
     render();
   };
   nextButton.onclick = () => {
-    if (state.answers[state.current] === undefined) return;
+    if (state.answers[index] === undefined) return;
     advance();
   };
   scrollToQuestionTop();
@@ -1009,7 +1030,7 @@ function continueChat() {
   if (state.deepCurrent < chatScenarios.length - 1) {
     state.deepCurrent += 1;
     state.deepTurn = 0;
-  } else if ((state.keyedAnswers || []).length < keyedItems.length) {
+  } else if (keyedAnsweredCount() < keyedItems.length) {
     // 긴 코스는 유형(20상황)에 이어 역량 체크(20문항)까지 한 번에 간다.
     beginKeyed();
     return;
