@@ -38,7 +38,7 @@ const codes = Object.keys(workTypeNames);
 const urls = [`${ORIGIN}/`];
 
 for (const code of codes) {
-  const title = `${code} · ${workTypeNames[code]}형 — FABL 테스트`;
+  const title = `나는 ${code} · ${workTypeNames[code]}형`;
   const description = `${workTypePeople[code]} 아키타입. ${workTypeReasons[code]}. 12개 상황으로 내 순서도 확인해보세요.`;
   const url = `${ORIGIN}/t/${code}/`;
 
