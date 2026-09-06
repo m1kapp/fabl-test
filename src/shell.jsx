@@ -148,7 +148,7 @@ function TeamPanel() {
 
         <h3 className="kit-skew-title">한쪽으로 쏠리면 이렇게 됩니다</h3>
         <p className="kit-body">
-          같은 힘을 먼저 쓰는 사람만 모이면 그 힘은 두꺼워지고, 아무도 안 보는 자리가
+          같은 힘을 먼저 쓰는 사람만 모이면 그 힘은 강해지지만, 아무도 안 보는 자리가
           생깁니다. 아래는 FABL 정의에서 따라 나오는 <b>예상</b>이지 조사 결과가 아니에요.
         </p>
         {SKEWS.map(skew => (
@@ -160,16 +160,17 @@ function TeamPanel() {
           </details>
         ))}
 
-        <h3 className="kit-skew-title">상황마다 두껍게 갈 곳이 다릅니다</h3>
+        <h3 className="kit-skew-title">상황마다 사람 구성이 달라요</h3>
         <p className="kit-body">
-          네 힘을 똑같이 나누는 게 늘 답은 아니에요. 지금 하는 일이 무엇이냐에 따라
-          한쪽을 두껍게 가져가되, <b>빠지면 안 되는 자리</b>는 한 명이라도 채워야 합니다.
+          네 명을 F·A·B·L 로 한 명씩 나누는 게 늘 답은 아니에요. 지금 하는 일에서 제일
+          많이 쓰는 힘은 <b>두세 명이 같이</b> 맡고, 대신 <b>없으면 사고 나는 자리</b>는
+          한 명이라도 꼭 채웁니다.
         </p>
         {SITUATION_TEAMS.map(item => (
           <div className="kit-situation" key={item.label}>
             <div className="kit-situation-head">
               <b>{item.label}</b>
-              <span>{item.thick} 두껍게</span>
+              <span>{item.thick}</span>
             </div>
             <p>{item.need}</p>
             <div className="kit-situation-codes">
@@ -389,25 +390,25 @@ const MBTI_HINTS = [
 const SITUATION_TEAMS = [
   {
     label: '아직 뭘 할지 모르는 새 일',
-    thick: 'F',
+    thick: 'F 를 여럿',
     need: '한 명은 반드시 B — 안 만들면 계속 회의만 한다',
     codes: ['FAB', 'FLA', 'BFL', 'LFA']
   },
   {
     label: '마감이 코앞인 출시',
-    thick: 'B',
+    thick: 'B 를 여럿',
     need: '한 명은 반드시 A — 뭘 버릴지 정할 사람이 필요하다',
     codes: ['BAF', 'BLF', 'AFB', 'FBA']
   },
   {
     label: '이해관계자가 많은 개편',
-    thick: 'L',
+    thick: 'L 을 여럿',
     need: '한 명은 반드시 F — 합의가 사실을 덮지 않게',
     codes: ['LAB', 'LFA', 'AFL', 'BLF']
   },
   {
     label: '터진 사고를 수습할 때',
-    thick: 'F + B',
+    thick: 'F·B 를 여럿',
     need: '한 명은 반드시 A — 어디까지 고치고 멈출지 정한다',
     codes: ['FBA', 'BAF', 'BFL', 'AFB']
   }
@@ -418,28 +419,28 @@ const SITUATION_TEAMS = [
 const SKEWS = [
   {
     key: 'F',
-    title: '해석만 두꺼운 조직',
+    title: '해석하는 사람만 모인 조직',
     strong: '문제를 깊게 판다. 남들이 놓친 이상을 먼저 찾는다.',
     missing: '정하고 손대는 사람',
     signs: ['자료는 쌓이는데 뭘 할지가 안 정해진다', '“조금 더 보고 정하자”가 반복된다', '분석이 끝나면 이미 상황이 바뀌어 있다']
   },
   {
     key: 'A',
-    title: '판단만 두꺼운 조직',
+    title: '정하는 사람만 모인 조직',
     strong: '방향과 우선순위가 빨리 선다. 회의가 짧다.',
     missing: '현장을 보는 눈과 만드는 손',
     signs: ['계획과 로드맵은 많은데 나온 것이 적다', '근거가 얇아 결정이 자주 뒤집힌다', '정한 사람과 하는 사람이 갈린다']
   },
   {
     key: 'B',
-    title: '실행만 두꺼운 조직',
+    title: '만드는 사람만 모인 조직',
     strong: '빨리 만든다. 일단 굴러가는 것이 나온다.',
     missing: '왜 하는지와 서로 맞추기',
     signs: ['만든 것끼리 서로 안 맞는다', '다 만든 뒤에 필요 없던 일이었음이 드러난다', '고쳐 만드는 시간이 계속 늘어난다']
   },
   {
     key: 'L',
-    title: '조율만 두꺼운 조직',
+    title: '맞추는 사람만 모인 조직',
     strong: '합의가 잘 되고 사람 사이 마찰이 적다.',
     missing: '문제를 규명하고 끝내는 힘',
     signs: ['회의는 좋은데 결론이 안 남는다', '책임이 흩어져 아무도 안 끝낸다', '갈등을 피하느라 이상 신호를 늦게 말한다']
