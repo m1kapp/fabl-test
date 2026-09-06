@@ -270,86 +270,88 @@ const scenarioBlueprints = [
   }
 ];
 
+// 문항 텍스트. 채점은 원본 blueprint 의 선택지 순서를 그대로 쓰므로 여기서는 문장만 바꾼다.
+// 읽자마자 이해되는 게 목표라 해요체 두 문장, 선택지는 20자 안쪽 행동 한 줄로 맞췄다.
 const plainScenarioCopy = [
   {
-    title: '보고서의 숫자가 맞지 않는다',
-    body: '하루 주문은 750건이고 그중 60%를 자동으로 처리했다고 발표했다. 그런데 자동 처리 건수는 270건으로 적혀 있다.',
-    options: ['두 숫자를 직접 계산해 무엇이 맞지 않는지 확인한다.', '담당자에게 각 숫자를 어떤 기준으로 셌는지 묻는다.', '이 숫자로 어떤 결정을 하려는지 먼저 확인한다.', '틀린 숫자가 쓰인 자료를 찾아 함께 고치도록 요청한다.']
+    title: '숫자가 안 맞아요',
+    body: '주문은 하루 750건이고, 그중 60%를 자동 처리했다고 발표했어요. 그런데 자동 처리는 270건으로 적혀 있어요.',
+    options: ['두 숫자를 직접 계산해 보기', '담당자에게 어떻게 센 건지 묻기', '이 숫자로 뭘 정하려는지 확인하기', '틀린 자료를 찾아 같이 고치기']
   },
   {
-    title: '목록에서 강의 하나가 사라졌다',
-    body: '수강생이 원하는 강의를 찾을 수 없다고 문의했다. 동료는 강의 추천 방식을 전부 바꿔야 한다고 말한다.',
-    options: ['그 강의가 보이지 않는 이유부터 확인한다.', '수강생에게 지금 강의를 찾는 방법부터 알려준다.', '다른 강의도 비슷하게 사라졌는지 찾아본다.', '한 명은 당장 고치고 다른 한 명은 더 큰 문제를 살펴보게 한다.']
+    title: '강의가 안 보인대요',
+    body: '수강생이 원하는 강의를 못 찾겠다고 해요. 동료는 추천 방식을 전부 바꾸자고 해요.',
+    options: ['왜 안 보이는지부터 확인하기', '수강생에게 찾는 방법 먼저 알려주기', '다른 강의도 그런지 찾아보기', '한 명은 지금 고치고 한 명은 크게 보기']
   },
   {
-    title: '처음 보는 포장법을 발견했다',
-    body: '해외 업체가 쓰는 포장법이 우리 제품의 배송 파손을 줄일 수 있어 보인다. 우리나라에서 써본 사례는 아직 없다.',
-    options: ['제품 몇 개에 새 포장법을 써서 파손 여부를 본다.', '우리 배송 환경에서도 통할지 차이부터 알아본다.', '다른 급한 일보다 지금 시험할 가치가 있는지 따져본다.', '배송 담당자와 구매 담당자에게 함께 시험해보자고 제안한다.']
+    title: '새 포장법을 봤어요',
+    body: '해외 업체가 쓰는 포장법이 배송 파손을 줄일 것 같아요. 국내에서 써본 사례는 아직 없어요.',
+    options: ['몇 개에 써보고 파손이 주는지 보기', '우리 배송에도 통할지 차이 알아보기', '지금 시험할 만한 일인지 따져보기', '배송·구매 담당자에게 같이 하자고 하기']
   },
   {
-    title: '가게를 열려는데 일정이 모두 다르다',
-    body: '가게를 열려면 공사·결제 설치·상품 배송이 모두 끝나야 한다. 세 업체가 가능하다고 말하는 날짜는 서로 다르다.',
-    options: ['무엇이 늦어지면 개점도 늦어지는지 먼저 찾는다.', '세 업체와 이야기해 모두 가능한 날짜를 다시 정한다.', '각 일의 담당자와 완료 날짜를 적고 매일 확인한다.', '개점 전에 꼭 할 일과 나중에 해도 될 일을 나눈다.']
+    title: '일정이 다 달라요',
+    body: '가게를 열려면 공사·결제 설치·상품 배송이 끝나야 해요. 업체 세 곳이 말한 날짜가 서로 달라요.',
+    options: ['뭐가 늦으면 개점이 늦는지 찾기', '업체 셋과 가능한 날짜 다시 잡기', '담당자와 완료일 적어 매일 확인하기', '꼭 할 일과 나중 할 일 나누기']
   },
   {
-    title: '내 의견과 다른 결정이 내려졌다',
-    body: '나는 운영시간을 길게 해야 한다고 생각했다. 하지만 책임자는 짧게 운영하며 시작하기로 최종 결정했다.',
-    options: ['걱정되는 점을 한 번 분명히 말한 뒤 결정대로 준비한다.', '고객 반응을 확인하고 다시 논의할 날짜를 정하자고 한다.', '책임자가 왜 그렇게 결정했는지 이유를 확인한다.', '정해진 시간 안에서 더 잘 운영할 방법을 찾아본다.']
+    title: '내 의견과 다르게 정해졌어요',
+    body: '나는 운영시간을 길게 하자고 했어요. 책임자는 짧게 시작하기로 정했어요.',
+    options: ['걱정을 한 번 말하고 결정대로 준비하기', '반응 보고 다시 볼 날짜 정하자고 하기', '왜 그렇게 정했는지 이유 확인하기', '정해진 시간 안에서 더 잘할 방법 찾기']
   },
   {
-    title: '공개 하루 전 작은 오류를 찾았다',
-    body: '서비스 공개를 하루 앞두고 일부 화면의 할인 문구가 틀린 것을 발견했다. 실제 결제 금액은 맞다.',
-    options: ['어떤 사람에게 얼마나 자주 보이는 오류인지 확인한다.', '틀린 문구만 고치고 다시 확인한 뒤 예정대로 공개한다.', '고객이 헷갈리지 않도록 안내와 문의 답변을 준비한다.', '지금 고칠 것과 공개 뒤 고칠 것을 나눠 담당자를 정한다.']
+    title: '공개 하루 전에 오류를 봤어요',
+    body: '일부 화면의 할인 문구가 틀렸어요. 실제 결제 금액은 맞아요.',
+    options: ['누구에게 얼마나 자주 보이는지 확인하기', '문구만 고치고 예정대로 공개하기', '고객 안내와 문의 답변 준비하기', '지금 고칠 것과 나중 고칠 것 나누기']
   },
   {
-    title: '공연은 매진됐지만 불편이 반복된다',
-    body: '새 공연은 매진됐고 만족도도 높다. 하지만 자주 오는 회원들은 좌석을 고르기 어렵다는 글을 계속 남긴다.',
-    options: ['자주 오는 회원에게만 불편이 생기는 이유를 찾아본다.', '다음 예매 전에 좌석 안내부터 고친다.', '회원들에게 어느 화면에서 막혔는지 직접 묻는다.', '같은 불편을 말하는 사람이 더 늘어나는지 지켜본다.']
+    title: '매진인데 불만이 반복돼요',
+    body: '새 공연은 매진이고 만족도도 높아요. 그런데 단골들은 좌석 고르기가 어렵다는 글을 계속 남겨요.',
+    options: ['단골에게만 생기는 이유 찾기', '다음 예매 전에 좌석 안내 고치기', '회원에게 어디서 막혔는지 직접 묻기', '같은 말 하는 사람이 느는지 지켜보기']
   },
   {
-    title: '전체는 좋아졌지만 한 곳만 나빠졌다',
-    body: '전체 서점의 책 반품은 줄었다. 그러나 거래량이 큰 한 서점은 배송이 늦어 반품이 오히려 늘었다.',
-    options: ['그 서점의 규모와 앞으로의 거래에 미칠 영향을 먼저 본다.', '전체 성과와 그 서점의 문제를 나눠 따로 다룬다.', '배송 기록을 비교해 어디서부터 늦어졌는지 찾는다.', '다음 배송은 다른 길로 보내보고 결과를 확인한다.']
+    title: '한 곳만 나빠졌어요',
+    body: '전체 서점의 반품은 줄었어요. 그런데 거래가 큰 한 곳은 배송이 늦어 반품이 늘었어요.',
+    options: ['그 거래처 규모와 앞으로의 영향 보기', '전체 성과와 그 문제를 나눠 다루기', '배송 기록에서 어디부터 늦었는지 찾기', '다음 배송은 다른 길로 보내보기']
   },
   {
-    title: '좋은 결과가 예상보다 빨리 나왔다',
-    body: '외부 연구소가 실험이 성공했다고 일찍 알려왔다. 자세한 자료와 실패한 경우는 다음 주에 받을 수 있다.',
-    options: ['성공이라고 알리기 전에 자세한 자료부터 확인한다.', '아직 확인 중이라고 밝히고 자료를 받을 날짜도 알린다.', '이 결과에 따라 무엇을 결정할지 먼저 확인한다.', '좋은 결과를 바탕으로 다음 실험을 미리 준비한다.']
+    title: '결과가 너무 빨리 왔어요',
+    body: '외부 연구소가 실험이 성공했다고 먼저 알려왔어요. 자세한 자료는 다음 주에 와요.',
+    options: ['알리기 전에 자세한 자료 확인하기', '확인 중이라고 밝히고 날짜도 알리기', '이 결과로 뭘 정할지 먼저 확인하기', '결과를 바탕으로 다음 실험 준비하기']
   },
   {
-    title: '새 장비를 쓴 뒤 수확이 늘었다',
-    body: '한 농장에서 새 장비를 쓴 뒤 수확량이 늘었다. 현장팀은 모든 농장에 바로 설치하자고 한다.',
-    options: ['날씨나 작물 차이가 아니라 장비 덕분인지 확인한다.', '환경이 다른 농장 한 곳에서 먼저 시험한다.', '비용과 기대 효과를 비교해 설치 순서를 정한다.', '성공과 중단 기준을 현장팀과 정한 뒤 조금씩 늘린다.']
+    title: '장비를 바꾸니 수확이 늘었어요',
+    body: '한 농장에서 새 장비를 쓰고 수확이 늘었어요. 현장팀은 모든 농장에 바로 넣자고 해요.',
+    options: ['날씨 덕인지 장비 덕인지 확인하기', '환경이 다른 농장에서 먼저 해보기', '비용과 효과 비교해 순서 정하기', '성공·중단 기준 정하고 조금씩 늘리기']
   },
   {
-    title: '행사 이틀 전 설명이 틀렸다고 한다',
-    body: '행사 이틀 전 전문가가 안내문의 중요한 표현이 부정확하다고 말했다. 종이 안내문은 이미 만들었지만 화면 안내는 바로 바꿀 수 있다.',
-    options: ['사람들이 크게 오해할 부분부터 골라낸다.', '화면 안내부터 고치고 종이 안내문을 보완할 방법을 찾는다.', '전문가에게 꼭 고쳐야 할 문장을 골라달라고 한다.', '행사 뒤 질문을 모아 안내문 전체를 다시 만든다.']
+    title: '안내문이 틀렸대요',
+    body: '행사 이틀 전, 전문가가 중요한 표현이 부정확하다고 했어요. 종이 안내문은 이미 만들었어요.',
+    options: ['크게 오해할 부분부터 골라내기', '화면부터 고치고 종이 보완법 찾기', '전문가에게 꼭 고칠 문장 골라달라 하기', '행사 뒤 질문 모아 전체 다시 만들기']
   },
   {
-    title: '인기 상품인데 문의가 계속 늘어난다',
-    body: '새 여행 상품은 예약이 잘된다. 하지만 일정이 너무 빠듯하다는 현장 문의가 계속 늘고 있다.',
-    options: ['어느 일정에서 문의가 몰리는지 찾아본다.', '예약 전에 일정이 빠듯하다는 점을 더 분명히 알린다.', '취소하는 사람도 늘어나는지 조금 더 지켜본다.', '가장 힘든 일정 하나를 골라 다음 여행부터 바꾼다.']
+    title: '잘 팔리는데 문의가 늘어요',
+    body: '새 여행 상품은 예약이 잘돼요. 그런데 일정이 빠듯하다는 문의가 계속 늘어요.',
+    options: ['어느 일정에 문의가 몰리는지 찾기', '예약 전에 빠듯하다고 분명히 알리기', '취소도 느는지 조금 더 지켜보기', '제일 힘든 일정 하나 바꾸기']
   },
   {
-    title: '밤마다 일부 층에서 경보가 울린다',
-    body: '냉난방 설정을 바꾼 뒤 전기 사용량은 줄었다. 그런데 일부 층에서는 밤마다 온도 경보가 울리고 아침이면 정상으로 돌아온다.',
-    options: ['어떤 층과 시간대에서 반복되는지 먼저 확인한다.', '밤에 그 층을 쓰는 사람이 불편한지 먼저 확인한다.', '한 층의 설정을 바꿔 다음 날 경보가 사라지는지 본다.', '관리 담당자와 정상이라고 볼 기준과 맡을 일을 정한다.']
+    title: '밤마다 경보가 울려요',
+    body: '냉난방 설정을 바꾼 뒤 전기는 줄었어요. 그런데 몇 층은 밤마다 온도 경보가 울려요.',
+    options: ['어느 층에서 언제 반복되는지 확인하기', '밤에 쓰는 사람이 불편한지 확인하기', '한 층 설정 바꿔 다음 날 보기', '관리자와 정상 기준·맡을 일 정하기']
   },
   {
-    title: '참여자는 늘었지만 마감 시간을 헷갈린다',
-    body: '온라인 경매 화면을 바꾼 뒤 참여자는 늘었다. 하지만 마감 시간을 잘못 알았다는 문의도 많아졌다.',
-    options: ['사람들이 어느 화면에서 시간을 잘못 이해했는지 찾는다.', '마감 시간을 더 눈에 띄게 보여주도록 바로 고친다.', '문의한 사람에게 어떤 문장을 어떻게 이해했는지 묻는다.', '참여율을 해치지 않는 두 가지 안내를 작게 시험한다.']
+    title: '마감 시간을 헷갈려 해요',
+    body: '경매 화면을 바꾸고 참여자는 늘었어요. 그런데 마감을 잘못 알았다는 문의도 늘었어요.',
+    options: ['어느 화면에서 헷갈렸는지 찾기', '마감 시간 더 크게 보이게 고치기', '문의한 사람에게 어떻게 읽었는지 묻기', '안내 두 가지를 작게 시험해 보기']
   },
   {
-    title: '전체 만족도는 올랐지만 줄이 길어졌다',
-    body: '새 식단의 만족도는 높고 남기는 음식도 줄었다. 하지만 알레르기 대체식을 받는 사람들의 대기시간은 길어졌다.',
-    options: ['대체식을 준비하고 건네는 과정에서 어디가 느린지 찾는다.', '기다리는 사람 수와 불편의 크기를 보고 먼저 고칠지 정한다.', '배식 담당자와 순서를 바꿔 다음 식사 때 시험한다.', '기다릴 시간을 미리 알리고 받는 방법을 고르게 한다.']
+    title: '줄이 길어졌어요',
+    body: '새 식단은 만족도가 높고 남는 음식도 줄었어요. 그런데 알레르기 대체식 줄이 길어졌어요.',
+    options: ['대체식 준비에서 느린 곳 찾기', '기다리는 사람 수와 불편 크기 보기', '배식 순서 바꿔 다음 끼니에 해보기', '기다릴 시간 미리 알리고 고르게 하기']
   },
   {
-    title: '예약은 많지만 다시 오는 사람은 적다',
-    body: '새 운동 수업은 예약이 많다. 하지만 다음 달에 다시 신청한 사람은 적고 참가자들의 실력 차이도 크다.',
-    options: ['초보자와 숙련자가 언제 그만두는지 나눠서 본다.', '수업 전에 난이도와 준비할 것을 분명히 알려준다.', '실력별 수업을 작게 열어 다시 신청하는 사람이 느는지 본다.', '예약 수와 재신청 중 무엇이 더 중요한지 먼저 정한다.']
+    title: '다시 오는 사람이 적어요',
+    body: '새 운동 수업은 예약이 많아요. 그런데 다음 달 재신청은 적고 실력 차이도 커요.',
+    options: ['초보와 숙련자가 언제 그만두는지 보기', '수업 전에 난이도와 준비물 알리기', '실력별 수업 작게 열어 보기', '예약과 재신청 중 뭐가 중요한지 정하기']
   }
 ];
 
@@ -592,7 +594,7 @@ function renderSharedType(code) {
   pick('#startShared').onclick = () => { history.replaceState(null, '', '/'); beginTest('short'); };
 }
 
-// 판단 체크 화면. 유형 문항과 달리 정답이 있고, 정답 위치는 매번 섞는다.
+// 역량 체크 화면. 유형 문항과 달리 정답이 있고, 정답 위치는 매번 섞는다.
 function renderKeyed() {
   const item = keyedItems[state.keyedCurrent];
   const order = state.keyedOrders[state.keyedCurrent];
@@ -600,8 +602,8 @@ function renderKeyed() {
   const progress = ((state.keyedCurrent + 1) / total) * 100;
   const picked = state.keyedAnswers[state.keyedCurrent];
   const last = state.keyedCurrent === total - 1;
-  screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>${state.answers.length ? '결과로' : '나가기'}</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.keyedCurrent === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '채점 보기' : '다음 →'}</button></nav></section></main>`;
-  // 유형 테스트를 거치지 않고 시작한 판단 체크는 돌아갈 결과 화면이 없다.
+  screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>${state.answers.length ? '결과로' : '나가기'}</span></button><strong>역량 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">역량 · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">이 문제는 정답이 있어요. 가장 맞다고 보는 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.keyedCurrent === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '채점 보기' : '다음 →'}</button></nav></section></main>`;
+  // 유형 테스트를 거치지 않고 시작한 역량 체크는 돌아갈 결과 화면이 없다.
   pick('#backToResult').onclick = () => { state.screen = state.answers.length ? 'result' : 'intro'; render(); };
   scrollToQuestionTop();
 
@@ -630,9 +632,9 @@ function renderKeyed() {
   };
 }
 
-// 유형 테스트 없이 판단 체크만 한 경우의 결과. 유형 결과 화면은 유형 답변을 전제한다.
+// 유형 테스트 없이 역량 체크만 한 경우의 결과. 유형 결과 화면은 유형 답변을 전제한다.
 function renderKeyedOnly() {
-  screenHost().innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">JUDGMENT CHECK</p><h1>정답 키로 매긴<br>판단 점수입니다.</h1></div><button class="ghost" id="toIntro">처음으로</button></header>${renderKeyedPanel()}<section class="keyed-panel keyed-invite"><div><p class="eyebrow">ASSESSMENT 01 · TYPE</p><h2>일하는 순서도 보시겠어요?</h2><p>판단 체크는 타당성만 봅니다. 어떤 순서로 일하는지는 유형 테스트 12문항에서 나옵니다.</p></div><button class="primary" id="toType">유형 테스트 하기 <b>→</b></button></section><footer>낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
+  screenHost().innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">역량 체크</p><h1>정답으로 매긴<br>역량 점수예요.</h1></div><button class="ghost" id="toIntro">처음으로</button></header>${renderKeyedPanel()}<section class="keyed-panel keyed-invite"><div><p class="eyebrow">평가 1 · 유형 찾기</p><h2>일하는 순서도 볼까요?</h2><p>역량 체크는 맞고 틀림만 봐요. 무엇부터 하는 사람인지는 유형 찾기 12문항에서 나와요.</p></div><button class="primary" id="toType">유형 테스트 하기 <b>→</b></button></section><footer>낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
   pick('#toIntro').onclick = () => { state.screen = 'intro'; render(); };
   pick('#toType').onclick = () => beginTest('short');
   const retryKeyed = pick('#retryKeyed');
@@ -647,19 +649,19 @@ function beginKeyed() {
   render();
 }
 
-// 결과 화면 안의 판단 체크 영역. 아직 안 했으면 권유, 했으면 채점 결과.
+// 결과 화면 안의 역량 체크 영역. 아직 안 했으면 권유, 했으면 채점 결과.
 function renderKeyedPanel() {
   const done = state.keyedAnswers && state.keyedAnswers.length === keyedItems.length;
   if (!done) {
-    return `<section class="keyed-panel keyed-invite"><div><p class="eyebrow">JUDGMENT CHECK · ${keyedItems.length} ITEMS</p><h2>여기까지는 &lsquo;어떤 순서로 일하는가&rsquo;였습니다</h2><p>위 유형은 자주 쓰는 순서를 볼 뿐, 잘하는지는 보지 않습니다. 모든 선택지가 타당한 대응이라 애초에 틀린 답이 없기 때문입니다. 정답이 있는 문항 ${keyedItems.length}개로 판단 습관을 따로 확인해보세요.</p></div><button class="primary" id="startKeyed">판단 체크 하기 <b>→</b></button></section>`;
+    return `<section class="keyed-panel keyed-invite"><div><p class="eyebrow">역량 체크 · ${keyedItems.length}문항</p><h2>여기까지는 &lsquo;무엇부터 하는가&rsquo;였어요</h2><p>유형은 자주 쓰는 순서만 봐요. 선택지가 다 가능한 대응이라 틀린 답이 없거든요. 정답이 있는 ${keyedItems.length}문항으로 실력은 따로 확인해보세요.</p></div><button class="primary" id="startKeyed">역량 체크 하기 <b>→</b></button></section>`;
   }
   const scored = scoreKeyed(state.keyedAnswers);
   const dims = Object.entries(scored.byDimension)
     .map(([key, v]) => `<div class="keyed-dim${v.correct === v.total ? ' ok' : ''}"><b>${qualityDimensionNames[key]}</b><span>${v.correct} / ${v.total}</span></div>`).join('');
   const missed = scored.missed.length
-    ? scored.missed.map(({ item, index }) => `<details class="keyed-miss"><summary><b>${qualityDimensionNames[item.dimension]}</b> ${item.question}</summary><p class="keyed-chose">고른 답 · ${item.options[state.keyedAnswers[index]]}</p><p class="keyed-answer">더 타당한 답 · ${item.options[item.correct]}</p><p class="keyed-why">${item.principle}</p></details>`).join('')
-    : '<p class="keyed-allok">여덟 문항 모두 원칙에 맞게 골랐습니다.</p>';
-  return `<section class="keyed-panel"><div class="keyed-head"><div><p class="eyebrow">JUDGMENT CHECK</p><h2>판단 체크 <em>${scored.correct} / ${scored.total}</em></h2><p>유형과 달리 이 점수는 정답 키로 매겼습니다. 사람 사이 비교가 되는 값입니다.</p></div><button class="ghost" id="retryKeyed">다시 풀기</button></div><div class="keyed-dims">${dims}</div>${missed}</section>`;
+    ? scored.missed.map(({ item, index }) => `<details class="keyed-miss"><summary><b>${qualityDimensionNames[item.dimension]}</b> ${item.question}</summary><p class="keyed-chose">내가 고른 답 · ${item.options[state.keyedAnswers[index]]}</p><p class="keyed-answer">더 맞는 답 · ${item.options[item.correct]}</p><p class="keyed-why">${item.principle}</p></details>`).join('')
+    : '<p class="keyed-allok">여덟 문항 모두 맞게 골랐어요.</p>';
+  return `<section class="keyed-panel"><div class="keyed-head"><div><p class="eyebrow">역량 체크</p><h2>역량 체크 <em>${scored.correct} / ${scored.total}</em></h2><p>유형과 달리 이 점수는 정답으로 매겼어요. 사람끼리 비교가 되는 값이에요.</p></div><button class="ghost" id="retryKeyed">다시 풀기</button></div><div class="keyed-dims">${dims}</div>${missed}</section>`;
 }
 
 function render() {
@@ -675,7 +677,7 @@ function render() {
   else renderResult();
 }
 
-// 랜딩에서 마지막으로 보던 탭. 판단 체크만 하고 돌아오면 그 탭으로 되돌린다.
+// 랜딩에서 마지막으로 보던 탭. 역량 체크만 하고 돌아오면 그 탭으로 되돌린다.
 let introTab = 'home';
 
 function renderIntro() {
@@ -722,7 +724,7 @@ function renderQuestion() {
   const picked = state.answers[state.current];
   const last = state.current === list.length - 1;
 
-  screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">SCENARIO · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">모두 가능한 대응입니다. 가장 먼저 취할 행동 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.current === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '결과 보기' : '다음 →'}</button></nav></section></main>`;
+  screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">상황 · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">정답은 없어요. 내가 제일 먼저 할 것 같은 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.current === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '결과 보기' : '다음 →'}</button></nav></section></main>`;
 
   pick('#home').onclick = goHome;
 
@@ -1066,7 +1068,7 @@ function renderResult() {
   const qualityEvidenceCount = judgmentQuality.reduce((sum, item) => sum + item.observed, 0);
   // 판단 품질 패널은 LLM 이 채워주던 quality 신호에만 의존한다. 공개판에서 그 호출을
   // 걷어냈으므로 qualityEvidenceCount 는 항상 0 이고 이 패널은 렌더되지 않는다.
-  // 같은 역할은 정답 키가 있는 판단 체크(renderKeyedPanel)가 대신한다.
+  // 같은 역할은 정답 키가 있는 역량 체크(renderKeyedPanel)가 대신한다.
   const qualityPanel = qualityEvidenceCount ? `<section class="quality-panel"><div><p class="eyebrow">JUDGMENT QUALITY · ${qualityEvidenceCount} SIGNALS</p><h3>한 줄 답변에서 확인된 판단 품질</h3></div><div>${judgmentQuality.map(item => `<article class="${item.score === null ? 'unobserved' : ''}"><span><b>${item.ko}</b><small>${item.desc}</small></span><strong>${item.score === null ? '관찰 전' : item.score.toFixed(1)}</strong></article>`).join('')}</div></section>` : `<p class="quality-empty">선택 이유나 직접 답변을 한 줄 보태면 판단 품질 점수가 여기에 표시됩니다.</p>`;
   const responseTimes = state.chatSignals.map(signal => signal.responseMs).filter(Number.isFinite).sort((a, b) => a - b);
   const middle = Math.floor(responseTimes.length / 2);

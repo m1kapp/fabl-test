@@ -37,8 +37,8 @@ function HomeTab({ on }) {
           <img src="/landing/hero.jpg" alt="새 일감 앞에서 어느 길로 갈지 고르는 사람" />
         </figure>
         <div className="kit-actions">
-          <Button full shape="pill" onClick={() => on.start('short')}>내 업무 유형 찾기 →</Button>
-          <Button full shape="pill" variant="light" onClick={on.goKeyed}>판단 체크 보기</Button>
+          <Button full shape="pill" onClick={() => on.start('short')}>3분 만에 내 유형 찾기 →</Button>
+          <Button full shape="pill" variant="light" onClick={on.goKeyed}>역량 체크 보기</Button>
         </div>
       </Section>
 
@@ -103,28 +103,28 @@ function HomeTab({ on }) {
 function TypeTab({ archiveCount, on }) {
   return (
     <Section className="pt-6 pb-8">
-      <p className="kit-eyebrow">ASSESSMENT 01 · TYPE</p>
-      <h1 className="kit-h2 kit-tab-title">일하는 순서를 봅니다</h1>
+      <p className="kit-eyebrow">평가 1 · 유형 찾기</p>
+      <h1 className="kit-h2 kit-tab-title">나는 뭐부터 하는 사람일까</h1>
       <p className="kit-body">
-        업무 상황 12개에서 <b>가장 먼저 취할 행동</b>을 고르면, 자주 쓰는 세 가지 힘을
-        순서대로 이어 24유형 중 하나가 나옵니다.
+        일이 생긴 상황 12개에서 <b>내가 제일 먼저 할 것</b>을 고르면 돼요.
+        자주 고른 세 가지를 순서대로 이으면 24유형 중 하나가 나와요.
       </p>
       <ul className="kit-facts">
-        <li><b>12문항</b><span>약 2~3분 · 객관식</span></li>
-        <li><b>정답 없음</b><span>모든 선택지가 가능한 대응</span></li>
-        <li><b>결과</b><span>유형 코드 · 인물 아키타입 · 10역량 레이더</span></li>
+        <li><b>12문항</b><span>2~3분이면 끝나요</span></li>
+        <li><b>정답 없음</b><span>넷 다 할 수 있는 행동이에요</span></li>
+        <li><b>결과</b><span>내 유형 · 닮은 인물 · 역량 그래프</span></li>
       </ul>
       <div className="kit-actions">
         <Button full shape="pill" onClick={() => on.start('short')}>짧은 코스 시작 →</Button>
-        <Button full shape="pill" variant="light" onClick={() => on.start('full')}>정밀 코스 (20상황 · 6~8분)</Button>
+        <Button full shape="pill" variant="light" onClick={() => on.start('full')}>길게 하기 (20상황 · 6~8분)</Button>
         {archiveCount > 0 && (
           <Button full shape="pill" variant="light" onClick={on.latest}>최근 결과 보기 {archiveCount}</Button>
         )}
         <Button full shape="pill" variant="light" onClick={on.importResult}>결과 파일 불러오기</Button>
       </div>
       <p className="kit-note">
-        이 점수는 본인 답변 안에서의 상대적 선호도라 사람끼리 비교되지 않습니다.
-        잘하는지를 보려면 판단 체크를 하세요.
+        유형은 잘하고 못하고를 보지 않아요. 내 답 안에서 어느 쪽을 더 자주 쓰는지만
+        봅니다. 실력이 궁금하면 역량 체크를 해보세요.
       </p>
     </Section>
   );
@@ -134,25 +134,26 @@ function KeyedTab({ on }) {
   const dims = [...new Set(keyedItems.map(item => item.dimension))];
   return (
     <Section className="pt-6 pb-8">
-      <p className="kit-eyebrow">ASSESSMENT 02 · JUDGMENT</p>
-      <h1 className="kit-h2 kit-tab-title">판단이 타당한지 봅니다</h1>
+      <p className="kit-eyebrow">평가 2 · 역량 체크</p>
+      <h1 className="kit-h2 kit-tab-title">일머리를 맞혀 볼까요</h1>
       <p className="kit-body">
-        유형 테스트와 달리 <b>정답이 있는</b> {keyedItems.length}문항입니다. 정답 키로 매기니
-        사람 사이 비교가 되는 값이 나옵니다.
+        유형 찾기와 달리 <b>정답이 있는</b> {keyedItems.length}문항이에요. 정답으로 매기니까
+        사람끼리 비교가 되는 점수가 나와요.
       </p>
       <ul className="kit-facts">
-        <li><b>{keyedItems.length}문항</b><span>약 3분 · 객관식</span></li>
-        <li><b>정답 있음</b><span>틀린 문항은 더 타당한 답과 원칙을 보여줍니다</span></li>
+        <li><b>{keyedItems.length}문항</b><span>3분이면 끝나요</span></li>
+        <li><b>정답 있음</b><span>틀리면 더 맞는 답과 이유를 보여줘요</span></li>
         <li><b>결과</b><span>맞은 개수 · 영역별 점수</span></li>
       </ul>
       <div className="kit-dims">
         {dims.map(key => <span key={key}>{qualityDimensionNames[key]}</span>)}
       </div>
       <div className="kit-actions">
-        <Button full shape="pill" onClick={on.startKeyed}>판단 체크 시작 →</Button>
+        <Button full shape="pill" onClick={on.startKeyed}>역량 체크 시작 →</Button>
       </div>
       <p className="kit-note">
-        낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 쓰지 마세요.
+        {keyedItems.length}문항짜리 짧은 확인이에요. 점수가 낮다고 능력이 부족한 건 아니고,
+        채용이나 인사평가의 근거로 쓰지 마세요.
       </p>
     </Section>
   );
@@ -191,8 +192,8 @@ function Shell({ mode, archiveCount, initialTab, on }) {
         {landing && (
           <TabBar>
             <Tab active={tab === 'home'} onClick={() => setTab('home')} icon={<span className="kit-tab-icon">🏠</span>} label="홈" activeColor={ACCENT} />
-            <Tab active={tab === 'type'} onClick={() => setTab('type')} icon={<span className="kit-tab-icon">🧭</span>} label="유형 테스트" activeColor={ACCENT} />
-            <Tab active={tab === 'keyed'} onClick={() => setTab('keyed')} icon={<span className="kit-tab-icon">✅</span>} label="판단 체크" activeColor={ACCENT} />
+            <Tab active={tab === 'type'} onClick={() => setTab('type')} icon={<span className="kit-tab-icon">🧭</span>} label="유형 찾기" activeColor={ACCENT} />
+            <Tab active={tab === 'keyed'} onClick={() => setTab('keyed')} icon={<span className="kit-tab-icon">✅</span>} label="역량 체크" activeColor={ACCENT} />
           </TabBar>
         )}
       </AppShell>
