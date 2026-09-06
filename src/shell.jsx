@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { AppShell, AppShellHeader, AppShellContent, TabBar, Tab, Section, Divider, Button, Watermark, watermarkTint } from '@m1kapp/kit';
 import './landing.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
-import { keyedItems, qualityDimensionNames } from './keyed.js';
+import { keyedItems, qualityDimensionNames, KEYED_QUESTION_COUNT } from './keyed.js';
 
 const ACCENT = '#6047d8';
 
@@ -235,12 +235,12 @@ function TestTab({ archiveCount, on }) {
       <div className="kit-course">
         <div className="kit-course-head"><b>길게</b><span>15분</span></div>
         <p>
-          상황 20개로 유형을 보고, 이어서 정답이 있는 {keyedItems.length}문항으로 판단이
+          상황 20개로 유형을 보고, 이어서 정답이 있는 {KEYED_QUESTION_COUNT}문항으로 판단이
           맞는지까지 봐요. 문항이 많아 시간이 걸려요.
         </p>
         <ul className="kit-facts">
           <li><b>상황 20개</b><span>고르기 · 이유 쓰기까지</span></li>
-          <li><b>역량 {keyedItems.length}문항</b><span>정답 있음 · 틀리면 이유를 보여줘요</span></li>
+          <li><b>역량 {KEYED_QUESTION_COUNT}문항</b><span>정답 있음 · 틀리면 이유를 보여줘요</span></li>
         </ul>
         <div className="kit-dims">
           {dims.map(key => <span key={key}>{qualityDimensionNames[key]}</span>)}
@@ -249,7 +249,7 @@ function TestTab({ archiveCount, on }) {
       </div>
 
       <div className="kit-actions">
-        <Button full shape="pill" variant="light" onClick={on.startKeyed}>역량 {keyedItems.length}문항만 하기</Button>
+        <Button full shape="pill" variant="light" onClick={on.startKeyed}>역량 {KEYED_QUESTION_COUNT}문항만 하기</Button>
         {archiveCount > 0 && (
           <Button full shape="pill" variant="light" onClick={on.latest}>최근 결과 보기 {archiveCount}</Button>
         )}
@@ -258,7 +258,7 @@ function TestTab({ archiveCount, on }) {
 
       <p className="kit-note">
         유형 점수는 내 답 안에서의 상대적 선호라 사람끼리 비교되지 않아요. 역량 점수는
-        정답으로 매기지만 {keyedItems.length}문항짜리 짧은 확인이고, 채용이나 인사평가의
+        정답으로 매기지만 {KEYED_QUESTION_COUNT}문항짜리 짧은 확인이고, 채용이나 인사평가의
         근거로 쓰지 마세요. 왜 그런지는 <b>근거</b> 탭에 적어 뒀어요.
       </p>
     </Section>

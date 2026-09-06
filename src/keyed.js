@@ -9,6 +9,9 @@
 // 문장을 기준으로 삼았고, 문항마다 그 원칙을 principle 에 적어 해설로 보여준다.
 // LLM 을 쓰지 않으므로 서버 비용이 들지 않고 답변이 밖으로 나가지 않는다.
 
+/** 한 회차에 내는 문항 수. 후보(keyedItems)는 더 많고 매번 여기서 뽑아 낸다. */
+export const KEYED_QUESTION_COUNT = 20;
+
 export const qualityDimensionNames = {
   problem_definition: '문제 정의',
   prioritization: '우선순위',
@@ -338,7 +341,7 @@ export const keyedItems = [
   {
     dimension: 'prioritization',
     situation: '중요한 일을 하는 중에 대표가 다른 급한 일을 시켰다. 둘 다 이번 주 안에는 안 된다.',
-    question: '어떻게 하겠어요?',
+    question: '둘 다 이번 주엔 안 되는데, 어떻게 할까요?',
     options: [
       '뒤로 밀 것을 정해 대표에게 확인받는다.',
       '새로 받은 일부터 하고 원래 일은 미룬다.',
@@ -390,7 +393,7 @@ export const keyedItems = [
   {
     dimension: 'actionability',
     situation: '내가 맡은 일이 다른 팀의 결정 하나에 걸려 있다. 그 결정은 2주 뒤에 난다.',
-    question: '지금 할 일은?',
+    question: '결정을 기다리는 2주 동안 할 일은?',
     options: [
       '상관없는 부분을 먼저 하고 갈림길을 적어 둔다.',
       '결정이 날 때까지 다른 일을 하고 있는다.',

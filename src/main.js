@@ -2,7 +2,7 @@ import './style.css';
 import './chat.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
 import { share, typeUrl, codeFromPath, answersFromQuery, scenarioSetFromQuery } from './share.js';
-import { keyedItems, scoreKeyed, qualityDimensionNames } from './keyed.js';
+import { keyedItems, scoreKeyed, qualityDimensionNames, KEYED_QUESTION_COUNT } from './keyed.js';
 import { mountShell, screenHost, shellScroller } from './shell.jsx';
 
 const capabilities = [
@@ -840,8 +840,7 @@ function renderKeyedOnly() {
   if (retryKeyed) retryKeyed.onclick = beginKeyed;
 }
 
-// 역량 문항도 매번 뽑는다. 30개 후보에서 20개를 내고, 직전에 낸 문항은 뒤로 미룬다.
-const KEYED_QUESTION_COUNT = 20;
+// 역량 문항도 매번 뽑는다. 후보에서 KEYED_QUESTION_COUNT 개를 내고, 직전에 낸 문항은 뒤로 미룬다.
 const KEYED_SEEN_KEY = 'fabl-seen-keyed';
 
 function pickKeyedSet() {
