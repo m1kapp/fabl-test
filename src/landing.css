@@ -192,3 +192,16 @@
 .kit-situation-codes img { width: 34px; height: 34px; object-fit: cover; background: #f1eefe; border-radius: 50%; }
 .kit-situation-codes b { color: var(--kit-accent, #6047d8); font-size: 11.5px; font-weight: 950; letter-spacing: .02em; }
 .kit-situation-codes em { color: #8b95a8; font-size: 9.5px; font-style: normal; line-height: 1.25; }
+
+/* 읽을거리 입구 — 눌러서 바텀시트로 연다 */
+.kit-readings { display: grid; gap: 8px; }
+.kit-reading { display: grid; grid-template-columns: 30px 1fr 12px; gap: 11px; align-items: center; width: 100%; padding: 13px; text-align: left; background: #fff; border: 1px solid #e3e7ee; border-radius: 14px; cursor: pointer; }
+.kit-reading:hover { border-color: var(--kit-accent, #6047d8); background: #faf9ff; }
+.kit-reading > span { font-size: 21px; line-height: 1; }
+.kit-reading b { display: block; font-size: 13.5px; letter-spacing: -.02em; }
+.kit-reading em { display: block; margin-top: 3px; color: #8b95a8; font-size: 11.5px; font-style: normal; line-height: 1.4; }
+.kit-reading i { color: #b6bdc9; font-size: 18px; font-style: normal; }
+
+/* 바텀시트 안 여백. 시트가 자체 패딩을 주므로 섹션 패딩은 걷어낸다. */
+.kit-sheet-body { padding: 4px 16px 24px; }
+.kit-sheet-cta { position: sticky; bottom: 0; padding: 12px 0 4px; background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 38%); }

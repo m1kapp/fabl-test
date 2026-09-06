@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AppShell, AppShellHeader, AppShellContent, TabBar, Tab, Section, Divider, Button, Watermark, watermarkTint } from '@m1kapp/kit';
+import { AppShell, AppShellHeader, AppShellContent, TabBar, Tab, Section, Divider, Button, InAppSheet, Watermark, watermarkTint } from '@m1kapp/kit';
 import './landing.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
 import { keyedItems, qualityDimensionNames, KEYED_QUESTION_COUNT } from './keyed.js';
@@ -30,62 +30,11 @@ function typeGroups() {
   });
 }
 
-function HomeTab({ on, ctaRef }) {
+
+// 홈이 너무 길어져서 읽을거리는 바텀시트로 뺐다. 각 시트 끝에는 바로 시작하는 버튼을 둔다.
+function TypesPanel() {
   return (
     <>
-      <Section className="pt-6">
-        <p className="kit-eyebrow">FRAME · AIM · BUILD · LINK</p>
-        <h1 className="kit-h1">일이 떨어지면<br />나는 <em>뭐부터</em> 할까?</h1>
-        <p className="kit-lead">
-          상황부터 파악하는 사람, 뭐가 중요한지 먼저 정하는 사람, 일단 만들어보는 사람,
-          관련된 사람부터 맞추는 사람. 성격이 아니라 <b>먼저 손대는 곳</b>이 다릅니다.
-        </p>
-        <figure className="kit-hero-shot">
-          <img src="/landing/hero.jpg" alt="새 일감 앞에서 어느 길로 갈지 고르는 사람" />
-        </figure>
-        {/* 두 코스를 나란히 둔다. 세로로 쌓으면 위가 기본, 아래는 덤처럼 읽힌다. */}
-        <div className="kit-picker" ref={ctaRef}>
-          <button className="kit-pick" onClick={() => on.start('short')}>
-            <b>3분</b>
-            <span>유형만</span>
-            <p>내가 뭐부터 하는 사람인지</p>
-            <i>시작 →</i>
-          </button>
-          <button className="kit-pick" onClick={() => on.start('full')}>
-            <b>15분</b>
-            <span>유형 + 역량</span>
-            <p>정답 있는 문제로 실제 실력까지</p>
-            <i>시작 →</i>
-          </button>
-        </div>
-      </Section>
-
-      <Divider />
-
-      <Section>
-        <p className="kit-eyebrow">FOUR WORK MODES</p>
-        <h2 className="kit-h2">FABL — 일은 네 가지 힘으로 흘러갑니다.</h2>
-        <p className="kit-body">
-          일이 주어지면 사람마다 먼저 손대는 곳이 다릅니다. 그 네 갈래가 FABL 이고,
-          자주 쓰는 세 가지를 <b>먼저 쓰는 차례대로</b> 이으면 내 유형이 됩니다.
-        </p>
-        <div className="kit-modes">
-          {workModes.map((mode, index) => (
-            <article className={`kit-mode mode-${mode.key.toLowerCase()}`} key={mode.key}>
-              <img className="kit-mode-shot" src={`/landing/mode-${mode.en.toLowerCase()}.jpg`} alt="" loading="lazy" />
-              <div><span>0{index + 1}</span><b>{mode.key}</b></div>
-              <small>{mode.en} · {mode.ko}</small>
-              <h3>{mode.question}</h3>
-              <p>{mode.desc}</p>
-            </article>
-          ))}
-        </div>
-      </Section>
-
-      <Divider />
-
-      <Section className="pb-2">
-        <p className="kit-eyebrow">24 WORKING TYPES</p>
         <h2 className="kit-h2">같은 강점도 먼저 쓰는 게 다르면 다른 유형입니다.</h2>
         <p className="kit-body">
           자주 쓰는 세 가지 힘을 <b>먼저 쓰는 차례대로</b> 이은 것이 유형 코드입니다.
@@ -124,12 +73,13 @@ function HomeTab({ on, ctaRef }) {
           인물은 공개된 업적과 행동에서 연상한 아키타입 예시이며, 실제 성격이나 역량을
           진단한 결과가 아닙니다.
         </p>
-      </Section>
+    </>
+  );
+}
 
-      <Divider />
-
-      <Section>
-        <p className="kit-eyebrow">MBTI 로 치면</p>
+function MbtiPanel() {
+  return (
+    <>
         <h2 className="kit-h2">겹칠 법한 성향은 이쪽</h2>
         <p className="kit-body">
           <b>맞춰 본 적은 없습니다.</b> 두 검사를 같이 받은 사람들의 답을 대조한 자료가
@@ -151,12 +101,13 @@ function HomeTab({ on, ctaRef }) {
           (<b>근거</b> 탭 참고). 두 결과가 다르게 나와도 둘 중 하나가 틀린 게 아니라
           애초에 다른 것을 봅니다 — MBTI 는 성향, FABL 은 <b>일이 왔을 때의 순서</b>예요.
         </p>
-      </Section>
+    </>
+  );
+}
 
-      <Divider />
-
-      <Section className="kit-home-tail">
-        <p className="kit-eyebrow">팀 조합</p>
+function TeamPanel() {
+  return (
+    <>
         <h2 className="kit-h2">일잘러 유형은 없습니다</h2>
         <p className="kit-body">
           <b>어느 유형이 더 낫다는 답은 못 냅니다.</b> 유형 점수는 내 답 안에서 비중을
@@ -266,7 +217,99 @@ function HomeTab({ on, ctaRef }) {
             작고 조건을 탄다는 연구는 <b>근거</b> 탭에 적어 뒀어요.
           </p>
         </div>
+    </>
+  );
+}
+
+const READINGS = [
+  { key: 'types', icon: '🗂️', title: '24유형 전부 보기', desc: '유형마다 닮은 인물과 잘 맞는 짝' },
+  { key: 'mbti', icon: '🔤', title: 'MBTI 로 치면', desc: '겹칠 법한 성향의 방향' },
+  { key: 'team', icon: '🧩', title: '팀 조합과 상황별 배치', desc: '일잘러 유형은 없다 · 쏠리면 생기는 일' }
+];
+
+function HomeTab({ on, ctaRef }) {
+  const [sheet, setSheet] = useState(null);
+  const reading = READINGS.find(item => item.key === sheet);
+  return (
+    <>
+      <Section className="pt-6">
+        <p className="kit-eyebrow">FRAME · AIM · BUILD · LINK</p>
+        <h1 className="kit-h1">일이 떨어지면<br />나는 <em>뭐부터</em> 할까?</h1>
+        <p className="kit-lead">
+          상황부터 파악하는 사람, 뭐가 중요한지 먼저 정하는 사람, 일단 만들어보는 사람,
+          관련된 사람부터 맞추는 사람. 성격이 아니라 <b>먼저 손대는 곳</b>이 다릅니다.
+        </p>
+        <figure className="kit-hero-shot">
+          <img src="/landing/hero.jpg" alt="새 일감 앞에서 어느 길로 갈지 고르는 사람" />
+        </figure>
+        {/* 두 코스를 나란히 둔다. 세로로 쌓으면 위가 기본, 아래는 덤처럼 읽힌다. */}
+        <div className="kit-picker" ref={ctaRef}>
+          <button className="kit-pick" onClick={() => on.start('short')}>
+            <b>3분</b>
+            <span>유형만</span>
+            <p>내가 뭐부터 하는 사람인지</p>
+            <i>시작 →</i>
+          </button>
+          <button className="kit-pick" onClick={() => on.start('full')}>
+            <b>15분</b>
+            <span>유형 + 역량</span>
+            <p>정답 있는 문제로 실제 실력까지</p>
+            <i>시작 →</i>
+          </button>
+        </div>
       </Section>
+
+      <Divider />
+
+      <Section>
+        <p className="kit-eyebrow">FOUR WORK MODES</p>
+        <h2 className="kit-h2">FABL — 일은 네 가지 힘으로 흘러갑니다.</h2>
+        <p className="kit-body">
+          일이 주어지면 사람마다 먼저 손대는 곳이 다릅니다. 그 네 갈래가 FABL 이고,
+          자주 쓰는 세 가지를 <b>먼저 쓰는 차례대로</b> 이으면 내 유형이 됩니다.
+        </p>
+        <div className="kit-modes">
+          {workModes.map((mode, index) => (
+            <article className={`kit-mode mode-${mode.key.toLowerCase()}`} key={mode.key}>
+              <img className="kit-mode-shot" src={`/landing/mode-${mode.en.toLowerCase()}.jpg`} alt="" loading="lazy" />
+              <div><span>0{index + 1}</span><b>{mode.key}</b></div>
+              <small>{mode.en} · {mode.ko}</small>
+              <h3>{mode.question}</h3>
+              <p>{mode.desc}</p>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      <Divider />
+
+      <Section className="kit-home-tail">
+        <p className="kit-eyebrow">더 읽을거리</p>
+        <h2 className="kit-h2">궁금한 것만 열어 보세요</h2>
+        <div className="kit-readings">
+          {READINGS.map(item => (
+            <button className="kit-reading" key={item.key} onClick={() => setSheet(item.key)}>
+              <span className="kit-tab-icon">{item.icon}</span>
+              <div>
+                <b>{item.title}</b>
+                <em>{item.desc}</em>
+              </div>
+              <i>›</i>
+            </button>
+          ))}
+        </div>
+      </Section>
+
+      <InAppSheet open={Boolean(sheet)} onClose={() => setSheet(null)} title={reading ? reading.title : ''} fullHeight>
+        <div className="kit-sheet-body">
+          {sheet === 'types' && <TypesPanel />}
+          {sheet === 'mbti' && <MbtiPanel />}
+          {sheet === 'team' && <TeamPanel />}
+          <div className="kit-sheet-cta">
+            <Button full shape="pill" onClick={() => { setSheet(null); on.start('short'); }}>3분 만에 내 유형 찾기 →</Button>
+          </div>
+        </div>
+      </InAppSheet>
     </>
   );
 }
