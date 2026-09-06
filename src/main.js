@@ -3,6 +3,7 @@ import './chat.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
 import { share, typeUrl, codeFromPath, answersFromQuery } from './share.js';
 import { keyedItems, scoreKeyed, qualityDimensionNames } from './keyed.js';
+import { mountLanding, unmountLanding } from './landing.jsx';
 
 const capabilities = [
   { key: 'sensemaking', ko: '맥락추론력', en: 'Sensemaking', desc: '불완전한 정보에서도 전체 흐름과 의미를 파악한다.' },
@@ -82,19 +83,6 @@ function renderBehaviorInsights(selectedModes) {
   return behaviorScenarios.map((scenario, index) => `<article><span>0${index + 1}</span><div><b>${scenario.title}</b><div class="behavior-steps">${selectedModes.map((mode, step) => `<span><em>${step + 1}</em><i>${scenario.actions[mode.key]}</i></span>`).join('')}</div></div></article>`).join('');
 }
 
-function renderTypeMatrix() {
-  const modeTitle = mode => `<b><strong>${mode.key}</strong><em>${mode.en.slice(1)}</em></b><span>${mode.archetype} · ${mode.ko}</span>`;
-  const headers = workModes.map(mode => `<div class="matrix-head">${modeTitle(mode)}</div>`).join('');
-  const rows = workModes.map(primary => {
-    const cells = workModes.map(secondary => {
-      if (primary.key === secondary.key) return '<div class="matrix-cell empty">—</div>';
-      const remaining = workModes.map(mode => mode.key).filter(key => ![primary.key, secondary.key].includes(key));
-      return `<div class="matrix-cell">${remaining.map(key => { const code = `${primary.key}${secondary.key}${key}`; const rankedCode = [...code].map((letter, index) => `<strong class="rank-${index + 1}">${letter}</strong>`).join(''); return `<span><img src="/people/${code}.jpg" alt="${workTypePeople[code]} 초상"><i><b class="ranked-code" aria-label="${code}">${rankedCode}</b><em>${workTypeNames[code]}</em><small>${workTypePeople[code]}</small><p>${workTypeReasons[code]}</p></i></span>`; }).join('')}</div>`;
-    }).join('');
-    return `<div class="matrix-row-head">${modeTitle(primary)}</div>${cells}`;
-  }).join('');
-  return `<div class="type-matrix"><div class="matrix-corner">시작 ↓<br>보조 →</div>${headers}${rows}</div><p class="people-note">인물은 공개된 업적과 행동에서 연상한 아키타입 예시이며, 실제 성격이나 역량을 진단한 결과가 아닙니다.</p>`;
-}
 
 const scenarioImageAlts = [
   '주간 보고서의 수치 불일치를 살피는 장면',
@@ -657,6 +645,7 @@ function renderKeyedPanel() {
 function render() {
   clearInterval(quickTimerId);
   saveState();
+  if (state.screen !== 'intro') unmountLanding();
   if (state.screen === 'intro') renderIntro();
   else if (state.screen === 'test') renderQuestion();
   else if (state.screen === 'chat') renderChat();
@@ -666,21 +655,22 @@ function render() {
 
 function renderIntro() {
   const archives = loadArchives();
-  const savedActions = archives.length ? `<div class="saved-actions"><button id="latestResult">최근 결과 보기 <b>${archives.length}</b></button></div>` : '';
-  const modeCards = workModes.map((mode, index) => `<article class="mode-card mode-${mode.key.toLowerCase()}"><div><span>0${index + 1}</span><b>${mode.key}</b></div><small>${mode.en} · ${mode.ko}</small><h3>${mode.question}</h3><p>${mode.desc}</p></article>`).join('');
-  app.innerHTML = `<main class="intro landing"><nav class="landing-nav"><div class="brand">FABL TEST <span>β</span></div><a href="#types">24 TYPES</a></nav><section class="hero landing-hero"><div><p class="eyebrow">FRAME · AIM · BUILD · LINK</p><h1>일이 떨어지면<br>나는 <em>뭐부터</em><br>할까?</h1><p class="lead">상황부터 파악하는 사람, 뭐가 중요한지 먼저 정하는 사람, 일단 만들어보는 사람, 관련된 사람부터 맞추는 사람. 성격이 아니라 <b>먼저 손대는 곳</b>이 다릅니다.</p><div class="hero-actions"><button class="primary" id="start">내 업무 유형 찾기 <b>→</b></button><button class="text-button" id="startFull">정밀 코스로 하기</button>${savedActions}</div><p class="meta">12개 상황 · 약 2~3분 · 정밀 코스는 서술형까지 20상황 · 약 6~8분</p></div><div class="hero-code" aria-label="결과 예시 FAB"><b class="hero-code-tag">결과는 이렇게 나옵니다 · 예시</b><span>F</span><i></i><span>A</span><i></i><span>B</span><small>FRAME → AIM → BUILD</small><strong>FAB · 분석추진형</strong></div></section><section class="mode-section"><div class="section-copy"><p class="eyebrow">FOUR WORK MODES</p><h2>FABL — 일은 네 가지<br>힘으로 흘러갑니다.</h2><p>일이 주어지면 사람마다 먼저 손대는 곳이 다릅니다. 그 네 갈래가 FABL 이고, 자주 쓰는 세 가지를 <b>먼저 쓰는 차례대로</b> 이으면 내 유형이 됩니다.</p></div><div class="mode-grid">${modeCards}</div></section><section class="type-section" id="types"><div class="section-copy"><p class="eyebrow">24 WORKING TYPES</p><h2>같은 강점도<br>먼저 쓰는 게 다르면<br>다른 유형입니다.</h2><p>세로에서 시작 모드, 가로에서 보조 모드를 찾으세요. 각 칸의 두 유형은 세 번째로 사용하는 힘이 다릅니다.</p></div>${renderTypeMatrix()}<div class="matrix-example"><span>예시</span><b>FAB · 분석추진형</b><p>상황을 읽고 → 중요한 것을 고르고 → 직접 만들어 끝냅니다.</p></div></section><section class="landing-cta"><p class="eyebrow">READY TO FIND YOUR TYPE?</p><h2>당신이 먼저 손대는 곳은<br>어디일까요?</h2><button class="primary" id="startBottom">테스트 시작 <b>→</b></button><button class="text-button" id="startBottomFull">정밀 코스</button><button class="text-button" id="importResult">결과 파일 불러오기</button><input type="file" id="resultFile" accept="application/json,.json" hidden></section><footer class="landing-footer"><b>FABL TEST β</b><span>FRAME · AIM · BUILD · LINK</span></footer></main>`;
-  // beginTest 를 그대로 넘기면 클릭 이벤트가 course 인자로 들어가 긴 코스로 빠진다.
-  document.querySelector('#start').onclick = () => beginTest('short');
-  document.querySelector('#startBottom').onclick = () => beginTest('short');
-  document.querySelector('#startFull').onclick = () => beginTest('full');
-  document.querySelector('#startBottomFull').onclick = () => beginTest('full');
-  if (archives.length) document.querySelector('#latestResult').onclick = () => { state = { ...createState(), ...archives[0], screen: 'result' }; render(); };
-  const fileInput = document.querySelector('#resultFile');
-  document.querySelector('#importResult').onclick = () => fileInput.click();
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'application/json,.json';
   fileInput.onchange = async () => {
     try { await restoreResultFile(fileInput.files[0]); }
     catch { alert('FABL 테스트 결과 파일을 확인해주세요.'); }
   };
+  // 랜딩만 @m1kapp/kit 앱셸(React)로 그린다. 나머지 화면은 기존 바닐라 렌더다.
+  mountLanding(app, {
+    archiveCount: archives.length,
+    on: {
+      start: course => beginTest(course),
+      latest: () => { state = { ...createState(), ...archives[0], screen: 'result' }; render(); },
+      importResult: () => fileInput.click()
+    }
+  });
 }
 
 // 문항이 바뀔 때 화면을 맨 위로 올린다. innerHTML 만 교체하면 스크롤 위치가
