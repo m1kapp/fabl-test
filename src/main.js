@@ -1,7 +1,7 @@
 import './style.css';
 import './chat.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
-import { share, typeUrl, codeFromPath, answersFromQuery } from './share.js';
+import { share, typeUrl, codeFromPath, answersFromQuery, scenarioSetFromQuery } from './share.js';
 import { keyedItems, scoreKeyed, qualityDimensionNames } from './keyed.js';
 import { mountShell, screenHost, shellScroller } from './shell.jsx';
 
@@ -374,6 +374,52 @@ const scenarios = scenarioBlueprints.map((scenario, index) => {
   };
 });
 
+// 짧은 코스 후보. 예전에는 아래 12개를 고정으로 냈는데, 두세 번만 풀어도 문항을 외운다.
+// 이제 후보 전체에서 매번 12개를 뽑고, 직전 회차에 나온 문항은 뒤로 미룬다.
+const SHORT_QUESTION_COUNT = 12;
+const SEEN_KEY = 'fabl-seen-scenarios';
+
+function buildScenario(index) {
+  return {
+    ...scenarioBlueprints[index],
+    imageIndex: index,
+    title: plainScenarioCopy[index].title,
+    body: plainScenarioCopy[index].body,
+    options: scenarioBlueprints[index].options.map((option, optionIndex) => ({
+      ...option,
+      text: plainScenarioCopy[index].options[optionIndex]
+    }))
+  };
+}
+
+function loadSeenScenarios() {
+  try { return JSON.parse(localStorage.getItem(SEEN_KEY)) || []; } catch { return []; }
+}
+
+function saveSeenScenarios(indexes) {
+  try { localStorage.setItem(SEEN_KEY, JSON.stringify(indexes)); } catch { /* 저장 불가여도 진행한다 */ }
+}
+
+/** 이번 회차에 낼 문항 12개. 직전에 낸 문항은 후순위로 밀어 겹침을 줄인다. */
+function pickShortScenarioSet() {
+  const seen = new Set(loadSeenScenarios());
+  const all = scenarioBlueprints.map((_, index) => index);
+  const fresh = shuffleValues(all.filter(index => !seen.has(index)));
+  const rest = shuffleValues(all.filter(index => seen.has(index)));
+  const picked = [...fresh, ...rest].slice(0, SHORT_QUESTION_COUNT);
+  saveSeenScenarios(picked);
+  return picked;
+}
+
+function shuffleValues(values) {
+  const copy = [...values];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 const shortScenarios = SHORT_SCENARIO_INDEXES.map(index => ({
   ...scenarioBlueprints[index],
   imageIndex: index,
@@ -387,7 +433,9 @@ const shortScenarios = SHORT_SCENARIO_INDEXES.map(index => ({
 
 // 지금 진행 중인 코스의 문항 목록. 짧은 코스와 긴 코스가 같은 채점을 쓰게 하는 지점이다.
 function activeScenarios() {
-  return state && state.course === 'short' ? shortScenarios : scenarios;
+  if (!state || state.course !== 'short') return scenarios;
+  const set = state.scenarioSet;
+  return Array.isArray(set) && set.length ? set.map(buildScenario) : shortScenarios;
 }
 
 const deepScenarios = [
@@ -443,7 +491,7 @@ const STORAGE_KEY = 'iljaller-assessment-session-v1';
 const ARCHIVE_KEY = 'iljaller-assessment-archives-v1';
 
 function createState() {
-  return { screen: 'intro', course: 'short', current: 0, answers: [], keyedAnswers: [], keyedOrders: [], keyedCurrent: 0, optionOrders: [], scenarioOrder: [], scenarioStartedAt: [], assessmentStartedAt: null, completedAt: null, assessmentDurationMs: null, deepCurrent: 0, deepTurn: 0, deepAnswers: [], chatSignals: [], awaitingNext: false, pendingChoice: null };
+  return { screen: 'intro', course: 'short', scenarioSet: null, current: 0, answers: [], keyedAnswers: [], keyedOrders: [], keyedCurrent: 0, optionOrders: [], scenarioOrder: [], scenarioStartedAt: [], assessmentStartedAt: null, completedAt: null, assessmentDurationMs: null, deepCurrent: 0, deepTurn: 0, deepAnswers: [], chatSignals: [], awaitingNext: false, pendingChoice: null };
 }
 
 function createSampleState() {
@@ -554,11 +602,13 @@ function shuffledIndexes(length) {
 }
 
 function beginTest(course = 'short') {
-  const list = course === 'short' ? shortScenarios : scenarios;
+  const scenarioSet = course === 'short' ? pickShortScenarioSet() : null;
+  const list = course === 'short' ? scenarioSet.map(buildScenario) : scenarios;
   state = {
     // 짧은 코스는 순수 객관식('test')이라 서술형·대화 단계를 거치지 않는다.
     screen: course === 'short' ? 'test' : 'chat',
     course,
+    scenarioSet,
     current: 0,
     answers: [],
     optionOrders: list.map(scenario => shuffledIndexes(scenario.options.length)),
@@ -1158,13 +1208,13 @@ function renderResult() {
 
   // 결과가 나오면 주소창을 공유 가능한 유형 경로로 바꾼다. 이 링크를 붙여 넣으면
   // 빌드 때 찍어둔 유형별 미리보기 카드가 뜬다(해시로는 크롤러가 못 읽는다).
-  if (!state.isExample) history.replaceState(null, '', typeUrl(typeCode, state.answers));
+  if (!state.isExample) history.replaceState(null, '', typeUrl(typeCode, state.answers, state.scenarioSet));
 
   restartButton.insertAdjacentHTML('beforebegin', '<button class="primary" id="shareResult">결과 공유하기</button>');
   const shareButton = pick('#shareResult');
   actions.prepend(shareButton);
   shareButton.onclick = async () => {
-    const copied = await share(typeCode, state.answers);
+    const copied = await share(typeCode, state.answers, state.scenarioSet);
     if (!copied) return;
     shareButton.textContent = '링크를 복사했어요';
     setTimeout(() => { shareButton.textContent = '결과 공유하기'; }, 2000);
@@ -1222,7 +1272,7 @@ if (sharedCode) {
   const sharedAnswers = answersFromQuery();
   if (sharedAnswers && sharedAnswers.length) {
     // 답변까지 실려 왔으면 레이더까지 그대로 복원한다.
-    state = { ...createState(), course: 'short', answers: sharedAnswers, screen: 'result' };
+    state = { ...createState(), course: 'short', scenarioSet: scenarioSetFromQuery(), answers: sharedAnswers, screen: 'result' };
     render();
   } else {
     mountShell(app, { mode: 'screen' });
