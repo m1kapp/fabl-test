@@ -554,3 +554,7 @@
 .chat-option p { font-size: 13.5px; line-height: 1.5; }
 .quick-hint { margin: 8px 3px; font-size: 10.5px; }
 .continue-row { margin-top: 12px; }
+
+/* 기록 뒤 줄: 다시 고르기 + 다음 상황 */
+.continue-row { display: flex; gap: 8px; justify-content: flex-end; }
+.continue-row .ghost { padding: 12px 14px; border-radius: 11px; font-size: 13px; font-weight: 700; }

@@ -117,7 +117,7 @@ const scenarioImageAlts = [
 
 const scenarioBlueprints = [
   {
-    domain: '물류 운영', title: '운영 효율이 개선된 주간 보고',
+    domain: '물류 운영', title: '주문 750건, 자동 처리 270건',
     body: '주간 회의에서 하루 주문 750건, 자동화율 60%, 자동 처리 270건이 담긴 자료가 공유됐다. 발표자는 지난주보다 처리 시간이 줄어 운영 효율이 개선되고 있다고 설명한 뒤 다음 안건으로 넘어가려 한다.',
     options: [
       { text: '예상값과 차이가 나는 지점을 직접 계산하고 집계 조건부터 대조한다.', scores: { validation: 3, focus: 2 } },
@@ -127,7 +127,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '교육 서비스', title: '추천 목록에서 사라진 강의',
+    domain: '교육 서비스', title: '찾는 강의가 목록에 없다는 문의',
     body: '수강생이 특정 강의를 찾을 수 없다고 문의했다. 동료는 추천 알고리즘 전체를 교체해야 한다고 주장한다.',
     options: [
       { text: '강의가 보이지 않는 상황부터 다시 확인하고, 추천 방식 전체의 문제는 나중에 따로 살펴본다.', scores: { focus: 3, priority: 3, validation: 2 } },
@@ -137,7 +137,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '식품 제조', title: '해외에서 발견한 새로운 포장법',
+    domain: '식품 제조', title: '해외 업체가 쓰는 포장법',
     body: '해외 물류업체의 포장 방식이 자사의 배송 파손 문제와 맞을 가능성이 있어 보인다. 아직 국내 적용 사례는 없다.',
     options: [
       { text: '작은 포장 실험을 설계해 실제 파손률이 달라지는지 먼저 시험한다.', scores: { pioneering: 3, delivery: 2, validation: 2 } },
@@ -147,7 +147,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '신규 매장', title: '세 협력사의 일정이 모두 다르다',
+    domain: '신규 매장', title: '업체 세 곳이 말한 날짜가 다르다',
     body: '개점을 위해 인테리어 업체·결제사·물류센터의 작업이 필요하지만 일정과 우선순위가 서로 다르다.',
     options: [
       { text: '어떤 일이 끝나야 다음 일을 시작할 수 있는지 정리해, 개점일을 늦출 가능성이 큰 일부터 확인한다.', scores: { sensemaking: 3, priority: 3, focus: 2 } },
@@ -157,7 +157,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '지역 센터', title: '내 의견과 다른 최종 결정',
+    domain: '지역 센터', title: '운영시간을 짧게 시작하기로 정해졌다',
     body: '나는 운영시간을 늘려야 한다고 판단했지만, 검토 후 책임자는 짧은 운영시간으로 시작하기로 결정했다.',
     options: [
       { text: '내 우려와 근거를 한 번 명확히 남긴 뒤 최종 결정에 맞춰 실행한다.', scores: { recalibration: 3, alignment: 3, delivery: 2 } },
@@ -167,7 +167,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '예약 서비스', title: '출시 직전 발견된 작은 오류',
+    domain: '예약 서비스', title: '공개 하루 전, 할인 문구가 실제와 다르다',
     body: '공개를 하루 앞두고 일부 조건에서 할인 문구가 잘못 표시된다. 결제 금액은 정확하며 전체 정책 개편 논의도 진행 중이다.',
     options: [
       { text: '발생 조건과 노출 범위를 빠르게 확인해 출시 판단에 필요한 위험을 계산한다.', scores: { validation: 3, priority: 3, sensemaking: 2 } },
@@ -177,7 +177,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '공연 운영', title: '매진된 공연의 엇갈린 반응',
+    domain: '공연 운영', title: '매진 공연에 좌석 관련 글이 이어진다',
     body: '신규 공연이 전석 매진됐고 만족도도 높다. 다만 장기 회원 게시판에는 좌석 선택이 어렵다는 글이 반복해서 올라오고 있다.',
     options: [
       { text: '전체 만족도보다 장기 회원의 이용 흐름을 따로 나눠 불편이 집중되는 조건을 찾는다.', scores: { sensemaking: 3, validation: 3 } },
@@ -187,7 +187,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '출판 유통', title: '반품이 줄어든 신간 배송',
+    domain: '출판 유통', title: '전체 반품은 줄고 한 곳은 늘었다',
     body: '신간의 전체 반품률이 지난 분기보다 낮아졌다. 한 대형 서점만 배송 지연으로 반품이 늘었지만 전체 수치에는 거의 영향을 주지 않는다.',
     options: [
       { text: '서점 규모와 거래 지속성을 고려해 해당 유통 경로의 지연 원인을 별도로 본다.', scores: { sensemaking: 3, impact: 3 } },
@@ -197,7 +197,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '연구 지원', title: '예상보다 빠른 실험 완료',
+    domain: '연구 지원', title: '연구소가 성공을 먼저 알려왔다',
     body: '외부 연구소가 예정일보다 일찍 실험 완료를 알렸다. 결과 요약은 긍정적이지만 원본 데이터와 실패 조건은 다음 주에 전달할 수 있다고 한다.',
     options: [
       { text: '결론을 공유하기 전에 원본 데이터와 실패 조건을 확인할 범위를 정한다.', scores: { validation: 3, focus: 2 } },
@@ -207,7 +207,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '도시 농업', title: '수확량을 높인 새로운 센서',
+    domain: '도시 농업', title: '새 장비를 쓴 농장에서 수확이 늘었다',
     body: '한 농장에서 새 센서를 도입한 뒤 수확량이 12% 늘었다. 현장팀은 모든 농장에 빠르게 확대하자고 제안한다.',
     options: [
       { text: '날씨·품종·작업 방식의 차이를 대조해 센서 효과인지 확인한다.', scores: { validation: 3, sensemaking: 2 } },
@@ -217,7 +217,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '박물관 전시', title: '개막일을 앞둔 설명문 변경',
+    domain: '박물관 전시', title: '전문가가 안내문 표현을 지적했다',
     body: '개막 이틀 전 전문가가 핵심 설명문의 표현이 부정확하다고 지적했다. 인쇄물은 이미 제작됐고 디지털 안내는 즉시 바꿀 수 있다.',
     options: [
       { text: '관람객 오해의 크기를 판단해 반드시 바꿀 표현부터 좁힌다.', scores: { priority: 3, focus: 3 } },
@@ -227,7 +227,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '여행 상품', title: '반응이 좋은 신규 코스',
+    domain: '여행 상품', title: '예약은 늘고 일정 문의도 늘었다',
     body: '새 여행 코스의 예약 전환율이 높다. 운영팀은 일정이 빠듯해 현장 문의가 늘었다고 하지만 취소율은 아직 낮다.',
     options: [
       { text: '전환율과 별개로 현장 문의가 집중되는 일정 구간을 찾아본다.', scores: { sensemaking: 3, validation: 2 } },
@@ -237,7 +237,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '건물 관리', title: '반복되는 야간 온도 경보',
+    domain: '건물 관리', title: '전기 사용은 줄고 밤에 경보가 울린다',
     body: '새 냉난방 제어 후 에너지 사용량은 줄었다. 야간에만 일부 층에서 온도 경보가 발생하지만 출근 시간에는 정상으로 돌아온다.',
     options: [
       { text: '경보가 발생한 층·시간·외부 기온을 묶어 공통 조건을 찾는다.', scores: { sensemaking: 3, validation: 3 } },
@@ -247,7 +247,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '온라인 경매', title: '입찰 참여가 늘어난 화면',
+    domain: '온라인 경매', title: '참여자는 늘고 마감 문의도 늘었다',
     body: '화면 개편 후 입찰 참여자는 늘었지만 문의 게시판에는 마감 시간을 오해했다는 글도 증가했다. 낙찰 자체는 정상 처리됐다.',
     options: [
       { text: '이용자들이 어느 화면을 거쳐 입찰했고 어디서 마감 시간을 오해했는지 확인한다.', scores: { sensemaking: 3, validation: 3 } },
@@ -257,7 +257,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '급식 운영', title: '선호도가 높아진 새 식단',
+    domain: '급식 운영', title: '만족도는 오르고 대체식 대기는 길어졌다',
     body: '새 식단의 평균 만족도가 높고 잔반도 줄었다. 알레르기 대체식을 신청한 이용자들의 배식 대기시간은 이전보다 길어졌다.',
     options: [
       { text: '대체식이 준비되고 전달되는 과정 중 어느 단계에서 시간이 더 걸리는지 찾는다.', scores: { sensemaking: 3, validation: 3 } },
@@ -267,7 +267,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '스포츠 센터', title: '예약률이 오른 신규 프로그램',
+    domain: '스포츠 센터', title: '예약은 많고 재신청은 적다',
     body: '신규 프로그램은 예약률이 높지만 첫 달 재등록률은 기존 프로그램보다 낮다. 강사는 참여자의 숙련도 차이가 크다고 말한다.',
     options: [
       { text: '신규·숙련 참여자의 재등록률과 중도 이탈 지점을 나눠본다.', scores: { sensemaking: 3, validation: 3 } },
@@ -277,7 +277,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '병원 외래', title: '오전 대기만 길어졌다',
+    domain: '병원 외래', title: '전체 대기는 줄고 오전만 길어졌다',
     body: '외래 접수 방식을 바꾼 뒤 전체 대기 시간은 줄었다. 그런데 오전 첫 시간대 환자들의 대기만 유독 길어졌다는 민원이 이어진다.',
     options: [
       { text: '어느 시간대와 진료과에서만 길어지는지 접수 기록을 갈라 확인한다.', scores: { sensemaking: 3, validation: 2 } },
@@ -287,7 +287,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '카페 운영', title: '신메뉴는 잘 팔리는데 매장이 힘들다',
+    domain: '카페 운영', title: '신메뉴 매출은 늘고 준비 시간도 늘었다',
     body: '신메뉴 매출은 목표를 넘겼다. 그런데 점주들은 준비 시간이 길어 다른 주문이 밀린다고 말한다.',
     options: [
       { text: '어느 공정에서 시간이 더 드는지 매장 기록으로 확인한다.', scores: { sensemaking: 3, focus: 2 } },
@@ -297,7 +297,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '게임 서비스', title: '업데이트 뒤 복귀가 줄었다',
+    domain: '게임 서비스', title: '접속자는 늘고 사흘째 복귀는 줄었다',
     body: '새 시즌을 열고 접속자는 늘었다. 그런데 사흘째 이후 돌아오지 않는 이용자가 이전보다 많아졌다.',
     options: [
       { text: '돌아오지 않는 이용자가 어디까지 하고 멈췄는지 구간을 나눠 본다.', scores: { sensemaking: 3, validation: 2 } },
@@ -307,7 +307,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '아파트 관리', title: '한 동에서만 주차 다툼이 난다',
+    domain: '아파트 관리', title: '전체 민원은 줄고 한 동은 다툼이 있다',
     body: '주차 구역을 다시 나눈 뒤 전체 민원은 줄었다. 그런데 특정 동에서는 밤마다 자리 다툼이 생긴다.',
     options: [
       { text: '그 동만 다른 조건이 무엇인지 세대 수와 차량 수를 대조한다.', scores: { validation: 3, sensemaking: 2 } },
@@ -317,7 +317,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '도서관 운영', title: '신청은 꽉 차는데 자리가 빈다',
+    domain: '도서관 운영', title: '신청은 마감되고 참석은 절반이다',
     body: '주말 강좌는 신청이 열리자마자 마감된다. 그런데 실제 참석률은 절반쯤이라는 기록이 남아 있다.',
     options: [
       { text: '신청은 했는데 오지 않은 사람들의 공통점을 기록에서 찾는다.', scores: { sensemaking: 3, validation: 2 } },
@@ -327,7 +327,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '자동차 정비', title: '같은 고장이 다시 들어온다',
+    domain: '자동차 정비', title: '수리한 차가 두 주 안에 다시 왔다',
     body: '수리를 마친 차가 두 주 안에 같은 증상으로 다시 들어오는 일이 늘었다. 정비 기록에는 정상 처리로 남아 있다.',
     options: [
       { text: '다시 온 차들의 부품과 작업 내용을 대조해 공통점을 찾는다.', scores: { validation: 3, sensemaking: 2 } },
@@ -337,7 +337,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '온라인 광고', title: '클릭은 늘고 구매는 그대로다',
+    domain: '온라인 광고', title: '클릭은 40% 늘고 구매는 그대로다',
     body: '새 광고 문구로 바꾼 뒤 클릭은 40% 늘었다. 그런데 구매 건수는 거의 변하지 않았다.',
     options: [
       { text: '클릭한 사람들이 어느 화면에서 멈추는지 흐름을 갈라 본다.', scores: { sensemaking: 3, focus: 2 } },
@@ -347,7 +347,7 @@ const scenarioBlueprints = [
     ]
   },
   {
-    domain: '공공 민원', title: '접수는 늘었는데 처리가 밀린다',
+    domain: '공공 민원', title: '접수는 두 배, 인력은 그대로다',
     body: '온라인 접수를 열자 민원 수가 두 배가 됐다. 담당 인력은 그대로라 처리 기한을 넘기는 건이 쌓인다.',
     options: [
       { text: '밀리는 민원이 어떤 종류인지 갈라 원인을 찾는다.', scores: { sensemaking: 3, focus: 2 } },
@@ -362,122 +362,122 @@ const scenarioBlueprints = [
 // 읽자마자 이해되는 게 목표라 해요체 두 문장, 선택지는 20자 안쪽 행동 한 줄로 맞췄다.
 const plainScenarioCopy = [
   {
-    title: '숫자가 안 맞아요',
+    title: '주문 750건 · 자동 처리 270건',
     body: '주문은 하루 750건이고, 그중 60%를 자동 처리했다고 발표했어요. 그런데 자동 처리는 270건으로 적혀 있어요.',
     options: ['두 숫자를 직접 계산해 보기', '담당자에게 어떻게 센 건지 묻기', '이 숫자로 뭘 정하려는지 확인하기', '틀린 자료를 찾아 같이 고치기']
   },
   {
-    title: '강의가 안 보인대요',
+    title: '찾는 강의가 목록에 없대요',
     body: '수강생이 원하는 강의를 못 찾겠다고 해요. 동료는 추천 방식을 전부 바꾸자고 해요.',
     options: ['왜 안 보이는지부터 확인하기', '수강생에게 찾는 방법 먼저 알려주기', '다른 강의도 그런지 찾아보기', '한 명은 지금 고치고 한 명은 크게 보기']
   },
   {
-    title: '새 포장법을 봤어요',
+    title: '해외 업체가 쓰는 포장법이 있어요',
     body: '해외 업체가 쓰는 포장법이 배송 파손을 줄일 것 같아요. 국내에서 써본 사례는 아직 없어요.',
     options: ['몇 개에 써보고 파손이 주는지 보기', '우리 배송에도 통할지 차이 알아보기', '지금 시험할 만한 일인지 따져보기', '배송·구매 담당자에게 같이 하자고 하기']
   },
   {
-    title: '일정이 다 달라요',
+    title: '업체 세 곳이 말한 날짜가 달라요',
     body: '가게를 열려면 공사·결제 설치·상품 배송이 끝나야 해요. 업체 세 곳이 말한 날짜가 서로 달라요.',
     options: ['뭐가 늦으면 개점이 늦는지 찾기', '업체 셋과 가능한 날짜 다시 잡기', '담당자와 완료일 적어 매일 확인하기', '꼭 할 일과 나중 할 일 나누기']
   },
   {
-    title: '내 의견과 다르게 정해졌어요',
+    title: '운영시간을 짧게 시작하기로 정해졌어요',
     body: '나는 운영시간을 길게 하자고 했어요. 책임자는 짧게 시작하기로 정했어요.',
     options: ['걱정을 한 번 말하고 결정대로 준비하기', '반응 보고 다시 볼 날짜 정하자고 하기', '왜 그렇게 정했는지 이유 확인하기', '정해진 시간 안에서 더 잘할 방법 찾기']
   },
   {
-    title: '공개 하루 전에 오류를 봤어요',
+    title: '공개 하루 전, 할인 문구가 실제와 달라요',
     body: '일부 화면의 할인 문구가 틀렸어요. 실제 결제 금액은 맞아요.',
     options: ['누구에게 얼마나 자주 보이는지 확인하기', '문구만 고치고 예정대로 공개하기', '고객 안내와 문의 답변 준비하기', '지금 고칠 것과 나중 고칠 것 나누기']
   },
   {
-    title: '매진인데 불만이 반복돼요',
+    title: '공연은 매진, 좌석 글은 계속 올라와요',
     body: '새 공연은 매진이고 만족도도 높아요. 그런데 단골들은 좌석 고르기가 어렵다는 글을 계속 남겨요.',
     options: ['단골에게만 생기는 이유 찾기', '다음 예매 전에 좌석 안내 고치기', '회원에게 어디서 막혔는지 직접 묻기', '같은 말 하는 사람이 느는지 지켜보기']
   },
   {
-    title: '한 곳만 나빠졌어요',
+    title: '전체 반품은 줄고 한 곳은 늘었어요',
     body: '전체 서점의 반품은 줄었어요. 그런데 거래가 큰 한 곳은 배송이 늦어 반품이 늘었어요.',
     options: ['그 거래처 규모와 앞으로의 영향 보기', '전체 성과와 그 문제를 나눠 다루기', '배송 기록에서 어디부터 늦었는지 찾기', '다음 배송은 다른 길로 보내보기']
   },
   {
-    title: '결과가 너무 빨리 왔어요',
+    title: '연구소가 성공을 먼저 알려왔어요',
     body: '외부 연구소가 실험이 성공했다고 먼저 알려왔어요. 자세한 자료는 다음 주에 와요.',
     options: ['알리기 전에 자세한 자료 확인하기', '확인 중이라고 밝히고 날짜도 알리기', '이 결과로 뭘 정할지 먼저 확인하기', '결과를 바탕으로 다음 실험 준비하기']
   },
   {
-    title: '장비를 바꾸니 수확이 늘었어요',
+    title: '새 장비를 쓴 농장에서 수확이 늘었어요',
     body: '한 농장에서 새 장비를 쓰고 수확이 늘었어요. 현장팀은 모든 농장에 바로 넣자고 해요.',
     options: ['날씨 덕인지 장비 덕인지 확인하기', '환경이 다른 농장에서 먼저 해보기', '비용과 효과 비교해 순서 정하기', '성공·중단 기준 정하고 조금씩 늘리기']
   },
   {
-    title: '안내문이 틀렸대요',
+    title: '전문가가 안내문 표현을 지적했어요',
     body: '행사 이틀 전, 전문가가 중요한 표현이 부정확하다고 했어요. 종이 안내문은 이미 만들었어요.',
     options: ['크게 오해할 부분부터 골라내기', '화면부터 고치고 종이 보완법 찾기', '전문가에게 꼭 고칠 문장 골라달라 하기', '행사 뒤 질문 모아 전체 다시 만들기']
   },
   {
-    title: '잘 팔리는데 문의가 늘어요',
+    title: '예약은 늘고 일정 문의도 늘었어요',
     body: '새 여행 상품은 예약이 잘돼요. 그런데 일정이 빠듯하다는 문의가 계속 늘어요.',
     options: ['어느 일정에 문의가 몰리는지 찾기', '예약 전에 빠듯하다고 분명히 알리기', '취소도 느는지 조금 더 지켜보기', '제일 힘든 일정 하나 바꾸기']
   },
   {
-    title: '밤마다 경보가 울려요',
+    title: '전기 사용은 줄고 밤에 경보가 울려요',
     body: '냉난방 설정을 바꾼 뒤 전기는 줄었어요. 그런데 몇 층은 밤마다 온도 경보가 울려요.',
     options: ['어느 층에서 언제 반복되는지 확인하기', '밤에 쓰는 사람이 불편한지 확인하기', '한 층 설정 바꿔 다음 날 보기', '관리자와 정상 기준·맡을 일 정하기']
   },
   {
-    title: '마감 시간을 헷갈려 해요',
+    title: '참여자는 늘고 마감 문의도 늘었어요',
     body: '경매 화면을 바꾸고 참여자는 늘었어요. 그런데 마감을 잘못 알았다는 문의도 늘었어요.',
     options: ['어느 화면에서 헷갈렸는지 찾기', '마감 시간 더 크게 보이게 고치기', '문의한 사람에게 어떻게 읽었는지 묻기', '안내 두 가지를 작게 시험해 보기']
   },
   {
-    title: '줄이 길어졌어요',
+    title: '만족도는 오르고 대체식 대기는 길어졌어요',
     body: '새 식단은 만족도가 높고 남는 음식도 줄었어요. 그런데 알레르기 대체식 줄이 길어졌어요.',
     options: ['대체식 준비에서 느린 곳 찾기', '기다리는 사람 수와 불편 크기 보기', '배식 순서 바꿔 다음 끼니에 해보기', '기다릴 시간 미리 알리고 고르게 하기']
   },
   {
-    title: '다시 오는 사람이 적어요',
+    title: '예약은 많고 재신청은 적어요',
     body: '새 운동 수업은 예약이 많아요. 그런데 다음 달 재신청은 적고 실력 차이도 커요.',
     options: ['초보와 숙련자가 언제 그만두는지 보기', '수업 전에 난이도와 준비물 알리기', '실력별 수업 작게 열어 보기', '예약과 재신청 중 뭐가 중요한지 정하기']
   },
   {
-    title: '오전에만 줄이 길어요',
+    title: '전체 대기는 줄고 오전만 길어졌어요',
     body: '접수 방식을 바꾼 뒤 전체 대기는 줄었어요. 그런데 오전 첫 시간대만 유독 길다는 민원이 이어져요.',
     options: ['어느 시간대·진료과만 긴지 확인하기', '민원 수와 지연 영향을 견줘 정하기', '한 진료과 순서를 바꿔 내일 보기', '접수·간호팀에 뭐가 막히는지 묻기']
   },
   {
-    title: '잘 팔리는데 매장이 힘들대요',
+    title: '신메뉴 매출은 늘고 준비 시간도 늘었어요',
     body: '신메뉴 매출은 목표를 넘겼어요. 그런데 점주들은 준비가 오래 걸려 다른 주문이 밀린대요.',
     options: ['어느 공정이 오래 걸리는지 보기', '매출과 밀린 주문 손해를 견주기', '한 매장에서 순서 바꿔 재보기', '점주들과 뭘 줄일지 기준 맞추기']
   },
   {
-    title: '사흘 뒤에 안 돌아와요',
+    title: '접속자는 늘고 사흘째 복귀는 줄었어요',
     body: '새 시즌을 열고 접속자는 늘었어요. 그런데 사흘째 이후 돌아오지 않는 사람이 많아졌어요.',
     options: ['어디까지 하고 멈췄는지 나눠 보기', '시즌 목표와 견줘 볼 숫자 정하기', '난이도 낮춘 판을 일부에게 열기', '기획·운영팀과 지킬 기준 맞추기']
   },
   {
-    title: '한 동만 주차 다툼이 나요',
+    title: '전체 민원은 줄고 한 동은 다툼이 있어요',
     body: '주차 구역을 다시 나눈 뒤 전체 민원은 줄었어요. 그런데 한 동만 밤마다 자리 다툼이 생겨요.',
     options: ['그 동만 다른 조건이 뭔지 대조하기', '피해 세대와 반복 정도로 정하기', '임시 구획 긋고 한 주 지켜보기', '입주민 대표와 규칙 함께 정하기']
   },
   {
-    title: '신청은 꽉 차는데 자리가 비어요',
+    title: '신청은 마감되고 참석은 절반이에요',
     body: '주말 강좌는 열자마자 마감돼요. 그런데 실제로 오는 사람은 절반쯤이에요.',
     options: ['안 온 사람들의 공통점 찾기', '빈자리 손해와 대기 불만 견주기', '대기자 승계 넣고 참석률 보기', '강사와 정원·취소 기준 맞추기']
   },
   {
-    title: '고친 차가 또 들어와요',
+    title: '수리한 차가 두 주 안에 다시 왔어요',
     body: '수리한 차가 두 주 안에 같은 증상으로 다시 와요. 기록에는 정상 처리로 남아 있어요.',
     options: ['다시 온 차들의 공통점 찾기', '재작업 비용과 예약 손실 견주기', '의심 부품 바꾼 차를 표시해 보기', '정비사와 정상 기준 다시 맞추기']
   },
   {
-    title: '클릭은 느는데 구매는 그대로예요',
+    title: '클릭은 40% 늘고 구매는 그대로예요',
     body: '광고 문구를 바꾸고 클릭이 40% 늘었어요. 그런데 구매 수는 거의 그대로예요.',
     options: ['클릭한 사람이 어디서 멈추는지 보기', '광고비 대비 구매로 계속할지 정하기', '도착 화면 문구를 맞춰 비교하기', '마케팅·상품팀 성공 기준 맞추기']
   },
   {
-    title: '접수는 두 배, 처리는 그대로예요',
+    title: '접수는 두 배, 인력은 그대로예요',
     body: '온라인 접수를 열자 민원이 두 배가 됐어요. 인력은 그대로라 기한을 넘기는 건이 쌓여요.',
     options: ['밀리는 민원이 어떤 종류인지 갈라 보기', '기한 넘길 때 피해 큰 순서로 정하기', '자주 오는 문의는 자동 답변 돌리기', '관련 부서와 맡을 경계 맞추기']
   }
@@ -729,9 +729,17 @@ function shuffledIndexes(length) {
   return indexes;
 }
 
+// 긴 코스에 낼 상황 20개. 객관식·하이브리드 16개를 24개 후보에서 뽑고, 서술형 4개는 항상 낸다.
+function pickChatOrder() {
+  const quickPool = shuffleValues(scenarios.map((_, index) => index)).slice(0, 16);
+  const deepIndexes = deepScenarios.map((_, index) => scenarios.length + index);
+  return [...quickPool, ...deepIndexes];
+}
+
 function beginTest(course = 'short') {
   const scenarioSet = course === 'short' ? pickShortScenarioSet() : null;
   const list = course === 'short' ? scenarioSet.map(buildScenario) : scenarios;
+  const chatOrder = course === 'short' ? [] : pickChatOrder();
   state = {
     // 짧은 코스는 순수 객관식('test')이라 서술형·대화 단계를 거치지 않는다.
     screen: course === 'short' ? 'test' : 'chat',
@@ -740,7 +748,7 @@ function beginTest(course = 'short') {
     current: 0,
     answers: [],
     optionOrders: list.map(scenario => shuffledIndexes(scenario.options.length)),
-    scenarioOrder: shuffledIndexes(list.length),
+    scenarioOrder: course === 'short' ? shuffledIndexes(list.length) : chatOrder,
     scenarioStartedAt: [],
     // 긴 코스는 역량 체크까지 이어지므로 여기서 같이 초기화한다.
     keyedAnswers: [],
@@ -1056,10 +1064,15 @@ function renderMotionGraphic(index) {
   return `<figure class="scenario-image"><img src="/scenarios/scenario-${number}.jpg" alt="${scenarioImageAlts[index]}"${index === 0 ? '' : ' loading="lazy"'}></figure>`;
 }
 
+/** 긴 코스에서 지금 낼 상황의 원본 인덱스와 총 상황 수. */
+function chatTotal() {
+  return (state.scenarioOrder || []).length || chatScenarios.length;
+}
+
 function renderChat() {
   const scenarioIndex = state.scenarioOrder[state.deepCurrent] ?? state.deepCurrent;
   const q = chatScenarios[scenarioIndex];
-  const mode = state.deepCurrent < 8 ? 'quick' : state.deepCurrent < 16 ? 'hybrid' : 'deep';
+  const mode = state.deepCurrent < 8 ? 'quick' : state.deepCurrent < chatTotal() - deepScenarios.length ? 'hybrid' : 'deep';
   const totalIndex = state.deepCurrent + 1;
   const history = state.deepAnswers[scenarioIndex] || [];
   const messages = [`<div class="scenario-visual">${renderMotionGraphic(scenarioIndex, q.domain)}</div><article class="bubble interviewer scenario-bubble"><small>상황</small>${compactScenario(q.opening)}</article>`];
@@ -1068,17 +1081,14 @@ function renderChat() {
     messages.push(`<article class="bubble user"><small>나</small><p>${escapeHtml(answer)}</p></article>`);
   });
   if (state.awaitingNext) {
-    const finalSignal = state.chatSignals.filter(signal => signal.scenarioIndex === scenarioIndex).at(-1);
-    messages.push(`<article class="bubble interviewer active"><small>자동 기록</small><p><em>${escapeHtml(finalSignal?.reaction || '답변에서 드러난 접근을 기록했습니다.')}</em>이 상황의 답변을 기록했습니다. 다음 상황으로 이어가겠습니다.</p></article>`);
+    // 진행 중에는 해석을 붙이지 않는다. 어떤 역량으로 읽혔는지 알려주면 다음 답이 흔들린다.
+    messages.push(`<article class="bubble interviewer active"><small>기록</small><p>답변을 기록했습니다. 결과는 마지막에 한 번에 보여드려요.</p></article>`);
   } else if (mode === 'deep' && state.deepTurn < q.turns.length) {
-    const previousSignal = state.chatSignals.find(signal => signal.scenarioIndex === scenarioIndex && signal.turn === state.deepTurn - 1);
-    const leadText = previousSignal?.reaction || (history.length ? adaptiveLead(history.at(-1)) : '');
-    const lead = leadText ? `<em>${escapeHtml(leadText)}</em>` : '';
-    messages.push(`<article class="bubble interviewer active"><small>진행</small><p>${lead}${q.turns[state.deepTurn]}</p></article>`);
+    messages.push(`<article class="bubble interviewer active"><small>진행</small><p>${q.turns[state.deepTurn]}</p></article>`);
   }
   let composer;
   if (state.awaitingNext) {
-    composer = `<div class="continue-row"><button id="continue">${state.deepCurrent < chatScenarios.length - 1 ? '다음 상황 →' : '역량 체크로 →'}</button></div>`;
+    composer = `<div class="continue-row"><button class="ghost" id="redo">다시 고르기</button><button id="continue">${state.deepCurrent < chatTotal() - 1 ? '다음 상황 →' : '역량 체크로 →'}</button></div>`;
   } else if (mode === 'quick' || mode === 'hybrid') {
     const scenario = scenarios[scenarioIndex];
     const order = state.optionOrders[scenarioIndex] || scenario.options.map((_, index) => index);
@@ -1099,11 +1109,12 @@ function renderChat() {
   const modeLabel = mode === 'quick' ? '빠른 선택' : mode === 'hybrid' ? '선택 + 이유' : '자세히 말하기';
   const guide = mode === 'quick' ? '직관적으로 가장 먼저 할 행동을 선택하세요.' : mode === 'hybrid' ? '선택하고, 필요할 때만 이유를 덧붙이세요.' : '좋은 문장보다 실제 질문과 다음 행동을 적어주세요.';
   const timer = mode === 'quick' && !state.awaitingNext ? '<b class="quick-timer" id="quickTimer">권장 25초</b>' : '';
-  screenHost().innerHTML = `<main class="chat-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${totalIndex} / ${chatScenarios.length}</span></header><div class="progress"><i style="width:${totalIndex / chatScenarios.length * 100}%"></i></div><section class="chat-stage"><div class="chat-intro"><p class="domain">${modeLabel} · ${q.domain}</p><h2>${q.title}</h2><span>${guide}${timer}</span></div><div class="conversation">${messages.join('')}</div>${composer}</section></main>`;
+  screenHost().innerHTML = `<main class="chat-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${totalIndex} / ${chatTotal()}</span></header><div class="progress"><i style="width:${totalIndex / chatTotal() * 100}%"></i></div><section class="chat-stage"><div class="chat-intro"><p class="domain">${modeLabel} · ${q.domain}</p><h2>${q.title}</h2><span>${guide}${timer}</span></div><div class="conversation">${messages.join('')}</div>${composer}</section></main>`;
   if (mode === 'quick' && !state.awaitingNext) startQuickTimer(scenarioIndex);
   pick('#home').onclick = goHome;
   if (state.awaitingNext) {
     pick('#continue').onclick = continueChat;
+    pick('#redo').onclick = () => redoScenario(scenarioIndex);
     return;
   }
   if (mode === 'quick' || mode === 'hybrid') {
@@ -1228,10 +1239,23 @@ async function submitChat(answer) {
   render();
 }
 
+/** 이번 상황의 답을 지우고 다시 고르게 한다. 긴 코스는 앞 문항으로 못 돌아가서
+    한 번 잘못 누르면 그대로 기록됐다. */
+function redoScenario(scenarioIndex) {
+  state.chatSignals = state.chatSignals.filter(signal => signal.scenarioIndex !== scenarioIndex);
+  delete state.deepAnswers[scenarioIndex];
+  delete state.answers[scenarioIndex];
+  state.pendingChoice = null;
+  state.awaitingNext = false;
+  state.deepTurn = 0;
+  state.scenarioStartedAt[scenarioIndex] = Date.now();
+  render();
+}
+
 function continueChat() {
   state.awaitingNext = false;
   state.pendingChoice = null;
-  if (state.deepCurrent < chatScenarios.length - 1) {
+  if (state.deepCurrent < chatTotal() - 1) {
     state.deepCurrent += 1;
     state.deepTurn = 0;
   } else if (!state.keyedSet || keyedAnsweredCount() < state.keyedSet.length) {
