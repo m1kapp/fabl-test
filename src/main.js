@@ -1047,28 +1047,46 @@ function continueChat() {
 
 function calculate() {
   const totals = Object.fromEntries(capabilities.map(c => [c.key, { sum: 0, count: 0, evidence: [] }]));
+  // 문항 풀이 역량마다 주는 기회가 다르다. 답한 문항의 선택지 평균을 '기대 신호'로 두고
+  // 그 대비 비율로 환산한다. 이걸 안 하면 아무 답이나 찍어도 A 가 1순위로 42% 나온다
+  // (무작위 2만 회 시뮬레이션 실측). 보정 뒤에는 F 23 · A 26 · B 26 · L 25 로 고르다.
+  const expected = Object.fromEntries(capabilities.map(c => [c.key, 0]));
   const list = activeScenarios();
   state.answers.forEach((answer, qIndex) => {
     const scenario = list[qIndex];
     if (!scenario) return;
     const option = scenario.options[answer];
     if (!option) return;
+    scenario.options.forEach(candidate => {
+      Object.entries(candidate.scores).forEach(([key, value]) => {
+        expected[key] += value / scenario.options.length;
+      });
+    });
     Object.entries(option.scores).forEach(([key, value]) => {
       totals[key].sum += value; totals[key].count += 1;
       totals[key].evidence.push({ scenario: scenario.title, value });
     });
   });
+  const chatSums = Object.fromEntries(capabilities.map(c => [c.key, 0]));
   state.chatSignals.forEach(signal => {
     Object.entries(signal.scores).forEach(([key, value]) => {
+      chatSums[key] += value;
       totals[key].sum += value;
       totals[key].count += 1;
       totals[key].evidence.push({ scenario: signal.scenario, value, text: signal.text });
     });
   });
-  const totalSignal = Object.values(totals).reduce((sum, item) => sum + item.sum, 0);
-  const averageSignal = totalSignal / capabilities.length;
+
+  // 서술형 신호는 선택지가 없어 기대값을 못 만든다. 역량 평균 기대치로 나눠 같은 축에 올린다.
+  const meanExpected = capabilities.reduce((sum, c) => sum + expected[c.key], 0) / capabilities.length;
+  const relative = Object.fromEntries(capabilities.map(c => {
+    const fromOptions = expected[c.key] ? (totals[c.key].sum - chatSums[c.key]) / expected[c.key] : 0;
+    const fromChat = meanExpected ? chatSums[c.key] / meanExpected : 0;
+    return [c.key, fromOptions + fromChat];
+  }));
+  const averageRelative = capabilities.reduce((sum, c) => sum + relative[c.key], 0) / capabilities.length;
   return capabilities.map(c => {
-    const relativePreference = averageSignal ? totals[c.key].sum / averageSignal : 0;
+    const relativePreference = averageRelative ? relative[c.key] / averageRelative : 0;
     const score = totals[c.key].count ? 2 + Math.min(3, relativePreference * 1.5) : 2;
     return { ...c, score, observed: totals[c.key].count, evidence: totals[c.key].evidence };
   });
