@@ -81,6 +81,17 @@
   box-shadow: inset 0 0 0 1px #6047d8;
 }
 .option.selected span { color: #fff; background: #6047d8; }
+/* '제일 나중' 은 고른 것이지 안 고른 것이 아니다. 흐리게 두되 눌린 표시는 남긴다. */
+.option.dropped {
+  border-color: #c2c9d4;
+  background: #f4f6f9;
+}
+.option.dropped p { color: #7c8697; }
+.option.dropped span { color: #fff; background: #98a2b3; }
+/* 역량 체크 화면도 .option 을 쓰지만 거기 뱃지는 A·B·C·D 글자다. 유형 문항에만 적용한다. */
+.option[data-letter].selected span,
+.option[data-letter].dropped span { font-size: 10.5px; letter-spacing: -0.02em; }
+#pickHint b { color: #6047d8; }
 .q-nav {
   display: flex;
   gap: 10px;

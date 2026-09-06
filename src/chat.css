@@ -265,6 +265,12 @@
 }
 .chat-option:hover,
 .chat-option.selected { border-color: #6047d8; background: #f4f1ff; }
+.chat-option.dropped { border-color: #c2c9d4; background: #f4f6f9; }
+.chat-option.dropped p { color: #7c8697; }
+.chat-option.dropped span { color: #fff; background: #98a2b3; }
+.chat-option.selected span,
+.chat-option.dropped span { font-size: 10.5px; letter-spacing: -0.02em; }
+.quick-hint b { color: #6047d8; }
 .chat-option.custom { border-style: dashed; color: #667287; }
 .chat-option.custom span { color: #667287; background: #eef1f5; }
 .chat-option span {

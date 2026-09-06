@@ -7,9 +7,11 @@ import { workTypeNames, workTypePeople } from './types.js';
 
 // 공유 링크는 크롤러가 읽을 수 있는 경로여야 한다.
 // 해시(#)는 미리보기 크롤러가 못 보기 때문에 유형마다 실제 경로를 쓴다.
-export function typeUrl(code, answers, scenarioSet) {
+export function typeUrl(code, answers, scenarioSet, worstAnswers) {
   const url = new URL(`/t/${code}/`, location.origin);
   if (Array.isArray(answers) && answers.length) url.searchParams.set('a', answers.join(''));
+  // 문항마다 '제일 나중' 도 받으므로 그것까지 실어야 같은 결과가 복원된다.
+  if (Array.isArray(worstAnswers) && worstAnswers.length) url.searchParams.set('w', worstAnswers.join(''));
   // 매번 다른 12문항이 출제되므로 어떤 문항이었는지도 같이 실어야 레이더가 복원된다.
   if (Array.isArray(scenarioSet) && scenarioSet.length) {
     url.searchParams.set('s', scenarioSet.map(index => index.toString(36)).join(''));
@@ -36,7 +38,15 @@ export function scenarioSetFromQuery() {
 }
 
 export function answersFromQuery() {
-  const raw = new URLSearchParams(location.search).get('a');
+  return digitsFromQuery('a');
+}
+
+export function worstAnswersFromQuery() {
+  return digitsFromQuery('w');
+}
+
+function digitsFromQuery(key) {
+  const raw = new URLSearchParams(location.search).get(key);
   if (!raw || !/^\d+$/.test(raw)) return null;
   return [...raw].map(Number);
 }
@@ -61,8 +71,8 @@ async function copy(url) {
 }
 
 /** 공유하고, 링크가 클립보드로 갔으면 true 를 돌려준다(버튼 문구 전환용). */
-export async function share(code, answers, scenarioSet) {
-  const url = typeUrl(code, answers, scenarioSet);
+export async function share(code, answers, scenarioSet, worstAnswers) {
+  const url = typeUrl(code, answers, scenarioSet, worstAnswers);
   const text = shareText(code);
   if (navigator.share) {
     try {

@@ -1,7 +1,7 @@
 import './style.css';
 import './chat.css';
 import { workModes, workTypeNames, workTypePeople, workTypeReasons } from './types.js';
-import { share, typeUrl, codeFromPath, answersFromQuery, scenarioSetFromQuery } from './share.js';
+import { share, typeUrl, codeFromPath, answersFromQuery, worstAnswersFromQuery, scenarioSetFromQuery } from './share.js';
 import { keyedItems, scoreKeyed, qualityDimensionNames, KEYED_QUESTION_COUNT } from './keyed.js';
 import { mountShell, screenHost, shellScroller } from './shell.jsx';
 
@@ -45,6 +45,8 @@ const capabilityWorkMode = Object.fromEntries(Object.entries(workModeCapabilityK
 // 관찰 기회가 적은 역량은 한 번만 골라도 비율이 튄다. 기대 신호에 상수를 더해
 // 관찰이 적을수록 전체 평균 쪽으로 당긴다(수축 추정). 기회가 충분하면 사실상 그대로다.
 const SIGNAL_PRIOR = 1.5;
+// '제일 나중' 선택에 줄 음의 가중치. 1 로 두면 '먼저' 와 대칭이 되어 신호가 과하게 흔들린다.
+const WORST_WEIGHT = 0.6;
 function shrunkRate(obtained, chance, globalRate) {
   return (obtained + SIGNAL_PRIOR * globalRate) / (chance + SIGNAL_PRIOR);
 }
@@ -642,7 +644,7 @@ const STORAGE_KEY = 'iljaller-assessment-session-v1';
 const ARCHIVE_KEY = 'iljaller-assessment-archives-v1';
 
 function createState() {
-  return { screen: 'intro', course: 'short', scenarioSet: null, current: 0, answers: [], keyedAnswers: [], keyedOrders: [], keyedSet: null, keyedSequence: [], keyedCurrent: 0, optionOrders: [], scenarioOrder: [], scenarioStartedAt: [], assessmentStartedAt: null, completedAt: null, assessmentDurationMs: null, deepCurrent: 0, deepTurn: 0, deepAnswers: [], chatSignals: [], awaitingNext: false, pendingChoice: null };
+  return { screen: 'intro', course: 'short', scenarioSet: null, current: 0, answers: [], lastAnswers: [], keyedAnswers: [], keyedOrders: [], keyedSet: null, keyedSequence: [], keyedCurrent: 0, optionOrders: [], scenarioOrder: [], scenarioStartedAt: [], assessmentStartedAt: null, completedAt: null, assessmentDurationMs: null, deepCurrent: 0, deepTurn: 0, deepAnswers: [], chatSignals: [], awaitingNext: false, pendingChoice: null };
 }
 
 function createSampleState() {
@@ -770,6 +772,7 @@ function beginTest(course = 'short') {
     scenarioSet,
     current: 0,
     answers: [],
+    lastAnswers: [],
     optionOrders: list.map(scenario => shuffledIndexes(scenario.options.length)),
     scenarioOrder: course === 'short' ? shuffledIndexes(list.length) : chatOrder,
     scenarioStartedAt: [],
@@ -787,7 +790,8 @@ function beginTest(course = 'short') {
     deepAnswers: [],
     chatSignals: [],
     awaitingNext: false,
-    pendingChoice: null
+    pendingChoice: null,
+    pendingWorst: null
   };
   render();
 }
@@ -996,6 +1000,21 @@ function questionIndexAt(step) {
   return order[step] ?? step;
 }
 
+// 한 문항에서 '제일 먼저'와 '제일 나중'을 둘 다 받는다. 하나만 받으면 12문항으로는
+// 네 모드의 순서가 잘 안 갈린다. 채점 코드를 그대로 돌린 모의 실험에서 같은 성향을
+// 가정했을 때 세 글자 코드가 재현되는 비율이 30.6% → 42.6% 로 올랐다.
+function optionMark(optionIndex, best, worst) {
+  if (best === optionIndex) return { className: ' selected', badge: '먼저' };
+  if (worst === optionIndex) return { className: ' dropped', badge: '나중' };
+  return { className: '', badge: '' };
+}
+
+function pickHint(best, worst) {
+  if (best === undefined) return '정답은 없어요. 제일 <b>먼저</b> 할 것 같은 하나를 고르세요.';
+  if (worst === undefined) return '이번엔 제일 <b>나중</b>에 할 것 같은 하나를 고르세요.';
+  return '다시 누르면 바꿀 수 있어요.';
+}
+
 function renderQuestion() {
   const list = activeScenarios();
   const index = questionIndexAt(state.current);
@@ -1004,26 +1023,39 @@ function renderQuestion() {
   // 짧은 코스는 객관식만으로 끝나므로 총계에 대화 단계를 더하지 않는다.
   const total = state.course === 'short' ? list.length : list.length + deepScenarios.length;
   const progress = ((state.current + 1) / total) * 100;
+  if (!state.lastAnswers) state.lastAnswers = [];
   const picked = state.answers[index];
+  const dropped = state.lastAnswers[index];
   const last = state.current === list.length - 1;
 
-  screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">상황 · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint">정답은 없어요. 내가 제일 먼저 할 것 같은 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.current === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '결과 보기' : '다음 →'}</button></nav></section></main>`;
+  screenHost().innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${state.current + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><div class="scenario-visual">${renderMotionGraphic(q.imageIndex)}</div><p class="domain">상황 · ${q.domain}</p><h2>${q.title}</h2><p class="situation">${q.body}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${optionMark(optionIndex, picked, dropped).className}" data-index="${optionIndex}" data-letter="${String.fromCharCode(65 + displayIndex)}" aria-pressed="${picked === optionIndex}"><span>${optionMark(optionIndex, picked, dropped).badge || String.fromCharCode(65 + displayIndex)}</span><p>${q.options[optionIndex].text}</p></button>`).join('')}</div><p class="hint" id="pickHint">${pickHint(picked, dropped)}</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.current === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined || dropped === undefined ? ' disabled' : ''}>${last ? '결과 보기' : '다음 →'}</button></nav></section></main>`;
 
   pick('#home').onclick = goHome;
 
   const nextButton = pick('#nextQ');
   // 누르는 즉시 넘어가지 않는다. 고른 뒤 확인하고 '다음'을 눌러야 진행된다.
   // 여기서 다시 그리지 않는 이유는 스크롤이 튀지 않게 하기 위해서다.
+  const paint = () => {
+    const best = state.answers[index];
+    const worst = state.lastAnswers[index];
+    pickAll('.option').forEach(other => {
+      const optionIndex = Number(other.dataset.index);
+      const mark = optionMark(optionIndex, best, worst);
+      other.className = 'option' + mark.className;
+      other.querySelector('span').textContent = mark.badge || other.dataset.letter;
+      other.setAttribute('aria-pressed', String(best === optionIndex));
+    });
+    pick('#pickHint').innerHTML = pickHint(best, worst);
+    nextButton.disabled = best === undefined || worst === undefined;
+    saveState();
+  };
   pickAll('.option').forEach(btn => btn.onclick = () => {
     const optionIndex = Number(btn.dataset.index);
-    state.answers[index] = optionIndex;
-    pickAll('.option').forEach(other => {
-      const on = Number(other.dataset.index) === optionIndex;
-      other.classList.toggle('selected', on);
-      other.setAttribute('aria-pressed', String(on));
-    });
-    nextButton.disabled = false;
-    saveState();
+    if (state.answers[index] === optionIndex) delete state.answers[index];
+    else if (state.lastAnswers[index] === optionIndex) delete state.lastAnswers[index];
+    else if (state.answers[index] === undefined) state.answers[index] = optionIndex;
+    else state.lastAnswers[index] = optionIndex;
+    paint();
   });
 
   pick('#prevQ').onclick = () => {
@@ -1032,7 +1064,7 @@ function renderQuestion() {
     render();
   };
   nextButton.onclick = () => {
-    if (state.answers[index] === undefined) return;
+    if (state.answers[index] === undefined || state.lastAnswers[index] === undefined) return;
     advance();
   };
   scrollToQuestionTop();
@@ -1131,22 +1163,26 @@ function renderChat() {
   } else if (mode === 'quick' || mode === 'hybrid') {
     const scenario = scenarios[scenarioIndex];
     const order = state.optionOrders[scenarioIndex] || scenario.options.map((_, index) => index);
-    const options = order.map((optionIndex, displayIndex) => `<button class="chat-option ${state.pendingChoice === optionIndex ? 'selected' : ''}" data-index="${optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${scenario.options[optionIndex].text}</p></button>`).join('');
+    const options = order.map((optionIndex, displayIndex) => {
+      const mark = optionMark(optionIndex, state.pendingChoice, state.pendingWorst);
+      return `<button class="chat-option${mark.className}" data-index="${optionIndex}"><span>${mark.badge || String.fromCharCode(65 + displayIndex)}</span><p>${scenario.options[optionIndex].text}</p></button>`;
+    }).join('');
     const custom = `<button class="chat-option custom ${state.pendingChoice === -1 ? 'selected' : ''}" id="customChoice"><span>＋</span><p>내가 할 행동은 선택지에 없습니다. 직접 입력할게요.</p></button>`;
     let detail;
     if (state.pendingChoice === -1) {
       detail = `<form class="rationale custom-answer" id="customForm"><label for="customText">직접 할 행동을 적어주세요.</label><textarea id="customText" rows="3" maxlength="500" placeholder="가장 먼저 할 질문이나 행동을 구체적으로 적어주세요."></textarea><div><span>5자 이상 입력해주세요.</span><button type="submit">직접 답변 제출 →</button></div></form>`;
     } else if (mode === 'hybrid') {
-      detail = `<form class="rationale" id="choiceForm"><label for="rationaleText">왜 골랐나요? 더 하고 싶은 행동이 있나요? <small>선택사항</small></label><textarea id="rationaleText" rows="2" maxlength="300" placeholder="예: 먼저 고객군을 나눠 보고, 영향이 크면 담당자와 수정 범위를 정하겠습니다."></textarea><div><span>한 줄은 결과 화면에 그대로 남습니다. 점수에는 반영하지 않아요.</span><button type="submit" ${state.pendingChoice === null ? 'disabled' : ''}>이 선택으로 제출 →</button></div></form>`;
+      const ready = state.pendingChoice !== null && state.pendingWorst !== null;
+      detail = `<form class="rationale" id="choiceForm"><label for="rationaleText">왜 골랐나요? 더 하고 싶은 행동이 있나요? <small>선택사항</small></label><textarea id="rationaleText" rows="2" maxlength="300" placeholder="예: 먼저 고객군을 나눠 보고, 영향이 크면 담당자와 수정 범위를 정하겠습니다."></textarea><div><span>${ready ? '한 줄은 결과 화면에 그대로 남습니다. 점수에는 반영하지 않아요.' : '제일 나중에 할 것도 하나 골라주세요.'}</span><button type="submit" ${ready ? '' : 'disabled'}>이 선택으로 제출 →</button></div></form>`;
     } else {
-      detail = '<p class="quick-hint">선택하면 바로 기록됩니다.</p>';
+      detail = `<p class="quick-hint">${pickHint(state.pendingChoice === null ? undefined : state.pendingChoice, state.pendingWorst === null ? undefined : state.pendingWorst)}</p>`;
     }
     composer = `<div class="choice-composer"><div class="chat-options">${options}${custom}</div>${detail}</div>`;
   } else {
     composer = `<form class="reply" id="reply"><textarea id="replyText" rows="3" maxlength="500" placeholder="이 상황에서 실제로 할 말이나 행동을 입력하세요"></textarea><div><span id="count">0 / 500</span><button type="submit">답변 보내기 →</button></div></form>`;
   }
   const modeLabel = mode === 'quick' ? '빠른 선택' : mode === 'hybrid' ? '선택 + 이유' : '자세히 말하기';
-  const guide = mode === 'quick' ? '직관적으로 가장 먼저 할 행동을 선택하세요.' : mode === 'hybrid' ? '선택하고, 필요할 때만 이유를 덧붙이세요.' : '좋은 문장보다 실제 질문과 다음 행동을 적어주세요.';
+  const guide = mode === 'quick' ? '제일 먼저 할 것과 제일 나중에 할 것을 하나씩 고르세요.' : mode === 'hybrid' ? '먼저·나중을 고르고, 필요할 때만 이유를 덧붙이세요.' : '좋은 문장보다 실제 질문과 다음 행동을 적어주세요.';
   const timer = mode === 'quick' && !state.awaitingNext ? '<b class="quick-timer" id="quickTimer">권장 25초</b>' : '';
   screenHost().innerHTML = `<main class="chat-shell"><header class="test-head"><button class="home-button" id="home"><b>←</b><span>처음으로</span></button><strong>FABL 테스트</strong><span>${totalIndex} / ${chatTotal()}</span></header><div class="progress"><i style="width:${totalIndex / chatTotal() * 100}%"></i></div><section class="chat-stage"><div class="chat-intro"><p class="domain">${modeLabel} · ${q.domain}</p><h2>${q.title}</h2><span>${guide}${timer}</span></div><div class="conversation">${messages.join('')}</div>${composer}</section></main>`;
   if (mode === 'quick' && !state.awaitingNext) startQuickTimer(scenarioIndex);
@@ -1159,10 +1195,18 @@ function renderChat() {
   if (mode === 'quick' || mode === 'hybrid') {
     pickAll('.chat-option').forEach(button => {
       button.onclick = () => {
-        if (button.id === 'customChoice') { state.pendingChoice = -1; render(); return; }
+        if (button.id === 'customChoice') { state.pendingChoice = -1; state.pendingWorst = null; render(); return; }
         const optionIndex = Number(button.dataset.index);
-        if (mode === 'quick') submitChoice(optionIndex, '');
-        else { state.pendingChoice = optionIndex; render(); }
+        if (state.pendingChoice === optionIndex) state.pendingChoice = null;
+        else if (state.pendingWorst === optionIndex) state.pendingWorst = null;
+        else if (state.pendingChoice === null || state.pendingChoice === -1) state.pendingChoice = optionIndex;
+        else state.pendingWorst = optionIndex;
+        // 빠른 선택은 둘 다 고른 순간 바로 기록한다. 확인 버튼을 따로 두지 않는다.
+        if (mode === 'quick' && state.pendingChoice !== null && state.pendingWorst !== null) {
+          submitChoice(state.pendingChoice, '', state.pendingWorst);
+          return;
+        }
+        render();
       };
     });
     if (state.pendingChoice === -1) {
@@ -1181,11 +1225,11 @@ function renderChat() {
     if (mode === 'hybrid') {
       pick('#choiceForm').onsubmit = event => {
         event.preventDefault();
-        if (state.pendingChoice === null) return;
+        if (state.pendingChoice === null || state.pendingWorst === null) return;
         const button = event.currentTarget.querySelector('button');
         button.disabled = true;
         button.textContent = '답변 분석 중…';
-        submitChoice(state.pendingChoice, pick('#rationaleText').value.trim());
+        submitChoice(state.pendingChoice, pick('#rationaleText').value.trim(), state.pendingWorst);
       };
     }
     return;
@@ -1227,16 +1271,19 @@ async function submitCustomChoice(answer) {
   state.deepAnswers[scenarioIndex] = [`직접 입력: ${answer}`];
   state.chatSignals.push({ scenario: scenario.title, scenarioIndex, turn: 0, scores: evaluation.scores, quality: evaluation.quality || {}, reaction: evaluation.reaction, text: answer, fallback: evaluation.fallback, responseMs: state.scenarioStartedAt[scenarioIndex] ? Date.now() - state.scenarioStartedAt[scenarioIndex] : null });
   state.pendingChoice = null;
+  state.pendingWorst = null;
   state.awaitingNext = true;
   render();
 }
 
-async function submitChoice(optionIndex, rationale) {
+async function submitChoice(optionIndex, rationale, worstIndex) {
   const scenarioIndex = state.scenarioOrder[state.deepCurrent] ?? state.deepCurrent;
   const scenario = scenarios[scenarioIndex];
   const option = scenario.options[optionIndex];
   const answer = rationale ? `선택: ${option.text}\n이유: ${rationale}` : `선택: ${option.text}`;
   state.answers[scenarioIndex] = optionIndex;
+  if (!state.lastAnswers) state.lastAnswers = [];
+  if (worstIndex !== undefined && worstIndex !== null) state.lastAnswers[scenarioIndex] = worstIndex;
   state.deepAnswers[scenarioIndex] = [answer];
   const strongestKey = Object.entries(option.scores).sort((a, b) => b[1] - a[1])[0]?.[0];
   const capability = capabilities.find(item => item.key === strongestKey);
@@ -1254,6 +1301,7 @@ async function submitChoice(optionIndex, rationale) {
     state.chatSignals.push({ scenario: scenario.title, scenarioIndex, turn: 0, scores: evaluation.scores, quality: evaluation.quality || {}, reaction: evaluation.reaction, text: rationale, fallback: evaluation.fallback });
   }
   state.pendingChoice = null;
+  state.pendingWorst = null;
   state.awaitingNext = true;
   render();
 }
@@ -1284,7 +1332,9 @@ function redoScenario(scenarioIndex) {
   state.chatSignals = state.chatSignals.filter(signal => signal.scenarioIndex !== scenarioIndex);
   delete state.deepAnswers[scenarioIndex];
   delete state.answers[scenarioIndex];
+  delete (state.lastAnswers || [])[scenarioIndex];
   state.pendingChoice = null;
+  state.pendingWorst = null;
   state.awaitingNext = false;
   state.deepTurn = 0;
   state.scenarioStartedAt[scenarioIndex] = Date.now();
@@ -1294,6 +1344,7 @@ function redoScenario(scenarioIndex) {
 function continueChat() {
   state.awaitingNext = false;
   state.pendingChoice = null;
+  state.pendingWorst = null;
   if (state.deepCurrent < chatTotal() - 1) {
     state.deepCurrent += 1;
     state.deepTurn = 0;
@@ -1319,15 +1370,26 @@ function calculate() {
     if (!scenario) return;
     const option = scenario.options[answer];
     if (!option) return;
+    // '제일 나중' 은 음의 신호다. 무작위로 고를 때의 기댓값도 그만큼 줄어들므로
+    // 기대 신호에 같은 비율(1 - WORST_WEIGHT)을 곱한다. 옛 공유 링크처럼 '나중' 이
+    // 없는 응답은 예전 그대로 '먼저' 만으로 채점된다.
+    const worstIndex = (state.lastAnswers || [])[qIndex];
+    const worstOption = worstIndex === undefined ? null : scenario.options[worstIndex];
+    const chanceScale = worstOption ? 1 - WORST_WEIGHT : 1;
     scenario.options.forEach(candidate => {
       Object.entries(candidate.scores).forEach(([key, value]) => {
-        expected[key] += value / scenario.options.length;
+        expected[key] += (value / scenario.options.length) * chanceScale;
       });
     });
     Object.entries(option.scores).forEach(([key, value]) => {
       totals[key].sum += value; totals[key].count += 1;
       totals[key].evidence.push({ scenario: scenario.title, value });
     });
+    if (worstOption) {
+      Object.entries(worstOption.scores).forEach(([key, value]) => {
+        totals[key].sum -= value * WORST_WEIGHT;
+      });
+    }
   });
   // 서술형은 정규식 키워드 매칭이라 '확인·먼저·담당자' 처럼 업무 문장에 거의 항상 있는 단어에
   // 걸린다. 길게 쓸수록 F·L 이 올라가고, 서술형 12턴이 객관식 20문항과 맞먹는 무게가 됐다.
@@ -1347,7 +1409,7 @@ function calculate() {
   return capabilities.map(c => {
     const rate = shrunkRate(totals[c.key].sum, expected[c.key], globalRate);
     const relativePreference = globalRate ? rate / globalRate : 0;
-    const score = totals[c.key].count || expected[c.key] ? 2 + Math.min(3, relativePreference * 1.5) : 2;
+    const score = totals[c.key].count || expected[c.key] ? 2 + Math.max(0, Math.min(3, relativePreference * 1.5)) : 2;
     // obtained·chance 를 같이 넘긴다. 모드 점수는 이걸 모드 단위로 합쳐서 다시 계산한다.
     return { ...c, score, observed: totals[c.key].count, obtained: totals[c.key].sum, chance: expected[c.key], globalRate, evidence: totals[c.key].evidence };
   });
@@ -1419,13 +1481,13 @@ function renderResult() {
 
   // 결과가 나오면 주소창을 공유 가능한 유형 경로로 바꾼다. 이 링크를 붙여 넣으면
   // 빌드 때 찍어둔 유형별 미리보기 카드가 뜬다(해시로는 크롤러가 못 읽는다).
-  if (!state.isExample) history.replaceState(null, '', typeUrl(typeCode, state.answers, state.scenarioSet));
+  if (!state.isExample) history.replaceState(null, '', typeUrl(typeCode, state.answers, state.scenarioSet, state.lastAnswers));
 
   restartButton.insertAdjacentHTML('beforebegin', '<button class="primary" id="shareResult">결과 공유하기</button>');
   const shareButton = pick('#shareResult');
   actions.prepend(shareButton);
   shareButton.onclick = async () => {
-    const copied = await share(typeCode, state.answers, state.scenarioSet);
+    const copied = await share(typeCode, state.answers, state.scenarioSet, state.lastAnswers);
     if (!copied) return;
     shareButton.textContent = '링크를 복사했어요';
     setTimeout(() => { shareButton.textContent = '결과 공유하기'; }, 2000);
@@ -1483,7 +1545,7 @@ if (sharedCode) {
   const sharedAnswers = answersFromQuery();
   if (sharedAnswers && sharedAnswers.length) {
     // 답변까지 실려 왔으면 레이더까지 그대로 복원한다.
-    state = { ...createState(), course: 'short', scenarioSet: scenarioSetFromQuery(), answers: sharedAnswers, screen: 'result' };
+    state = { ...createState(), course: 'short', scenarioSet: scenarioSetFromQuery(), answers: sharedAnswers, lastAnswers: worstAnswersFromQuery() || [], screen: 'result' };
     render();
   } else {
     mountShell(app, { mode: 'screen' });
