@@ -15,6 +15,8 @@
 .kit-meta { margin: 14px 0 0; color: #98a1b0; font-size: 11px; line-height: 1.6; text-align: center; }
 
 .kit-actions { display: grid; gap: 8px; margin-top: 20px; }
+.kit-action-note { margin: 6px 2px 0; color: #7b8496; font-size: 12px; line-height: 1.65; }
+.kit-action-note b { color: #172238; }
 
 /* 히어로와 모드 카드의 장면 이미지. 글로만 있던 설명을 그림으로 먼저 읽히게 한다. */
 .kit-hero-shot { margin: 20px 0 0; }

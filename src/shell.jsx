@@ -38,7 +38,13 @@ function HomeTab({ on, ctaRef }) {
         </figure>
         <div className="kit-actions" ref={ctaRef}>
           <Button full shape="pill" onClick={() => on.start('short')}>3분 만에 내 유형 찾기 →</Button>
-          <Button full shape="pill" variant="light" onClick={on.goKeyed}>역량 체크 보기</Button>
+          <Button full shape="pill" variant="light" onClick={() => on.start('full')}>유형 + 역량 다 보기 · 15분</Button>
+          <p className="kit-action-note">
+            <b>3분</b>은 내가 뭐부터 하는 사람인지만 봐요.
+            <br />
+            <b>15분</b>은 유형도 찾고, 정답이 있는 문제로 <b>실제로 잘하는지까지</b> 봅니다.
+            문항이 많아 시간이 걸려요.
+          </p>
         </div>
       </Section>
 
