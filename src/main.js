@@ -590,8 +590,9 @@ function renderKeyed() {
   const progress = ((state.keyedCurrent + 1) / total) * 100;
   const picked = state.keyedAnswers[state.keyedCurrent];
   const last = state.keyedCurrent === total - 1;
-  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>결과로</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.keyedCurrent === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '채점 보기' : '다음 →'}</button></nav></section></main>`;
-  document.querySelector('#backToResult').onclick = () => { state.screen = 'result'; render(); };
+  app.innerHTML = `<main class="test-shell"><header class="test-head"><button class="home-button" id="backToResult"><b>←</b><span>${state.answers.length ? '결과로' : '나가기'}</span></button><strong>판단 체크</strong><span>${state.keyedCurrent + 1} / ${total}</span></header><div class="progress"><i style="width:${progress}%"></i></div><section class="question"><p class="domain">JUDGMENT · ${qualityDimensionNames[item.dimension]}</p><h2>${item.question}</h2><p class="situation">${item.situation}</p><div class="options">${order.map((optionIndex, displayIndex) => `<button class="option${picked === optionIndex ? ' selected' : ''}" data-index="${optionIndex}" aria-pressed="${picked === optionIndex}"><span>${String.fromCharCode(65 + displayIndex)}</span><p>${item.options[optionIndex]}</p></button>`).join('')}</div><p class="hint">여기는 정답이 있는 문항입니다. 가장 타당한 하나를 고르세요.</p><nav class="q-nav"><button class="ghost" id="prevQ"${state.keyedCurrent === 0 ? ' disabled' : ''}>← 이전</button><button class="primary" id="nextQ"${picked === undefined ? ' disabled' : ''}>${last ? '채점 보기' : '다음 →'}</button></nav></section></main>`;
+  // 유형 테스트를 거치지 않고 시작한 판단 체크는 돌아갈 결과 화면이 없다.
+  document.querySelector('#backToResult').onclick = () => { state.screen = state.answers.length ? 'result' : 'intro'; render(); };
   scrollToQuestionTop();
 
   const nextButton = document.querySelector('#nextQ');
@@ -614,9 +615,18 @@ function renderKeyed() {
   nextButton.onclick = () => {
     if (state.keyedAnswers[state.keyedCurrent] === undefined) return;
     if (state.keyedCurrent < total - 1) state.keyedCurrent += 1;
-    else state.screen = 'result';
+    else state.screen = state.answers.length ? 'result' : 'keyedResult';
     render();
   };
+}
+
+// 유형 테스트 없이 판단 체크만 한 경우의 결과. 유형 결과 화면은 유형 답변을 전제한다.
+function renderKeyedOnly() {
+  app.innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">JUDGMENT CHECK</p><h1>정답 키로 매긴<br>판단 점수입니다.</h1></div><button class="ghost" id="toIntro">처음으로</button></header>${renderKeyedPanel()}<section class="keyed-panel keyed-invite"><div><p class="eyebrow">ASSESSMENT 01 · TYPE</p><h2>일하는 순서도 보시겠어요?</h2><p>판단 체크는 타당성만 봅니다. 어떤 순서로 일하는지는 유형 테스트 12문항에서 나옵니다.</p></div><button class="primary" id="toType">유형 테스트 하기 <b>→</b></button></section><footer>낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
+  document.querySelector('#toIntro').onclick = () => { state.screen = 'intro'; render(); };
+  document.querySelector('#toType').onclick = () => beginTest('short');
+  const retryKeyed = document.querySelector('#retryKeyed');
+  if (retryKeyed) retryKeyed.onclick = beginKeyed;
 }
 
 function beginKeyed() {
@@ -650,8 +660,12 @@ function render() {
   else if (state.screen === 'test') renderQuestion();
   else if (state.screen === 'chat') renderChat();
   else if (state.screen === 'keyed') renderKeyed();
+  else if (state.screen === 'keyedResult') renderKeyedOnly();
   else renderResult();
 }
+
+// 랜딩에서 마지막으로 보던 탭. 판단 체크만 하고 돌아오면 그 탭으로 되돌린다.
+let introTab = 'home';
 
 function renderIntro() {
   const archives = loadArchives();
@@ -665,8 +679,10 @@ function renderIntro() {
   // 랜딩만 @m1kapp/kit 앱셸(React)로 그린다. 나머지 화면은 기존 바닐라 렌더다.
   mountLanding(app, {
     archiveCount: archives.length,
+    initialTab: introTab,
     on: {
-      start: course => beginTest(course),
+      start: course => { introTab = 'type'; beginTest(course); },
+      startKeyed: () => { introTab = 'keyed'; beginKeyed(); },
       latest: () => { state = { ...createState(), ...archives[0], screen: 'result' }; render(); },
       importResult: () => fileInput.click()
     }
