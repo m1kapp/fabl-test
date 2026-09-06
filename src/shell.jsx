@@ -156,6 +156,20 @@ function HomeTab({ on, ctaRef }) {
           </div>
         ))}
 
+        <h3 className="kit-skew-title">한쪽으로 쏠리면 이렇게 됩니다</h3>
+        <p className="kit-body">
+          같은 힘을 먼저 쓰는 사람만 모이면 그 힘은 두꺼워지고, 아무도 안 보는 자리가
+          생깁니다. 아래는 FABL 정의에서 따라 나오는 <b>예상</b>이지 조사 결과가 아니에요.
+        </p>
+        {SKEWS.map(skew => (
+          <details className="kit-skew" key={skew.key}>
+            <summary><b>{skew.key}</b>{skew.title}</summary>
+            <p className="kit-skew-strong">잘하는 것 · {skew.strong}</p>
+            <p className="kit-skew-missing">빠지는 것 · {skew.missing}</p>
+            <ul>{skew.signs.map(sign => <li key={sign}>{sign}</li>)}</ul>
+          </details>
+        ))}
+
         <div className="kit-callout">
           <b>상극은 없어요. 겹침이 있을 뿐입니다.</b>
           <p>
@@ -232,6 +246,39 @@ const TEAM_SETS = [
   { label: '조율 중심', codes: ['FLA', 'LAB', 'ABF', 'BFL'] }
 ];
 
+// 한 모드로 쏠린 조직에서 생기는 일. 연구 결과가 아니라 FABL 정의에서 따라 나오는
+// 예상이라는 점을 화면에 적는다.
+const SKEWS = [
+  {
+    key: 'F',
+    title: '해석만 두꺼운 조직',
+    strong: '문제를 깊게 판다. 남들이 놓친 이상을 먼저 찾는다.',
+    missing: '정하고 손대는 사람',
+    signs: ['자료는 쌓이는데 뭘 할지가 안 정해진다', '“조금 더 보고 정하자”가 반복된다', '분석이 끝나면 이미 상황이 바뀌어 있다']
+  },
+  {
+    key: 'A',
+    title: '판단만 두꺼운 조직',
+    strong: '방향과 우선순위가 빨리 선다. 회의가 짧다.',
+    missing: '현장을 보는 눈과 만드는 손',
+    signs: ['계획과 로드맵은 많은데 나온 것이 적다', '근거가 얇아 결정이 자주 뒤집힌다', '정한 사람과 하는 사람이 갈린다']
+  },
+  {
+    key: 'B',
+    title: '실행만 두꺼운 조직',
+    strong: '빨리 만든다. 일단 굴러가는 것이 나온다.',
+    missing: '왜 하는지와 서로 맞추기',
+    signs: ['만든 것끼리 서로 안 맞는다', '다 만든 뒤에 필요 없던 일이었음이 드러난다', '고쳐 만드는 시간이 계속 늘어난다']
+  },
+  {
+    key: 'L',
+    title: '조율만 두꺼운 조직',
+    strong: '합의가 잘 되고 사람 사이 마찰이 적다.',
+    missing: '문제를 규명하고 끝내는 힘',
+    signs: ['회의는 좋은데 결론이 안 남는다', '책임이 흩어져 아무도 안 끝낸다', '갈등을 피하느라 이상 신호를 늦게 말한다']
+  }
+];
+
 // 근거 탭. 이 테스트가 무엇에 기대고 무엇을 못 하는지 출처와 함께 적는다.
 // 링크는 걸지 않는다 — 확인 못 한 URL 을 붙이는 것보다 서지사항이 정확하다.
 const EVIDENCE = [
@@ -262,6 +309,13 @@ const EVIDENCE = [
     who: 'Sackett, P. R., Zhang, C., Berry, C. M., & Lievens, F. (2022)',
     title: 'Revisiting meta-analytic estimates of validity in personnel selection',
     where: 'Journal of Applied Psychology, 107(11)'
+  },
+  {
+    claim: '같은 것을 아는 사람끼리 모이면 아는 것만 다시 확인한다',
+    body: '집단은 이미 모두가 알고 있는 정보를 주로 이야기하고, 한 사람만 가진 정보는 잘 꺼내지 않는다는 실험이 있다. 한쪽으로 쏠린 조직에서 놓치는 자리가 생기는 이유와 맞닿는다.',
+    who: 'Stasser, G., & Titus, W. (1985)',
+    title: 'Pooling of unshared information in group decision making',
+    where: 'Journal of Personality and Social Psychology, 48(6)'
   },
   {
     claim: '팀을 잘 굴리는 것은 구성원 조합보다 대화 방식이었다',
