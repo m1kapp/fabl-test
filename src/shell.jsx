@@ -128,6 +128,33 @@ function HomeTab({ on, ctaRef }) {
 
       <Divider />
 
+      <Section>
+        <p className="kit-eyebrow">MBTI 로 치면</p>
+        <h2 className="kit-h2">겹칠 법한 성향은 이쪽</h2>
+        <p className="kit-body">
+          <b>맞춰 본 적은 없습니다.</b> 두 검사를 같이 받은 사람들의 답을 대조한 자료가
+          없어서, 24유형을 16유형에 대응시키는 표는 만들지 않았어요. 아래는 네 가지 힘의
+          정의에서 짐작한 <b>성향의 방향</b>까지입니다.
+        </p>
+        <div className="kit-mbti">
+          {MBTI_HINTS.map(hint => (
+            <div key={hint.key}>
+              <b>{hint.key}</b>
+              <span>{hint.ko}</span>
+              <em>{hint.axis}</em>
+              <p>{hint.why}</p>
+            </div>
+          ))}
+        </div>
+        <p className="kit-note">
+          MBTI 쪽도 유형 분류로 사람을 가르기에는 근거가 약하다는 검토가 있습니다
+          (<b>근거</b> 탭 참고). 두 결과가 다르게 나와도 둘 중 하나가 틀린 게 아니라
+          애초에 다른 것을 봅니다 — MBTI 는 성향, FABL 은 <b>일이 왔을 때의 순서</b>예요.
+        </p>
+      </Section>
+
+      <Divider />
+
       <Section className="kit-home-tail">
         <p className="kit-eyebrow">팀 조합</p>
         <h2 className="kit-h2">일잘러 유형은 없습니다</h2>
@@ -244,6 +271,15 @@ const TEAM_SETS = [
   { label: '균형형', codes: ['FAB', 'ABL', 'BLF', 'LFA'] },
   { label: '실행 중심', codes: ['FBA', 'BAL', 'ALF', 'LFB'] },
   { label: '조율 중심', codes: ['FLA', 'LAB', 'ABF', 'BFL'] }
+];
+
+// MBTI 대응은 데이터로 확인한 게 아니다. 두 검사를 같이 받은 사람들의 응답을 맞춰 본
+// 적이 없으므로, 축 수준의 '겹칠 법한 성향'까지만 적고 24유형 대 16유형 표는 만들지 않는다.
+const MBTI_HINTS = [
+  { key: 'F', ko: '해석', axis: 'N · T 쪽', why: '눈앞의 사실보다 패턴과 원인을 먼저 본다' },
+  { key: 'A', ko: '판단', axis: 'J · T 쪽', why: '먼저 정하고 닫는 것을 편하게 여긴다' },
+  { key: 'B', ko: '실행', axis: 'S · P 쪽', why: '말보다 손이 먼저 나가고 하면서 고친다' },
+  { key: 'L', ko: '조율', axis: 'E · F 쪽', why: '사람과 맞추는 과정에서 답을 찾는다' }
 ];
 
 // 한 모드로 쏠린 조직에서 생기는 일. 연구 결과가 아니라 FABL 정의에서 따라 나오는
