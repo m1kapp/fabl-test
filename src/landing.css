@@ -37,8 +37,23 @@
 
 .kit-actions { display: grid; gap: 8px; margin-top: 20px; }
 
+/* 히어로와 모드 카드의 장면 이미지. 글로만 있던 설명을 그림으로 먼저 읽히게 한다. */
+.kit-hero-shot { margin: 20px 0 0; }
+.kit-hero-shot img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid #e5e2f6; border-radius: 18px; }
+
 .kit-modes { display: grid; gap: 10px; }
-.kit-mode { padding: 16px; background: #fff; border: 1px solid #e3e7ee; border-left: 3px solid var(--kit-accent, #6047d8); border-radius: 14px; }
+.kit-mode { overflow: hidden; padding: 0 16px 16px; background: #fff; border: 1px solid #e3e7ee; border-left: 3px solid var(--kit-accent, #6047d8); border-radius: 14px; }
+/* kit 스타일시트(tailwind preflight)의 img{max-width:100%;height:auto} 가 나중에 주입돼
+   높이 지정을 덮어썼다. max-width 를 풀고 높이를 다시 못박는다. */
+.kit-mode > .kit-mode-shot {
+  display: block;
+  width: calc(100% + 32px);
+  max-width: none;
+  height: 132px;
+  margin: 0 -16px 14px -16px;
+  object-fit: cover;
+  object-position: center 38%;
+}
 .kit-mode > div { display: flex; align-items: baseline; gap: 8px; }
 .kit-mode > div span { color: #b3bac6; font-size: 10px; font-weight: 900; }
 .kit-mode > div b { font-size: 20px; font-weight: 950; letter-spacing: -.03em; }
@@ -72,3 +87,7 @@
 .kit-dims { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
 .kit-dims span { padding: 5px 10px; color: var(--kit-accent, #6047d8); background: #f2effe; border-radius: 999px; font-size: 11.5px; font-weight: 700; }
 .kit-note { margin: 16px 0 0; color: #98a1b0; font-size: 11px; line-height: 1.6; }
+
+/* 토스 이모지는 탭 아이콘에만 쓴다. 폰트 스택 맨 앞에 두면 숫자까지 Tossface 로 잡혀
+   'v0.0.46' 이 'v 0 . 0 . 4 6' 처럼 벌어진다(실측). */
+.kit-tab-icon { font-family: "Tossface", sans-serif; }

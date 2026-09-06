@@ -44,6 +44,9 @@ function HomeTab({ on }) {
           상황부터 파악하는 사람, 뭐가 중요한지 먼저 정하는 사람, 일단 만들어보는 사람,
           관련된 사람부터 맞추는 사람. 성격이 아니라 <b>먼저 손대는 곳</b>이 다릅니다.
         </p>
+        <figure className="kit-hero-shot">
+          <img src="/landing/hero.jpg" alt="새 일감 앞에서 어느 길로 갈지 고르는 사람" />
+        </figure>
         <ExampleCard />
         <div className="kit-actions">
           <Button full shape="pill" onClick={() => on.start('short')}>내 업무 유형 찾기 →</Button>
@@ -63,6 +66,7 @@ function HomeTab({ on }) {
         <div className="kit-modes">
           {workModes.map((mode, index) => (
             <article className={`kit-mode mode-${mode.key.toLowerCase()}`} key={mode.key}>
+              <img className="kit-mode-shot" src={`/landing/mode-${mode.en.toLowerCase()}.jpg`} alt="" loading="lazy" />
               <div><span>0{index + 1}</span><b>{mode.key}</b></div>
               <small>{mode.en} · {mode.ko}</small>
               <h3>{mode.question}</h3>
@@ -199,9 +203,9 @@ function Shell({ mode, archiveCount, initialTab, on }) {
         </AppShellContent>
         {landing && (
           <TabBar>
-            <Tab active={tab === 'home'} onClick={() => setTab('home')} icon="🏠" label="홈" activeColor={ACCENT} />
-            <Tab active={tab === 'type'} onClick={() => setTab('type')} icon="🧭" label="유형 테스트" activeColor={ACCENT} />
-            <Tab active={tab === 'keyed'} onClick={() => setTab('keyed')} icon="✅" label="판단 체크" activeColor={ACCENT} />
+            <Tab active={tab === 'home'} onClick={() => setTab('home')} icon={<span className="kit-tab-icon">🏠</span>} label="홈" activeColor={ACCENT} />
+            <Tab active={tab === 'type'} onClick={() => setTab('type')} icon={<span className="kit-tab-icon">🧭</span>} label="유형 테스트" activeColor={ACCENT} />
+            <Tab active={tab === 'keyed'} onClick={() => setTab('keyed')} icon={<span className="kit-tab-icon">✅</span>} label="판단 체크" activeColor={ACCENT} />
           </TabBar>
         )}
       </AppShell>
