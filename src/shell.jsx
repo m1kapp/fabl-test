@@ -43,15 +43,20 @@ function HomeTab({ on, ctaRef }) {
         <figure className="kit-hero-shot">
           <img src="/landing/hero.jpg" alt="새 일감 앞에서 어느 길로 갈지 고르는 사람" />
         </figure>
-        <div className="kit-actions" ref={ctaRef}>
-          <Button full shape="pill" onClick={() => on.start('short')}>3분 만에 내 유형 찾기 →</Button>
-          <Button full shape="pill" variant="light" onClick={() => on.start('full')}>유형 + 역량 다 보기 · 15분</Button>
-          <p className="kit-action-note">
-            <b>3분</b>은 내가 뭐부터 하는 사람인지만 봐요.
-            <br />
-            <b>15분</b>은 유형도 찾고, 정답이 있는 문제로 <b>실제로 잘하는지까지</b> 봅니다.
-            문항이 많아 시간이 걸려요.
-          </p>
+        {/* 두 코스를 나란히 둔다. 세로로 쌓으면 위가 기본, 아래는 덤처럼 읽힌다. */}
+        <div className="kit-picker" ref={ctaRef}>
+          <button className="kit-pick" onClick={() => on.start('short')}>
+            <b>3분</b>
+            <span>유형만</span>
+            <p>내가 뭐부터 하는 사람인지</p>
+            <i>시작 →</i>
+          </button>
+          <button className="kit-pick" onClick={() => on.start('full')}>
+            <b>15분</b>
+            <span>유형 + 역량</span>
+            <p>정답 있는 문제로 실제 실력까지</p>
+            <i>시작 →</i>
+          </button>
         </div>
       </Section>
 

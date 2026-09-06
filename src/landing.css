@@ -111,3 +111,25 @@
 .kit-callout p { margin: 0; color: #5b6577; font-size: 12.5px; line-height: 1.65; }
 .kit-type-pair { margin: 6px 0 0 !important; color: #8b95a8; font-size: 11.5px; }
 .kit-type-pair b { color: var(--kit-accent, #6047d8); font-weight: 900; letter-spacing: .02em; }
+
+/* 홈의 코스 선택. 3분과 15분을 나란히 둬서 둘 중 고르는 화면으로 읽히게 한다. */
+.kit-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+.kit-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 14px 13px 12px;
+  text-align: left;
+  background: #fff;
+  border: 1px solid #dfe3ec;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: .15s;
+}
+.kit-pick:hover { border-color: var(--kit-accent, #6047d8); background: #faf9ff; }
+.kit-pick b { font-size: 22px; font-weight: 950; letter-spacing: -.04em; }
+.kit-pick > span { color: var(--kit-accent, #6047d8); font-size: 11px; font-weight: 800; }
+.kit-pick p { margin: 8px 0 12px; color: #5b6577; font-size: 12px; line-height: 1.5; }
+.kit-pick i { margin-top: auto; padding: 7px 12px; color: #fff; background: #172238; border-radius: 999px; font-size: 12px; font-style: normal; font-weight: 800; }
+.kit-pick:first-child i { background: var(--kit-accent, #6047d8); }
