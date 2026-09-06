@@ -23,17 +23,6 @@ function typeGroups() {
   });
 }
 
-function ExampleCard() {
-  return (
-    <div className="kit-example" aria-label="결과 예시 FAB">
-      <b className="kit-example-tag">결과는 이렇게 나옵니다 · 예시</b>
-      <div><span>F</span><i /><span>A</span><i /><span>B</span></div>
-      <small>FRAME → AIM → BUILD</small>
-      <strong>FAB · 분석추진형</strong>
-    </div>
-  );
-}
-
 function HomeTab({ on }) {
   return (
     <>
@@ -47,7 +36,6 @@ function HomeTab({ on }) {
         <figure className="kit-hero-shot">
           <img src="/landing/hero.jpg" alt="새 일감 앞에서 어느 길로 갈지 고르는 사람" />
         </figure>
-        <ExampleCard />
         <div className="kit-actions">
           <Button full shape="pill" onClick={() => on.start('short')}>내 업무 유형 찾기 →</Button>
           <Button full shape="pill" variant="light" onClick={on.goKeyed}>판단 체크 보기</Button>
@@ -121,7 +109,6 @@ function TypeTab({ archiveCount, on }) {
         업무 상황 12개에서 <b>가장 먼저 취할 행동</b>을 고르면, 자주 쓰는 세 가지 힘을
         순서대로 이어 24유형 중 하나가 나옵니다.
       </p>
-      <ExampleCard />
       <ul className="kit-facts">
         <li><b>12문항</b><span>약 2~3분 · 객관식</span></li>
         <li><b>정답 없음</b><span>모든 선택지가 가능한 대응</span></li>

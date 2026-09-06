@@ -14,27 +14,6 @@
 .kit-lead b, .kit-body b { color: #172238; }
 .kit-meta { margin: 14px 0 0; color: #98a1b0; font-size: 11px; line-height: 1.6; text-align: center; }
 
-/* 결과 예시 카드. 자기 결과로 오해하지 않게 라벨을 위에 남겨둔다. */
-.kit-example {
-  margin: 22px 0 20px;
-  padding: 18px 16px 20px;
-  background: #f5f3ff;
-  border: 1px solid #ded9fb;
-  border-radius: 20px;
-  text-align: center;
-}
-.kit-example-tag { display: block; margin-bottom: 12px; color: #8b95a8; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; }
-.kit-example > div { display: flex; align-items: center; justify-content: center; gap: 8px; }
-.kit-example > div span {
-  display: grid; place-items: center;
-  width: 56px; height: 56px;
-  color: #fff; background: var(--kit-accent, #6047d8);
-  border-radius: 16px; font-size: 30px; font-weight: 950;
-}
-.kit-example > div i { width: 14px; height: 2px; background: #a9b0be; }
-.kit-example small { display: block; margin-top: 12px; color: #8b95a8; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; }
-.kit-example strong { display: block; margin-top: 4px; font-size: 17px; letter-spacing: -.02em; }
-
 .kit-actions { display: grid; gap: 8px; margin-top: 20px; }
 
 /* 히어로와 모드 카드의 장면 이미지. 글로만 있던 설명을 그림으로 먼저 읽히게 한다. */
@@ -42,7 +21,7 @@
 .kit-hero-shot img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid #e5e2f6; border-radius: 18px; }
 
 .kit-modes { display: grid; gap: 10px; }
-.kit-mode { overflow: hidden; padding: 0 16px 16px; background: #fff; border: 1px solid #e3e7ee; border-left: 3px solid var(--kit-accent, #6047d8); border-radius: 14px; }
+.kit-mode { overflow: hidden; padding: 0 16px 16px; background: #fff; border: 1px solid #e3e7ee; border-radius: 14px; }
 /* kit 스타일시트(tailwind preflight)의 img{max-width:100%;height:auto} 가 나중에 주입돼
    높이 지정을 덮어썼다. max-width 를 풀고 높이를 다시 못박는다. */
 .kit-mode > .kit-mode-shot {
