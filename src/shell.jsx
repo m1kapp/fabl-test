@@ -184,27 +184,37 @@ const EVIDENCE = [
   {
     claim: '유형 점수로는 사람끼리 비교할 수 없다',
     body: '본인의 답 안에서 비중을 나눠 매기는 방식(ipsative)은 합이 구조적으로 고정돼, 두 사람의 점수를 나란히 놓고 누가 높은지 말할 수 없다. 이 테스트의 유형 점수가 정확히 그 방식이다.',
-    source: 'Hicks, L. E. (1970). Some properties of ipsative, normative, and forced-choice normative measures. Psychological Bulletin, 74(3).'
+    who: 'Hicks, L. E. (1970)',
+    title: 'Some properties of ipsative, normative, and forced-choice normative measures',
+    where: 'Psychological Bulletin, 74(3)'
   },
   {
     claim: '유형 라벨은 사람을 가르는 근거가 못 된다',
     body: '대표적인 유형 검사(MBTI)에 대해, 유형 분류의 재검사 일치도와 예측력이 채용·배치 결정을 뒷받침할 만큼은 아니라는 검토가 있다. 유형은 대화의 출발점이지 판정문이 아니다.',
-    source: 'Pittenger, D. J. (2005). Cautionary comments regarding the Myers-Briggs Type Indicator. Consulting Psychology Journal, 57(3).'
+    who: 'Pittenger, D. J. (2005)',
+    title: 'Cautionary comments regarding the Myers-Briggs Type Indicator',
+    where: 'Consulting Psychology Journal, 57(3)'
   },
   {
     claim: '상황을 주고 대응을 고르게 하는 문항은 실제 성과와 상관이 있다',
     body: '역량 체크가 쓰는 형식(상황판단검사, SJT)은 여러 연구를 모아 보면 업무 성과와 유의한 상관을 보인다. 다만 상관이 있다는 것과 개인을 선별할 만큼 정확하다는 것은 다른 말이다.',
-    source: 'McDaniel, M. A., Morgeson, F. P., Finnegan, E. B., Campion, M. A., & Braverman, E. P. (2001). Use of situational judgment tests to predict job performance. Journal of Applied Psychology, 86(4).'
+    who: 'McDaniel, M. A., Morgeson, F. P., Finnegan, E. B., Campion, M. A., & Braverman, E. P. (2001)',
+    title: 'Use of situational judgment tests to predict job performance: A clarification of the literature',
+    where: 'Journal of Applied Psychology, 86(4)'
   },
   {
     claim: '선발 도구의 예측력은 과거에 알려진 것보다 낮게 잡아야 한다',
     body: '오랫동안 인용돼 온 선발 방법별 타당도 추정치가 범위 제한 보정 등을 다시 따지면서 하향 조정됐다. 짧은 온라인 검사 하나로 사람을 거르는 판단은 이 보정 이후 더 조심스러워졌다.',
-    source: 'Sackett, P. R., Zhang, C., Berry, C. M., & Lievens, F. (2022). Revisiting meta-analytic estimates of validity in personnel selection. Journal of Applied Psychology, 107(11).'
+    who: 'Sackett, P. R., Zhang, C., Berry, C. M., & Lievens, F. (2022)',
+    title: 'Revisiting meta-analytic estimates of validity in personnel selection',
+    where: 'Journal of Applied Psychology, 107(11)'
   },
   {
     claim: '문항이 적으면 점수가 흔들린다',
-    body: '같은 성질의 문항을 늘릴수록 검사의 신뢰도가 올라간다는 관계는 공식으로 정리돼 있다. 역량 체크는 ' + '20문항이라 맞은 개수의 차이가 실력 차인지 운인지 가르기에는 아직 짧다.',
-    source: 'Spearman, C. (1910) · Brown, W. (1910). British Journal of Psychology, 3(3) — Spearman–Brown 예측 공식.'
+    body: '같은 성질의 문항을 늘릴수록 검사의 신뢰도가 올라간다는 관계는 100년 전에 공식으로 정리됐다. 역량 체크는 20문항이라, 맞은 개수의 차이가 실력 차인지 운인지 가르기에는 아직 짧다.',
+    who: 'Spearman, C. (1910) · Brown, W. (1910)',
+    title: 'Spearman–Brown 예측 공식 — 검사 길이와 신뢰도의 관계',
+    where: 'British Journal of Psychology, 3(3)'
   }
 ];
 
@@ -229,7 +239,9 @@ function EvidenceTab() {
         <article className="kit-evidence" key={item.claim}>
           <h3>{item.claim}</h3>
           <p>{item.body}</p>
-          <cite>{item.source}</cite>
+          <cite>
+            <b>{item.who}</b> {item.title}. <b>{item.where}</b>.
+          </cite>
         </article>
       ))}
 

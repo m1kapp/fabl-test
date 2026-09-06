@@ -100,7 +100,8 @@
 .kit-evidence { padding: 14px 0; border-top: 1px solid #edf0f4; }
 .kit-evidence h3 { margin: 0 0 6px; font-size: 14.5px; line-height: 1.4; letter-spacing: -.02em; }
 .kit-evidence p { margin: 0 0 8px; color: #5b6577; font-size: 12.5px; line-height: 1.65; }
-.kit-evidence cite { display: block; color: #8b95a8; font-size: 11px; font-style: normal; line-height: 1.5; }
+.kit-evidence cite { display: block; padding: 9px 11px; color: #6b7688; background: #f7f8fa; border-left: 2px solid #cfc7ef; border-radius: 0 8px 8px 0; font-size: 11px; font-style: normal; line-height: 1.55; }
+.kit-evidence cite b { color: #2b3244; font-weight: 800; }
 .kit-evidence-title { margin: 26px 0 10px; font-size: 19px; }
 .kit-limits { margin: 0; padding-left: 18px; }
 .kit-limits li { margin-bottom: 8px; color: #5b6577; font-size: 12.5px; line-height: 1.6; }
