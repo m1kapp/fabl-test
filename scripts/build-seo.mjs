@@ -39,7 +39,7 @@ const urls = [`${ORIGIN}/`];
 
 for (const code of codes) {
   const title = `${code} · ${workTypeNames[code]}형 — FABL 테스트`;
-  const description = `${workTypePeople[code]} 아키타입. ${workTypeReasons[code]} 나의 일하는 순서도 확인해보세요.`;
+  const description = `${workTypePeople[code]} 아키타입. ${workTypeReasons[code]}. 12개 상황으로 내 순서도 확인해보세요.`;
   const url = `${ORIGIN}/t/${code}/`;
 
   let html = setTitle(shell, title);
@@ -49,6 +49,9 @@ for (const code of codes) {
   html = setMeta(html, 'og:description', description);
   html = setMeta(html, 'og:url', url);
   html = setMeta(html, 'og:image', `${ORIGIN}/og/${code}.png`);
+  // 카카오톡은 og:image 를 캐시한다. 유형마다 경로가 달라 새 코드는 항상 새로 읽힌다.
+  html = setMeta(html, 'og:image:alt', `${code} · ${workTypeNames[code]}형 — ${workTypePeople[code]} 아키타입`);
+  html = setMeta(html, 'og:image:type', 'image/png');
 
   const dir = join(dist, 't', code);
   mkdirSync(dir, { recursive: true });
