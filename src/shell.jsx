@@ -170,16 +170,28 @@ function HomeTab({ on, ctaRef }) {
 
         {TEAM_SETS.map(set => (
           <div className="kit-team" key={set.label}>
-            <div className="kit-team-head"><b>{set.label}</b><span>F · A · B · L 모두 채움</span></div>
-            <ul>
+            <div className="kit-team-head"><b>{set.label}</b><span>진할수록 먼저 쓰는 힘</span></div>
+            <div className="kit-grid">
+              <div className="kit-grid-row kit-grid-head">
+                <span />
+                {workModes.map(mode => <b key={mode.key}>{mode.key}</b>)}
+              </div>
               {set.codes.map(code => (
-                <li key={code}>
-                  <img src={`/people/${code}.jpg`} alt="" loading="lazy" />
-                  <b>{code}</b>
-                  <span>{workTypeNames[code]}형</span>
-                </li>
+                <div className="kit-grid-row" key={code}>
+                  <span>
+                    <img src={`/people/${code}.jpg`} alt="" loading="lazy" />
+                    <em>{code}</em>
+                  </span>
+                  {workModes.map(mode => {
+                    const rank = code.indexOf(mode.key);
+                    return <i key={mode.key} className={rank === -1 ? 'rank-none' : `rank-${rank + 1}`} title={rank === -1 ? '거의 안 씀' : `${rank + 1}순위`} />;
+                  })}
+                </div>
               ))}
-            </ul>
+            </div>
+            <p className="kit-grid-note">
+              세로로 보면 F·A·B·L 마다 진한 칸이 하나씩 — 네 힘을 한 사람씩 맡는다.
+            </p>
           </div>
         ))}
 
