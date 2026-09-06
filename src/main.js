@@ -40,11 +40,34 @@ const workModeCapabilityKeys = {
 const workModeColors = { F: '#6047d8', A: '#df705f', B: '#239575', L: '#3e78c5' };
 const capabilityWorkMode = Object.fromEntries(Object.entries(workModeCapabilityKeys).flatMap(([mode, keys]) => keys.map(key => [key, mode])));
 
+// 모드 점수는 역량 점수의 평균이 아니라 모드에 속한 역량을 묶어 한 번에 비율을 낸다.
+// 평균을 쓰면 신호가 적은 역량 하나가 튀면서 모드 순위까지 뒤집힌다.
+// 관찰 기회가 적은 역량은 한 번만 골라도 비율이 튄다. 기대 신호에 상수를 더해
+// 관찰이 적을수록 전체 평균 쪽으로 당긴다(수축 추정). 기회가 충분하면 사실상 그대로다.
+const SIGNAL_PRIOR = 1.5;
+function shrunkRate(obtained, chance, globalRate) {
+  return (obtained + SIGNAL_PRIOR * globalRate) / (chance + SIGNAL_PRIOR);
+}
+
 function calculateWorkType(result) {
+  const byKey = Object.fromEntries(result.map(item => [item.key, item]));
+  const globalRate = result[0] && result[0].globalRate;
   const scores = Object.fromEntries(result.map(item => [item.key, item.score]));
-  const modes = workModes.map(mode => {
+  const pooled = Number.isFinite(globalRate) && globalRate
+    ? workModes.map(mode => {
+        const keys = workModeCapabilityKeys[mode.key];
+        const obtained = keys.reduce((sum, key) => sum + (byKey[key].obtained || 0), 0);
+        const chance = keys.reduce((sum, key) => sum + (byKey[key].chance || 0), 0);
+        return shrunkRate(obtained, chance, globalRate);
+      })
+    : null;
+  const meanRate = pooled ? pooled.reduce((sum, rate) => sum + rate, 0) / pooled.length : 0;
+  const modes = workModes.map((mode, index) => {
     const keys = workModeCapabilityKeys[mode.key];
-    return { ...mode, score: keys.reduce((sum, key) => sum + scores[key], 0) / keys.length };
+    const score = pooled && meanRate
+      ? 2 + Math.min(3, (pooled[index] / meanRate) * 1.5)
+      : keys.reduce((sum, key) => sum + scores[key], 0) / keys.length;
+    return { ...mode, score };
   }).sort((a, b) => b.score - a.score);
   return { code: modes.slice(0, 3).map(mode => mode.key).join(''), modes };
 }
@@ -121,19 +144,19 @@ const scenarioBlueprints = [
     body: '주간 회의에서 하루 주문 750건, 자동화율 60%, 자동 처리 270건이 담긴 자료가 공유됐다. 발표자는 지난주보다 처리 시간이 줄어 운영 효율이 개선되고 있다고 설명한 뒤 다음 안건으로 넘어가려 한다.',
     options: [
       { text: '예상값과 차이가 나는 지점을 직접 계산하고 집계 조건부터 대조한다.', scores: { validation: 3, focus: 2 } },
-      { text: '담당자와 숫자의 정의·기간·필터를 맞추고 같은 기준으로 다시 확인한다.', scores: { alignment: 3, validation: 2 } },
-      { text: '이 숫자를 쓰는 보고와 의사결정을 찾아 실제 영향부터 파악한다.', scores: { sensemaking: 3, impact: 2, priority: 2 } },
-      { text: '숫자가 달라지는 조건을 정리하고, 담당자에게 잘못된 수치와 관련 보고서를 바로잡아 달라고 요청한다.', scores: { delivery: 3, focus: 2, collaboration: 2 } }
+      { text: '담당자와 숫자의 정의·기간·필터를 맞추고 같은 기준으로 다시 확인한다.', scores: { alignment: 3, collaboration: 2 } },
+      { text: '이 숫자를 쓰는 보고와 의사결정을 찾아 무엇부터 바로잡을지 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '집계 조건을 바로잡아 같은 자료를 내가 다시 만들어 공유한다.', scores: { delivery: 3, pioneering: 2 } }
     ]
   },
   {
     domain: '교육 서비스', title: '찾는 강의가 목록에 없다는 문의',
     body: '수강생이 특정 강의를 찾을 수 없다고 문의했다. 동료는 추천 알고리즘 전체를 교체해야 한다고 주장한다.',
     options: [
-      { text: '강의가 보이지 않는 상황부터 다시 확인하고, 추천 방식 전체의 문제는 나중에 따로 살펴본다.', scores: { focus: 3, priority: 3, validation: 2 } },
-      { text: '수강생에게 확인 상황과 당장 강의를 찾을 수 있는 방법부터 안내한다.', scores: { impact: 3, alignment: 2, delivery: 2 } },
-      { text: '비슷한 누락 사례를 묶어 추천 구조에서 공통으로 깨지는 지점을 탐색한다.', scores: { sensemaking: 3, pioneering: 2, validation: 2 } },
-      { text: '동료와 역할을 나눠 한쪽은 빠르게 강의를 다시 보이게 하고, 다른 쪽은 추천 방식의 문제를 살펴본다.', scores: { collaboration: 3, alignment: 3, delivery: 2 } }
+      { text: '강의가 보이지 않는 상황부터 다시 확인하고, 추천 방식 전체의 문제는 나중에 따로 살펴본다.', scores: { focus: 3, validation: 2 } },
+      { text: '그 강의가 지금 검색 결과에 바로 뜨도록 손봐서 내보낸다.', scores: { delivery: 3, impact: 2 } },
+      { text: '이 강의의 수강 규모와 매출 비중을 견줘 지금 다룰 일인지 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '동료와 역할을 나눠 한쪽은 빠르게 강의를 다시 보이게 하고, 다른 쪽은 추천 방식의 문제를 살펴본다.', scores: { collaboration: 3, alignment: 2 } }
     ]
   },
   {
@@ -150,30 +173,30 @@ const scenarioBlueprints = [
     domain: '신규 매장', title: '업체 세 곳이 말한 날짜가 다르다',
     body: '개점을 위해 인테리어 업체·결제사·물류센터의 작업이 필요하지만 일정과 우선순위가 서로 다르다.',
     options: [
-      { text: '어떤 일이 끝나야 다음 일을 시작할 수 있는지 정리해, 개점일을 늦출 가능성이 큰 일부터 확인한다.', scores: { sensemaking: 3, priority: 3, focus: 2 } },
-      { text: '각 업체의 제약을 듣고 모두가 실행 가능한 하나의 일정으로 조율한다.', scores: { collaboration: 3, alignment: 3 } },
-      { text: '각 일의 담당자와 기한, 끝났다고 볼 조건을 적고 매일 지연되는 일을 해결한다.', scores: { delivery: 3, alignment: 2, validation: 2 } },
-      { text: '개점에 꼭 필요한 범위와 나중에 보완할 범위를 나눠 대안을 제시한다.', scores: { priority: 3, focus: 3, impact: 2 } }
+      { text: '어떤 일이 끝나야 다음 일을 시작할 수 있는지 정리해, 개점일을 늦출 가능성이 큰 일부터 확인한다.', scores: { sensemaking: 3, validation: 2 } },
+      { text: '각 업체의 제약을 듣고 모두가 실행 가능한 하나의 일정으로 조율한다.', scores: { collaboration: 3, alignment: 2 } },
+      { text: '각 일의 담당자와 기한, 끝났다고 볼 조건을 적고 매일 지연되는 일을 해결한다.', scores: { delivery: 3, focus: 2 } },
+      { text: '개점에 꼭 필요한 범위와 나중에 보완할 범위를 나눠 대안을 제시한다.', scores: { priority: 3, impact: 2 } }
     ]
   },
   {
     domain: '지역 센터', title: '운영시간을 짧게 시작하기로 정해졌다',
     body: '나는 운영시간을 늘려야 한다고 판단했지만, 검토 후 책임자는 짧은 운영시간으로 시작하기로 결정했다.',
     options: [
-      { text: '내 우려와 근거를 한 번 명확히 남긴 뒤 최종 결정에 맞춰 실행한다.', scores: { recalibration: 3, alignment: 3, delivery: 2 } },
-      { text: '짧게 운영했을 때의 고객 영향을 측정할 지표와 재검토 시점을 제안한다.', scores: { validation: 3, impact: 3, recalibration: 2 } },
-      { text: '책임자가 중요하게 본 제약을 확인해 내 판단에서 놓친 맥락을 갱신한다.', scores: { sensemaking: 3, recalibration: 3 } },
-      { text: '결정된 범위 안에서 운영 성과를 높일 새로운 방법을 찾아 시험한다.', scores: { pioneering: 3, delivery: 2, impact: 2 } }
+      { text: '내 우려와 근거를 기록으로 남긴 뒤 최종 결정에 맞춰 실행한다.', scores: { recalibration: 3, alignment: 2 } },
+      { text: '짧게 운영하면 어떤 이용자가 얼마나 불편해지는지 숫자로 재 본다.', scores: { validation: 3, sensemaking: 2 } },
+      { text: '짧게 운영해 지키려는 것과 잃는 것을 견줘 무엇이 먼저인지 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '결정된 범위 안에서 운영 성과를 높일 새로운 방법을 찾아 시험한다.', scores: { delivery: 3, pioneering: 2 } }
     ]
   },
   {
     domain: '예약 서비스', title: '공개 하루 전, 할인 문구가 실제와 다르다',
     body: '공개를 하루 앞두고 일부 조건에서 할인 문구가 잘못 표시된다. 결제 금액은 정확하며 전체 정책 개편 논의도 진행 중이다.',
     options: [
-      { text: '발생 조건과 노출 범위를 빠르게 확인해 출시 판단에 필요한 위험을 계산한다.', scores: { validation: 3, priority: 3, sensemaking: 2 } },
-      { text: '잘못된 문구만 고친 뒤 같은 상황에서 다시 확인하고 예정대로 출시한다.', scores: { focus: 3, delivery: 3, validation: 2 } },
-      { text: '고객이 오해하지 않도록 안내 방법을 준비하고 문의 대응까지 연결한다.', scores: { impact: 3, alignment: 3, collaboration: 2 } },
-      { text: '지금 고칠 문구와 나중에 바꿀 정책을 나누고, 각각 누가 어디까지 맡을지 정한다.', scores: { priority: 3, alignment: 3, recalibration: 2 } }
+      { text: '발생 조건과 노출 범위를 빠르게 확인해 출시 판단에 필요한 위험을 계산한다.', scores: { validation: 3, sensemaking: 2 } },
+      { text: '잘못된 문구만 고친 뒤 같은 상황에서 다시 확인하고 예정대로 출시한다.', scores: { delivery: 3, focus: 2 } },
+      { text: '고객센터와 안내 문구·문의 답변을 같은 기준으로 맞춘다.', scores: { alignment: 3, collaboration: 2 } },
+      { text: '지금 고칠 문구와 나중에 바꿀 정책을 나눠 무엇을 먼저 할지 정한다.', scores: { priority: 3, impact: 2 } }
     ]
   },
   {
@@ -181,18 +204,18 @@ const scenarioBlueprints = [
     body: '신규 공연이 전석 매진됐고 만족도도 높다. 다만 장기 회원 게시판에는 좌석 선택이 어렵다는 글이 반복해서 올라오고 있다.',
     options: [
       { text: '전체 만족도보다 장기 회원의 이용 흐름을 따로 나눠 불편이 집중되는 조건을 찾는다.', scores: { sensemaking: 3, validation: 3 } },
-      { text: '매진 성과를 유지하면서 다음 예매 때 좌석 안내를 먼저 개선한다.', scores: { impact: 3, delivery: 2 } },
+      { text: '매진 성과를 유지하면서 다음 예매 때 좌석 안내를 먼저 개선한다.', scores: { delivery: 3, impact: 2 } },
       { text: '장기 회원에게 구체적인 이용 화면과 기대했던 방식을 물어본다.', scores: { alignment: 3, collaboration: 2 } },
-      { text: '현재 결과를 기록해두고, 다음 공연에서 같은 불편을 말하는 사람이 늘어나는지 지켜본다.', scores: { priority: 3, validation: 2, recalibration: 2 } }
+      { text: '매진 성과와 장기 회원의 불편 중 무엇을 먼저 챙길지 정한다.', scores: { priority: 3, impact: 2 } }
     ]
   },
   {
     domain: '출판 유통', title: '전체 반품은 줄고 한 곳은 늘었다',
     body: '신간의 전체 반품률이 지난 분기보다 낮아졌다. 한 대형 서점만 배송 지연으로 반품이 늘었지만 전체 수치에는 거의 영향을 주지 않는다.',
     options: [
-      { text: '서점 규모와 거래 지속성을 고려해 해당 유통 경로의 지연 원인을 별도로 본다.', scores: { sensemaking: 3, impact: 3 } },
-      { text: '전체 반품률 개선을 먼저 확정하고 해당 서점 문제는 별도 과제로 분리한다.', scores: { focus: 3, priority: 3 } },
-      { text: '물류사와 서점의 배송 기록을 비교해 어느 단계부터 늦어졌는지 찾는다.', scores: { validation: 3, collaboration: 2 } },
+      { text: '서점 규모와 거래 지속성을 견줘 이 문제를 지금 다룰지 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '전체 반품률 개선을 먼저 확정하고 해당 서점 문제는 별도 과제로 분리한다.', scores: { focus: 3, validation: 2 } },
+      { text: '물류사·서점 담당자와 어느 단계부터 늦어졌는지 함께 맞춰 본다.', scores: { collaboration: 3, alignment: 2 } },
       { text: '다음 배송부터 적용할 임시 경로를 정하고 반품률 변화를 확인한다.', scores: { delivery: 3, pioneering: 2 } }
     ]
   },
@@ -201,9 +224,9 @@ const scenarioBlueprints = [
     body: '외부 연구소가 예정일보다 일찍 실험 완료를 알렸다. 결과 요약은 긍정적이지만 원본 데이터와 실패 조건은 다음 주에 전달할 수 있다고 한다.',
     options: [
       { text: '결론을 공유하기 전에 원본 데이터와 실패 조건을 확인할 범위를 정한다.', scores: { validation: 3, focus: 2 } },
-      { text: '아직 확인이 끝나지 않은 결과라고 밝히고, 원본 데이터를 확인할 날짜를 함께 알린다.', scores: { alignment: 3, delivery: 2 } },
+      { text: '아직 확인이 끝나지 않은 결과라고 밝히고, 원본 데이터를 확인할 날짜를 함께 알린다.', scores: { alignment: 3, collaboration: 2 } },
       { text: '이 결과로 바뀌는 의사결정이 무엇인지 확인해 필요한 검증 수준을 정한다.', scores: { priority: 3, impact: 3 } },
-      { text: '긍정적 신호를 활용해 후속 실험 후보를 먼저 설계한다.', scores: { pioneering: 3, sensemaking: 2 } }
+      { text: '긍정적 신호를 활용해 후속 실험 후보를 먼저 설계한다.', scores: { pioneering: 3, delivery: 2 } }
     ]
   },
   {
@@ -220,10 +243,10 @@ const scenarioBlueprints = [
     domain: '박물관 전시', title: '전문가가 안내문 표현을 지적했다',
     body: '개막 이틀 전 전문가가 핵심 설명문의 표현이 부정확하다고 지적했다. 인쇄물은 이미 제작됐고 디지털 안내는 즉시 바꿀 수 있다.',
     options: [
-      { text: '관람객 오해의 크기를 판단해 반드시 바꿀 표현부터 좁힌다.', scores: { priority: 3, focus: 3 } },
-      { text: '디지털 안내를 먼저 수정하고 현장 인쇄물의 보완 방법을 실행한다.', scores: { delivery: 3, impact: 3 } },
-      { text: '전문가에게 반드시 고쳐야 할 표현과 그대로 써도 되는 표현을 구분해 달라고 요청한다.', scores: { alignment: 3, validation: 2 } },
-      { text: '개막 후 질문 데이터를 모아 전체 설명 체계를 다시 설계한다.', scores: { recalibration: 3, pioneering: 2 } }
+      { text: '관람객 오해의 크기를 판단해 반드시 바꿀 표현부터 좁힌다.', scores: { priority: 3, impact: 2 } },
+      { text: '디지털 안내를 먼저 수정하고 현장 인쇄물의 보완 방법을 실행한다.', scores: { delivery: 3, focus: 2 } },
+      { text: '전문가에게 반드시 고쳐야 할 표현과 그대로 써도 되는 표현을 구분해 달라고 요청한다.', scores: { alignment: 3, collaboration: 2 } },
+      { text: '지적받은 문장이 실제로 틀렸는지 원자료와 대조한다.', scores: { validation: 3, sensemaking: 2 } }
     ]
   },
   {
@@ -231,9 +254,9 @@ const scenarioBlueprints = [
     body: '새 여행 코스의 예약 전환율이 높다. 운영팀은 일정이 빠듯해 현장 문의가 늘었다고 하지만 취소율은 아직 낮다.',
     options: [
       { text: '전환율과 별개로 현장 문의가 집중되는 일정 구간을 찾아본다.', scores: { sensemaking: 3, validation: 2 } },
-      { text: '예약 고객에게 일정의 난도를 더 명확히 안내해 기대를 맞춘다.', scores: { impact: 3, alignment: 3 } },
-      { text: '취소율 변화까지 관찰한 뒤 코스 수정 여부를 결정한다.', scores: { recalibration: 3, priority: 2 } },
-      { text: '운영팀과 가장 부담이 큰 한 구간을 골라 다음 회차부터 조정한다.', scores: { collaboration: 3, delivery: 3 } }
+      { text: '예약 고객에게 일정의 난도를 더 명확히 안내해 기대를 맞춘다.', scores: { alignment: 3, impact: 2 } },
+      { text: '예약이 늘어 얻은 것과 문의 대응 비용을 견줘 코스를 손댈지 정한다.', scores: { priority: 3, impact: 2 } },
+      { text: '가장 부담이 큰 한 구간을 골라 다음 회차부터 바꿔 본다.', scores: { delivery: 3, pioneering: 2 } }
     ]
   },
   {
@@ -251,9 +274,9 @@ const scenarioBlueprints = [
     body: '화면 개편 후 입찰 참여자는 늘었지만 문의 게시판에는 마감 시간을 오해했다는 글도 증가했다. 낙찰 자체는 정상 처리됐다.',
     options: [
       { text: '이용자들이 어느 화면을 거쳐 입찰했고 어디서 마감 시간을 오해했는지 확인한다.', scores: { sensemaking: 3, validation: 3 } },
-      { text: '마감 직전 이용자에게 시간을 더 분명히 보여주는 수정을 우선한다.', scores: { impact: 3, delivery: 3 } },
+      { text: '마감 직전 이용자에게 시간을 더 분명히 보여주는 수정을 우선한다.', scores: { delivery: 3, impact: 2 } },
       { text: '문의 고객에게 어떤 표현을 어떻게 이해했는지 구체적으로 확인한다.', scores: { alignment: 3, collaboration: 2 } },
-      { text: '참여율을 훼손하지 않는 작은 문구 실험으로 대안을 비교한다.', scores: { pioneering: 3, priority: 2 } }
+      { text: '참여자가 는 성과와 마감 오해 민원 중 무엇을 먼저 다룰지 정한다.', scores: { priority: 3, impact: 2 } }
     ]
   },
   {
@@ -262,8 +285,8 @@ const scenarioBlueprints = [
     options: [
       { text: '대체식이 준비되고 전달되는 과정 중 어느 단계에서 시간이 더 걸리는지 찾는다.', scores: { sensemaking: 3, validation: 3 } },
       { text: '이용자 수와 불편의 크기를 함께 보고 개선 투입 순서를 판단한다.', scores: { priority: 3, impact: 3 } },
-      { text: '배식팀과 대체식 준비 순서를 조정해 다음 운영에서 바로 시험한다.', scores: { collaboration: 3, delivery: 3 } },
-      { text: '신청자에게 예상 대기시간을 먼저 안내하고 수령 방식을 선택하게 한다.', scores: { alignment: 3, impact: 2 } }
+      { text: '대체식 준비 순서를 바꿔 다음 운영에서 바로 시험한다.', scores: { delivery: 3, pioneering: 2 } },
+      { text: '신청자에게 예상 대기시간을 먼저 안내하고 수령 방식을 선택하게 한다.', scores: { alignment: 3, collaboration: 2 } }
     ]
   },
   {
@@ -271,9 +294,9 @@ const scenarioBlueprints = [
     body: '신규 프로그램은 예약률이 높지만 첫 달 재등록률은 기존 프로그램보다 낮다. 강사는 참여자의 숙련도 차이가 크다고 말한다.',
     options: [
       { text: '신규·숙련 참여자의 재등록률과 중도 이탈 지점을 나눠본다.', scores: { sensemaking: 3, validation: 3 } },
-      { text: '첫 수업 전에 난도와 준비사항을 안내해 기대 차이를 줄인다.', scores: { alignment: 3, impact: 3 } },
+      { text: '첫 수업 전에 난도와 준비사항을 안내해 기대 차이를 줄인다.', scores: { alignment: 3, collaboration: 2 } },
       { text: '난도별 소규모 세션을 열어 재등록률 변화를 시험한다.', scores: { pioneering: 3, delivery: 2 } },
-      { text: '예약 성과와 장기 유지 중 무엇을 우선할지 운영 목표부터 맞춘다.', scores: { priority: 3, focus: 3 } }
+      { text: '예약 성과와 장기 유지 중 무엇을 우선할지 운영 목표부터 맞춘다.', scores: { priority: 3, impact: 2 } }
     ]
   },
   {
@@ -364,12 +387,12 @@ const plainScenarioCopy = [
   {
     title: '주문 750건 · 자동 처리 270건',
     body: '주문은 하루 750건이고, 그중 60%를 자동 처리했다고 발표했어요. 그런데 자동 처리는 270건으로 적혀 있어요.',
-    options: ['두 숫자를 직접 계산해 보기', '담당자에게 어떻게 센 건지 묻기', '이 숫자로 뭘 정하려는지 확인하기', '틀린 자료를 찾아 같이 고치기']
+    options: ['두 숫자를 직접 계산해 보기', '담당자에게 어떻게 센 건지 묻기', '이 숫자로 뭘 먼저 바로잡을지 정하기', '자료를 내가 다시 만들어 공유하기']
   },
   {
     title: '찾는 강의가 목록에 없대요',
     body: '수강생이 원하는 강의를 못 찾겠다고 해요. 동료는 추천 방식을 전부 바꾸자고 해요.',
-    options: ['왜 안 보이는지부터 확인하기', '수강생에게 찾는 방법 먼저 알려주기', '다른 강의도 그런지 찾아보기', '둘로 나눠 하나는 고치고 하나는 원인 보기']
+    options: ['왜 안 보이는지부터 확인하기', '그 강의가 바로 뜨게 고쳐 내보내기', '이 강의가 매출에 얼마나 큰지 따져보기', '동료와 역할 나눠 하나는 고치고 하나는 원인 보기']
   },
   {
     title: '해외 업체가 쓰는 포장법이 있어요',
@@ -384,22 +407,22 @@ const plainScenarioCopy = [
   {
     title: '운영시간을 짧게 시작하기로 정해졌어요',
     body: '나는 운영시간을 길게 하자고 했어요. 책임자는 짧게 시작하기로 정했어요.',
-    options: ['걱정을 한 번 말하고 결정대로 준비하기', '반응 보고 다시 볼 날짜 정하자고 하기', '왜 그렇게 정했는지 이유 확인하기', '정해진 시간 안에서 더 잘할 방법 찾기']
+    options: ['우려는 기록으로 남기고 결정대로 준비하기', '짧게 열면 누가 얼마나 불편한지 재보기', '짧게 해서 지키는 것과 잃는 것 견주기', '정해진 시간 안에서 더 잘할 방법 찾기']
   },
   {
     title: '공개 하루 전, 할인 문구가 실제와 달라요',
-    body: '일부 화면의 할인 문구가 틀렸어요. 실제 결제 금액은 맞아요.',
-    options: ['누구에게 얼마나 자주 보이는지 확인하기', '문구만 고치고 예정대로 공개하기', '고객 안내와 문의 답변 준비하기', '지금 고칠 것과 나중 고칠 것 나누기']
+    body: '일부 화면의 할인 문구가 틀렸어요. 실제 결제 금액은 맞고, 할인 정책을 통째로 바꾸는 논의도 따로 진행 중이에요.',
+    options: ['누구에게 얼마나 자주 보이는지 확인하기', '문구만 고치고 예정대로 공개하기', '고객센터와 안내·문의 답변 맞추기', '지금 고칠 것과 나중 고칠 것 나누기']
   },
   {
     title: '공연은 매진, 좌석 글은 계속 올라와요',
     body: '새 공연은 매진이고 만족도도 높아요. 그런데 단골들은 좌석 고르기가 어렵다는 글을 계속 남겨요.',
-    options: ['단골에게만 생기는 이유 찾기', '다음 예매 전에 좌석 안내 고치기', '회원에게 어디서 막혔는지 직접 묻기', '같은 말 하는 사람이 느는지 지켜보기']
+    options: ['단골에게만 생기는 이유 찾기', '다음 예매 전에 좌석 안내 고치기', '회원에게 어디서 막혔는지 직접 묻기', '매진 성과와 단골 불편 중 뭘 먼저 챙길지 정하기']
   },
   {
     title: '전체 반품은 줄고 한 곳은 늘었어요',
     body: '전체 서점의 반품은 줄었어요. 그런데 거래가 큰 한 곳은 배송이 늦어 반품이 늘었어요.',
-    options: ['그 거래처 규모와 앞으로의 영향 보기', '전체 성과와 그 거래처 문제를 따로 보기', '배송 기록에서 어디부터 늦었는지 찾기', '다음 배송은 다른 길로 보내보기']
+    options: ['그 거래처 문제를 지금 다룰지 정하기', '전체 성과와 그 거래처 문제를 따로 보기', '물류사·서점 담당자와 늦은 단계 맞춰보기', '다음 배송은 다른 길로 보내보기']
   },
   {
     title: '연구소가 성공을 먼저 알려왔어요',
@@ -409,17 +432,17 @@ const plainScenarioCopy = [
   {
     title: '새 장비를 쓴 농장에서 수확이 늘었어요',
     body: '한 농장에서 새 장비를 쓰고 수확이 늘었어요. 현장팀은 모든 농장에 바로 넣자고 해요.',
-    options: ['날씨 덕인지 장비 덕인지 확인하기', '환경이 다른 농장에서 먼저 해보기', '비용과 효과 비교해 순서 정하기', '어디까지 되면 늘리고 안 되면 멈출지 정하기']
+    options: ['날씨 덕인지 장비 덕인지 확인하기', '환경이 다른 농장에서 먼저 해보기', '비용과 효과 비교해 순서 정하기', '현장팀과 늘릴 기준·멈출 기준 정하기']
   },
   {
     title: '전문가가 안내문 표현을 지적했어요',
-    body: '행사 이틀 전, 전문가가 중요한 표현이 부정확하다고 했어요. 종이 안내문은 이미 만들었어요.',
-    options: ['크게 오해할 부분부터 골라내기', '화면부터 고치고 종이엔 정정문 끼우기', '전문가에게 꼭 고칠 문장 골라달라 하기', '행사 뒤 질문 모아 전체 다시 만들기']
+    body: '행사 이틀 전, 전문가가 중요한 표현이 부정확하다고 했어요. 종이 안내문은 이미 만들었고, 화면 안내는 지금 바로 바꿀 수 있어요.',
+    options: ['크게 오해할 부분부터 골라내기', '화면부터 고치고 종이엔 정정문 끼우기', '전문가에게 꼭 고칠 문장 골라달라 하기', '지적한 문장이 진짜 틀렸는지 원자료와 대조하기']
   },
   {
     title: '예약은 늘고 일정 문의도 늘었어요',
-    body: '새 여행 상품은 예약이 잘돼요. 그런데 일정이 빠듯하다는 문의가 계속 늘어요.',
-    options: ['어느 일정에 문의가 몰리는지 찾기', '예약 전에 빠듯하다고 분명히 알리기', '취소도 느는지 조금 더 지켜보기', '제일 힘든 일정 하나 바꾸기']
+    body: '새 여행 상품은 예약이 잘돼요. 그런데 일정이 빠듯하다는 문의가 계속 늘어요. 취소는 아직 안 늘었어요.',
+    options: ['어느 일정에 문의가 몰리는지 찾기', '예약 전에 빠듯하다고 분명히 알리기', '늘어난 예약과 문의 부담 견줘 정하기', '제일 힘든 일정 하나 바꿔 다음 회차 보기']
   },
   {
     title: '전기 사용은 줄고 밤에 경보가 울려요',
@@ -429,7 +452,7 @@ const plainScenarioCopy = [
   {
     title: '참여자는 늘고 마감 문의도 늘었어요',
     body: '경매 화면을 바꾸고 참여자는 늘었어요. 그런데 마감을 잘못 알았다는 문의도 늘었어요.',
-    options: ['어느 화면에서 헷갈렸는지 찾기', '마감 시간 더 크게 보이게 고치기', '문의한 사람에게 어떻게 읽었는지 묻기', '안내 두 가지를 작게 시험해 보기']
+    options: ['어느 화면에서 헷갈렸는지 찾기', '마감 시간 더 크게 보이게 고치기', '문의한 사람에게 어떻게 읽었는지 묻기', '참여 성과와 오해 민원 중 뭘 먼저 할지 정하기']
   },
   {
     title: '만족도는 오르고 대체식 대기는 길어졌어요',
@@ -855,10 +878,26 @@ function pickKeyedSet() {
   let seen = [];
   try { seen = JSON.parse(localStorage.getItem(KEYED_SEEN_KEY)) || []; } catch { seen = []; }
   const seenSet = new Set(seen);
-  const all = keyedItems.map((_, index) => index);
-  const fresh = shuffleValues(all.filter(index => !seenSet.has(index)));
-  const rest = shuffleValues(all.filter(index => seenSet.has(index)));
-  const picked = [...fresh, ...rest].slice(0, KEYED_QUESTION_COUNT);
+  // 단순 무작위로 뽑으면 어떤 차원이 2문항만 나오는 회차가 생긴다(6문항 풀 기준 7.6%).
+  // 2문항짜리 차원은 찍기로도 만점이 떠서 차원 점수가 의미를 잃는다. 차원마다 같은 수를 낸다.
+  const byDimension = new Map();
+  keyedItems.forEach((item, index) => {
+    if (!byDimension.has(item.dimension)) byDimension.set(item.dimension, []);
+    byDimension.get(item.dimension).push(index);
+  });
+  const order = shuffleValues([...byDimension.keys()]);
+  const perDimension = Math.floor(KEYED_QUESTION_COUNT / order.length);
+  const picked = [];
+  const leftover = [];
+  order.forEach(dimension => {
+    const indexes = byDimension.get(dimension);
+    const fresh = shuffleValues(indexes.filter(index => !seenSet.has(index)));
+    const rest = shuffleValues(indexes.filter(index => seenSet.has(index)));
+    const sorted = [...fresh, ...rest];
+    picked.push(...sorted.slice(0, perDimension));
+    leftover.push(...sorted.slice(perDimension));
+  });
+  picked.push(...leftover.slice(0, Math.max(0, KEYED_QUESTION_COUNT - picked.length)));
   try { localStorage.setItem(KEYED_SEEN_KEY, JSON.stringify(picked)); } catch { /* 저장 못 해도 진행 */ }
   return picked;
 }
@@ -888,15 +927,15 @@ function beginKeyed() {
 function renderKeyedPanel() {
   const done = state.keyedSet && keyedAnsweredCount() === state.keyedSet.length;
   if (!done) {
-    return `<section class="keyed-panel keyed-invite"><div><p class="eyebrow">역량 체크 · ${KEYED_QUESTION_COUNT}문항</p><h2>여기까지는 &lsquo;무엇부터 하는가&rsquo;였어요</h2><p>유형은 자주 쓰는 순서만 봐요. 선택지가 다 가능한 대응이라 틀린 답이 없거든요. 정답이 있는 ${KEYED_QUESTION_COUNT}문항으로 실력은 따로 확인해보세요.</p></div><button class="primary" id="startKeyed">역량 체크 하기 <b>→</b></button></section>`;
+    return `<section class="keyed-panel keyed-invite"><div><p class="eyebrow">역량 체크 · ${KEYED_QUESTION_COUNT}문항</p><h2>여기까지는 &lsquo;무엇부터 하는가&rsquo;였어요</h2><p>유형은 자주 쓰는 순서만 봐요. 선택지가 다 가능한 대응이라 틀린 답이 없거든요. 정답이 있는 ${KEYED_QUESTION_COUNT}문항은 따로 있어요. 몇 개 맞혔는지, 어디서 놓쳤는지 보여드려요.</p></div><button class="primary" id="startKeyed">역량 체크 하기 <b>→</b></button></section>`;
   }
   const scored = scoreKeyed(state.keyedAnswers, state.keyedSet);
   const dims = Object.entries(scored.byDimension)
     .map(([key, v]) => `<div class="keyed-dim${v.correct === v.total ? ' ok' : ''}"><b>${qualityDimensionNames[key]}</b><span>${v.correct} / ${v.total}</span></div>`).join('');
   const missed = scored.missed.length
     ? scored.missed.map(({ item, index }) => `<details class="keyed-miss"><summary><b>${qualityDimensionNames[item.dimension]}</b> ${item.question}</summary><p class="keyed-chose">내가 고른 답 · ${item.options[state.keyedAnswers[index]]}</p><p class="keyed-answer">더 맞는 답 · ${item.options[item.correct]}</p><p class="keyed-why">${item.principle}</p></details>`).join('')
-    : '<p class="keyed-allok">여덟 문항 모두 맞게 골랐어요.</p>';
-  return `<section class="keyed-panel"><div class="keyed-head"><div><p class="eyebrow">역량 체크</p><h2>역량 체크 <em>${scored.correct} / ${scored.total}</em></h2><p>유형과 달리 이 점수는 정답으로 매겼어요. 사람끼리 비교가 되는 값이에요.</p></div><button class="ghost" id="retryKeyed">다시 풀기</button></div><div class="keyed-dims">${dims}</div>${missed}</section>`;
+    : `<p class="keyed-allok">${scored.total}문항 모두 맞게 골랐어요.</p>`;
+  return `<section class="keyed-panel"><div class="keyed-head"><div><p class="eyebrow">역량 체크</p><h2>역량 체크 <em>${scored.correct} / ${scored.total}</em></h2><p>유형과 달리 여기엔 정답이 있어요. 다만 문항을 매번 다르게 뽑아 내니 사람마다 받는 문제가 달라요. 점수로 사람을 줄 세우지는 마세요.</p></div><button class="ghost" id="retryKeyed">다시 풀기</button></div><div class="keyed-dims">${dims}</div>${missed}</section>`;
 }
 
 function render() {
@@ -1098,7 +1137,7 @@ function renderChat() {
     if (state.pendingChoice === -1) {
       detail = `<form class="rationale custom-answer" id="customForm"><label for="customText">직접 할 행동을 적어주세요.</label><textarea id="customText" rows="3" maxlength="500" placeholder="가장 먼저 할 질문이나 행동을 구체적으로 적어주세요."></textarea><div><span>5자 이상 입력해주세요.</span><button type="submit">직접 답변 제출 →</button></div></form>`;
     } else if (mode === 'hybrid') {
-      detail = `<form class="rationale" id="choiceForm"><label for="rationaleText">왜 골랐나요? 더 하고 싶은 행동이 있나요? <small>선택사항</small></label><textarea id="rationaleText" rows="2" maxlength="300" placeholder="예: 먼저 고객군을 나눠 보고, 영향이 크면 담당자와 수정 범위를 정하겠습니다."></textarea><div><span>한 줄을 보태면 역량 판단이 더 정확해집니다.</span><button type="submit" ${state.pendingChoice === null ? 'disabled' : ''}>이 선택으로 제출 →</button></div></form>`;
+      detail = `<form class="rationale" id="choiceForm"><label for="rationaleText">왜 골랐나요? 더 하고 싶은 행동이 있나요? <small>선택사항</small></label><textarea id="rationaleText" rows="2" maxlength="300" placeholder="예: 먼저 고객군을 나눠 보고, 영향이 크면 담당자와 수정 범위를 정하겠습니다."></textarea><div><span>한 줄은 결과 화면에 그대로 남습니다. 점수에는 반영하지 않아요.</span><button type="submit" ${state.pendingChoice === null ? 'disabled' : ''}>이 선택으로 제출 →</button></div></form>`;
     } else {
       detail = '<p class="quick-hint">선택하면 바로 기록됩니다.</p>';
     }
@@ -1290,28 +1329,27 @@ function calculate() {
       totals[key].evidence.push({ scenario: scenario.title, value });
     });
   });
-  const chatSums = Object.fromEntries(capabilities.map(c => [c.key, 0]));
+  // 서술형은 정규식 키워드 매칭이라 '확인·먼저·담당자' 처럼 업무 문장에 거의 항상 있는 단어에
+  // 걸린다. 길게 쓸수록 F·L 이 올라가고, 서술형 12턴이 객관식 20문항과 맞먹는 무게가 됐다.
+  // 그래서 점수에서는 뺀다. 무엇을 적었는지는 근거 목록에만 남긴다.
   state.chatSignals.forEach(signal => {
     Object.entries(signal.scores).forEach(([key, value]) => {
-      chatSums[key] += value;
-      totals[key].sum += value;
-      totals[key].count += 1;
       totals[key].evidence.push({ scenario: signal.scenario, value, text: signal.text });
     });
   });
 
-  // 서술형 신호는 선택지가 없어 기대값을 못 만든다. 역량 평균 기대치로 나눠 같은 축에 올린다.
-  const meanExpected = capabilities.reduce((sum, c) => sum + expected[c.key], 0) / capabilities.length;
-  const relative = Object.fromEntries(capabilities.map(c => {
-    const fromOptions = expected[c.key] ? (totals[c.key].sum - chatSums[c.key]) / expected[c.key] : 0;
-    const fromChat = meanExpected ? chatSums[c.key] / meanExpected : 0;
-    return [c.key, fromOptions + fromChat];
-  }));
-  const averageRelative = capabilities.reduce((sum, c) => sum + relative[c.key], 0) / capabilities.length;
+  // 역량마다 문항이 주는 기회가 다르다. 기회가 거의 없던 역량(예: 판단갱신력)은 한 번만 골라도
+  // 비율이 4~6 까지 튀어 모드 순위를 뒤집었다. 기대 신호에 상수를 더해 관찰이 적을수록
+  // 전체 평균 쪽으로 당긴다(수축 추정). 기회가 충분한 역량은 사실상 그대로 남는다.
+  const obtainedAll = capabilities.reduce((sum, c) => sum + totals[c.key].sum, 0);
+  const expectedAll = capabilities.reduce((sum, c) => sum + expected[c.key], 0);
+  const globalRate = expectedAll ? obtainedAll / expectedAll : 0;
   return capabilities.map(c => {
-    const relativePreference = averageRelative ? relative[c.key] / averageRelative : 0;
-    const score = totals[c.key].count ? 2 + Math.min(3, relativePreference * 1.5) : 2;
-    return { ...c, score, observed: totals[c.key].count, evidence: totals[c.key].evidence };
+    const rate = shrunkRate(totals[c.key].sum, expected[c.key], globalRate);
+    const relativePreference = globalRate ? rate / globalRate : 0;
+    const score = totals[c.key].count || expected[c.key] ? 2 + Math.min(3, relativePreference * 1.5) : 2;
+    // obtained·chance 를 같이 넘긴다. 모드 점수는 이걸 모드 단위로 합쳐서 다시 계산한다.
+    return { ...c, score, observed: totals[c.key].count, obtained: totals[c.key].sum, chance: expected[c.key], globalRate, evidence: totals[c.key].evidence };
   });
 }
 
@@ -1351,7 +1389,7 @@ function renderResult() {
   // 판단 품질 패널은 LLM 이 채워주던 quality 신호에만 의존한다. 공개판에서 그 호출을
   // 걷어냈으므로 qualityEvidenceCount 는 항상 0 이고 이 패널은 렌더되지 않는다.
   // 같은 역할은 정답 키가 있는 역량 체크(renderKeyedPanel)가 대신한다.
-  const qualityPanel = qualityEvidenceCount ? `<section class="quality-panel"><div><p class="eyebrow">JUDGMENT QUALITY · ${qualityEvidenceCount} SIGNALS</p><h3>한 줄 답변에서 확인된 판단 품질</h3></div><div>${judgmentQuality.map(item => `<article class="${item.score === null ? 'unobserved' : ''}"><span><b>${item.ko}</b><small>${item.desc}</small></span><strong>${item.score === null ? '관찰 전' : item.score.toFixed(1)}</strong></article>`).join('')}</div></section>` : `<p class="quality-empty">선택 이유나 직접 답변을 한 줄 보태면 판단 품질 점수가 여기에 표시됩니다.</p>`;
+  const qualityPanel = qualityEvidenceCount ? `<section class="quality-panel"><div><p class="eyebrow">JUDGMENT QUALITY · ${qualityEvidenceCount} SIGNALS</p><h3>한 줄 답변에서 확인된 판단 품질</h3></div><div>${judgmentQuality.map(item => `<article class="${item.score === null ? 'unobserved' : ''}"><span><b>${item.ko}</b><small>${item.desc}</small></span><strong>${item.score === null ? '관찰 전' : item.score.toFixed(1)}</strong></article>`).join('')}</div></section>` : '';
   const responseTimes = state.chatSignals.map(signal => signal.responseMs).filter(Number.isFinite).sort((a, b) => a - b);
   const middle = Math.floor(responseTimes.length / 2);
   const medianSeconds = responseTimes.length ? Math.round((responseTimes.length % 2 ? responseTimes[middle] : (responseTimes[middle - 1] + responseTimes[middle]) / 2) / 1000) : null;
@@ -1361,7 +1399,7 @@ function renderResult() {
   const archivedDurations = loadArchives().map(item => item.assessmentDurationMs).filter(Number.isFinite);
   const browserAverageMs = archivedDurations.length ? archivedDurations.reduce((sum, milliseconds) => sum + milliseconds, 0) / archivedDurations.length : null;
   const paceCard = responseTimes.length ? `<section class="pace-card"><div><p class="eyebrow">ASSESSMENT TIME</p><h2>검사 시간</h2><p>중간에 화면을 닫아둔 시간은 총 소요시간에 포함될 수 있습니다.</p></div><div class="time-metrics"><span><small>이번 검사</small><b>${formatDuration(state.assessmentDurationMs)}</b></span><span><small>문항당 평균</small><b>${averageResponseSeconds}초</b></span><span><small>중앙 응답</small><b>${medianSeconds}초</b></span><span><small>내 평균 · ${archivedDurations.length}회</small><b>${formatDuration(browserAverageMs)}</b></span></div><span class="guide-count">25초 안에 선택<br><b>${withinGuide} / ${responseTimes.length}</b></span></section>` : '';
-  screenHost().innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">YOUR WORKING PATTERN</p><h1>먼저 <em>${selectedModes[0].plain}</em>,<br>그다음 ${selectedModes[1].plain},<br>마지막에 ${selectedModes[2].plain}.</h1></div><button class="ghost" id="restart">다시 하기</button></header><section class="type-result"><div class="type-identity"><img src="/people/${typeCode}.jpg" alt="${workTypePeople[typeCode]} 초상"><div><b class="result-type-code" aria-label="${typeCode}">${rankedTypeCode}</b><span>${workTypeNames[typeCode]}형</span><small>${workTypePeople[typeCode]} 아키타입</small></div><p>${workTypeReasons[typeCode]}</p></div></section><section class="result-grid"><div class="radar-card"><canvas id="radar" width="680" height="620"></canvas><div class="scale-note">색상은 FABL 그룹 · 2 관찰 없음 · 3.5 평균 · 5 강한 선호</div></div><div class="summary behavior-summary"><h2>당신은 이렇게 행동할 가능성이 큽니다</h2>${renderBehaviorInsights(selectedModes)}<p class="behavior-note">상황에 따라 다른 접근도 사용하지만, 답변에서 반복된 우선순서를 풀어낸 예시입니다.</p></div></section>${qualityPanel}${renderKeyedPanel()}<details class="all-scores"><summary><div class="section-title"><p class="eyebrow">${state.answers.length} SCENARIOS · 10 CAPABILITIES</p><h2>10개 역량 상세 점수 보기</h2></div><b>펼치기 ＋</b></summary><div class="score-list">${result.map(c => `<div class="score-row"><div><b>${c.ko}</b><small>${c.en} · 신호 ${c.observed}</small></div><i><span style="width:${c.score / 5 * 100}%"></span></i><strong>${c.score.toFixed(1)}</strong></div>`).join('')}</div></details><footer>이 결과는 ${state.answers.length}개 상황에서 먼저 사용한 접근을 분석한 상대적 선호도입니다. 낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요.</footer></main>`;
+  screenHost().innerHTML = `<main class="result-shell"><header class="result-head"><div><p class="eyebrow">YOUR WORKING PATTERN</p><h1>먼저 <em>${selectedModes[0].plain}</em>,<br>그다음 ${selectedModes[1].plain},<br>마지막에 ${selectedModes[2].plain}.</h1></div><button class="ghost" id="restart">다시 하기</button></header><section class="type-result"><div class="type-identity"><img src="/people/${typeCode}.jpg" alt="${workTypePeople[typeCode]} 초상"><div><b class="result-type-code" aria-label="${typeCode}">${rankedTypeCode}</b><span>${workTypeNames[typeCode]}형</span><small>${workTypePeople[typeCode]} 아키타입</small></div><p>${workTypeReasons[typeCode]}</p></div></section><section class="result-grid"><div class="radar-card"><canvas id="radar" width="680" height="620"></canvas><div class="scale-note">색상은 FABL 그룹 · 2 관찰 없음 · 3.5 평균 · 5 강한 선호</div></div><div class="summary behavior-summary"><h2>당신은 이렇게 행동할 가능성이 큽니다</h2>${renderBehaviorInsights(selectedModes)}<p class="behavior-note">상황에 따라 다른 접근도 사용하지만, 답변에서 반복된 우선순서를 풀어낸 예시입니다.</p></div></section>${qualityPanel}${renderKeyedPanel()}<details class="all-scores"><summary><div class="section-title"><p class="eyebrow">${state.answers.length} SCENARIOS · 10 CAPABILITIES</p><h2>10개 역량 상세 점수 보기</h2></div><b>펼치기 ＋</b></summary><div class="score-list">${result.map(c => `<div class="score-row"><div><b>${c.ko}</b><small>${c.en} · 신호 ${c.observed}</small></div><i><span style="width:${c.score / 5 * 100}%"></span></i><strong>${c.score.toFixed(1)}</strong></div>`).join('')}</div></details><footer>이 결과는 ${state.answers.length}개 상황에서 먼저 사용한 접근을 분석한 상대적 선호도입니다. 낮은 점수는 능력 부족을 뜻하지 않으며, 채용·인사평가의 단독 근거로 사용하지 마세요. 함께 나오는 인물은 공개된 업적에서 연상한 예시이고, 그 사람을 진단한 결과가 아닙니다.</footer></main>`;
   if (paceCard) pick('.all-scores').insertAdjacentHTML('beforebegin', paceCard);
   drawRadar(pick('#radar'), result);
   const resultHead = pick('.result-head');
